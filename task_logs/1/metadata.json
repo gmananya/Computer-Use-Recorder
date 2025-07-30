@@ -1,0 +1,24 @@
+{
+  "task_set": "Set 1",
+  "task_number": "Task 1 - Open Safari",
+  "context": "I have some free time and would like to browse the internet.",
+  "task": "Open a web browser",
+  "familiarity": "Low",
+  "difficulty": "Easy",
+  "accessibility_settings": {
+    "os": "Windows",
+    "os_version": "10.0.26100",
+    "python_version": "3.13.5",
+    "high_contrast": "126",
+    "sticky_keys": "510",
+    "toggle_keys": "62",
+    "filter_keys": "126",
+    "font_smoothing": "2",
+    "display_scaling": 192,
+    "narrator": false,
+    "magnifier": 100,
+    "color_filter": 0,
+    "color_filter_type": "Blue-Yellow",
+    "mouse_cursor_scheme": "Windows Aero"
+  }
+}

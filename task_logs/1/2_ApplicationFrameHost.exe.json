@@ -1,0 +1,327 @@
+[
+  {
+    "timestamp": 1753766229.807318,
+    "application": "ApplicationFrameHost.exe",
+    "window_title": "Calculator",
+    "cursor_position": [
+      636,
+      758
+    ],
+    "focused_element": {
+      "name": "Display is 0",
+      "control_type": "TextControl"
+    },
+    "element_under_cursor": {
+      "name": "Nine",
+      "control_type": "ButtonControl",
+      "bounding_rect": {
+        "left": 576,
+        "top": 694,
+        "right": 729,
+        "bottom": 796
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  },
+  {
+    "timestamp": 1753766230.1020093,
+    "application": "ApplicationFrameHost.exe",
+    "window_title": "Calculator",
+    "cursor_position": [
+      636,
+      758
+    ],
+    "focused_element": {
+      "name": "Nine",
+      "control_type": "ButtonControl"
+    },
+    "element_under_cursor": {
+      "name": "Nine",
+      "control_type": "ButtonControl",
+      "bounding_rect": {
+        "left": 576,
+        "top": 694,
+        "right": 729,
+        "bottom": 796
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  },
+  {
+    "timestamp": 1753766230.1611812,
+    "application": "ApplicationFrameHost.exe",
+    "window_title": "Calculator",
+    "cursor_position": [
+      636,
+      758
+    ],
+    "focused_element": {
+      "name": "Nine",
+      "control_type": "ButtonControl"
+    },
+    "element_under_cursor": {
+      "name": "Nine",
+      "control_type": "ButtonControl",
+      "bounding_rect": {
+        "left": 576,
+        "top": 694,
+        "right": 729,
+        "bottom": 796
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  },
+  {
+    "timestamp": 1753766231.6437366,
+    "application": "ApplicationFrameHost.exe",
+    "window_title": "Calculator",
+    "cursor_position": [
+      464,
+      868
+    ],
+    "focused_element": {
+      "name": "Nine",
+      "control_type": "ButtonControl"
+    },
+    "element_under_cursor": {
+      "name": "Five",
+      "control_type": "ButtonControl",
+      "bounding_rect": {
+        "left": 419,
+        "top": 800,
+        "right": 572,
+        "bottom": 902
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  },
+  {
+    "timestamp": 1753766232.2768836,
+    "application": "ApplicationFrameHost.exe",
+    "window_title": "Calculator",
+    "cursor_position": [
+      362,
+      972
+    ],
+    "focused_element": {
+      "name": "Five",
+      "control_type": "ButtonControl"
+    },
+    "element_under_cursor": {
+      "name": "One",
+      "control_type": "ButtonControl",
+      "bounding_rect": {
+        "left": 262,
+        "top": 906,
+        "right": 415,
+        "bottom": 1008
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  },
+  {
+    "timestamp": 1753766233.7271512,
+    "application": "ApplicationFrameHost.exe",
+    "window_title": "Calculator",
+    "cursor_position": [
+      830,
+      634
+    ],
+    "focused_element": {
+      "name": "One",
+      "control_type": "ButtonControl"
+    },
+    "element_under_cursor": {
+      "name": "Divide by",
+      "control_type": "ButtonControl",
+      "bounding_rect": {
+        "left": 733,
+        "top": 588,
+        "right": 886,
+        "bottom": 690
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  },
+  {
+    "timestamp": 1753766234.5114276,
+    "application": "ApplicationFrameHost.exe",
+    "window_title": "Calculator",
+    "cursor_position": [
+      646,
+      966
+    ],
+    "focused_element": {
+      "name": "Divide by",
+      "control_type": "ButtonControl"
+    },
+    "element_under_cursor": {
+      "name": "Three",
+      "control_type": "ButtonControl",
+      "bounding_rect": {
+        "left": 576,
+        "top": 906,
+        "right": 729,
+        "bottom": 1008
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  },
+  {
+    "timestamp": 1753766235.027051,
+    "application": "ApplicationFrameHost.exe",
+    "window_title": "Calculator",
+    "cursor_position": [
+      864,
+      1064
+    ],
+    "focused_element": {
+      "name": "Three",
+      "control_type": "ButtonControl"
+    },
+    "element_under_cursor": {
+      "name": "Equals",
+      "control_type": "ButtonControl",
+      "bounding_rect": {
+        "left": 733,
+        "top": 1012,
+        "right": 886,
+        "bottom": 1114
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  },
+  {
+    "timestamp": 1753766238.3921654,
+    "application": "ApplicationFrameHost.exe",
+    "window_title": "Calculator",
+    "cursor_position": [
+      848,
+      102
+    ],
+    "focused_element": {
+      "name": "Equals",
+      "control_type": "ButtonControl"
+    },
+    "element_under_cursor": {
+      "name": "Close Calculator",
+      "control_type": "ButtonControl",
+      "bounding_rect": {
+        "left": 802,
+        "top": 58,
+        "right": 894,
+        "bottom": 122
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  },
+  {
+    "timestamp": 1753766250.109406,
+    "application": "ApplicationFrameHost.exe",
+    "window_title": "Settings",
+    "cursor_position": [
+      346,
+      1136
+    ],
+    "focused_element": {
+      "name": "Search box, Find a setting",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "Accessibility",
+      "control_type": "ListItemControl",
+      "bounding_rect": {
+        "left": 32,
+        "top": 1110,
+        "right": 592,
+        "bottom": 1182
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  },
+  {
+    "timestamp": 1753766252.7967882,
+    "application": "ApplicationFrameHost.exe",
+    "window_title": "Settings",
+    "cursor_position": [
+      1644,
+      1340
+    ],
+    "focused_element": {
+      "name": "Accessibility",
+      "control_type": "ListItemControl"
+    },
+    "element_under_cursor": {
+      "name": "Narrator",
+      "control_type": "GroupControl",
+      "bounding_rect": {
+        "left": 1220,
+        "top": 1293,
+        "right": 3220,
+        "bottom": 1431
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  },
+  {
+    "timestamp": 1753766256.6977227,
+    "application": "ApplicationFrameHost.exe",
+    "window_title": "Settings",
+    "cursor_position": [
+      3070,
+      452
+    ],
+    "focused_element": {
+      "name": "Narrator",
+      "control_type": "ButtonControl"
+    },
+    "element_under_cursor": {
+      "name": "Narrator",
+      "control_type": "ButtonControl",
+      "bounding_rect": {
+        "left": 2989,
+        "top": 407,
+        "right": 3132,
+        "bottom": 487
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  },
+  {
+    "timestamp": 1753766272.7156978,
+    "application": "ApplicationFrameHost.exe",
+    "window_title": "Settings",
+    "cursor_position": [
+      2052,
+      2106
+    ],
+    "focused_element": {
+      "name": "Narrator",
+      "control_type": "ButtonControl"
+    },
+    "element_under_cursor": {
+      "name": "Google Chrome pinned",
+      "control_type": "ButtonControl",
+      "bounding_rect": {
+        "left": 2013,
+        "top": 2064,
+        "right": 2101,
+        "bottom": 2160
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  }
+]

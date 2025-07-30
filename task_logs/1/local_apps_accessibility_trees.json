@@ -1,0 +1,1765 @@
+{
+  "SearchHost.exe": {
+    "name": "Search",
+    "control_type": "WindowControl",
+    "automation_id": "",
+    "bounding_rectangle": {
+      "left": 1369,
+      "top": 564,
+      "right": 2969,
+      "bottom": 2160
+    },
+    "children": [
+      {
+        "name": "Search box",
+        "control_type": "EditControl",
+        "automation_id": "SearchTextBox",
+        "bounding_rectangle": {
+          "left": 1393,
+          "top": 2080,
+          "right": 1833,
+          "bottom": 2144
+        },
+        "children": [
+          {
+            "name": "Search box",
+            "control_type": "EditControl",
+            "automation_id": "",
+            "bounding_rectangle": {
+              "left": 1393,
+              "top": 2080,
+              "right": 1833,
+              "bottom": 2144
+            },
+            "children": []
+          },
+          {
+            "name": "",
+            "control_type": "PaneControl",
+            "automation_id": "ContentElement",
+            "bounding_rectangle": {
+              "left": 1393,
+              "top": 2092,
+              "right": 1833,
+              "bottom": 2130
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "name": "\"Search\"",
+        "control_type": "PaneControl",
+        "automation_id": "",
+        "bounding_rectangle": {
+          "left": 1395,
+          "top": 590,
+          "right": 2943,
+          "bottom": 2038
+        },
+        "children": [
+          {
+            "name": "CoreInput",
+            "control_type": "PaneControl",
+            "automation_id": "",
+            "bounding_rectangle": {
+              "left": 1395,
+              "top": 590,
+              "right": 2943,
+              "bottom": 2038
+            },
+            "children": [
+              {
+                "name": "Search",
+                "control_type": "PaneControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 1395,
+                  "top": 590,
+                  "right": 2943,
+                  "bottom": 2038
+                },
+                "children": [
+                  {
+                    "name": "",
+                    "control_type": "PaneControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 1395,
+                      "top": 590,
+                      "right": 2943,
+                      "bottom": 2038
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "Search - Web content",
+                    "control_type": "PaneControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 1394,
+                      "top": 590,
+                      "right": 2942,
+                      "bottom": 2038
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "ApplicationFrameHost.exe": {
+    "name": "Calculator",
+    "control_type": "WindowControl",
+    "automation_id": "",
+    "bounding_rectangle": {
+      "left": 241,
+      "top": 57,
+      "right": 907,
+      "bottom": 1135
+    },
+    "children": [
+      {
+        "name": "Calculator",
+        "control_type": "WindowControl",
+        "automation_id": "TitleBar",
+        "bounding_rectangle": {
+          "left": 518,
+          "top": 58,
+          "right": 894,
+          "bottom": 122
+        },
+        "children": [
+          {
+            "name": "System",
+            "control_type": "MenuBarControl",
+            "automation_id": "SystemMenuBar",
+            "bounding_rectangle": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            },
+            "children": [
+              {
+                "name": "System",
+                "control_type": "MenuItemControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "Minimize Calculator",
+            "control_type": "ButtonControl",
+            "automation_id": "Minimize",
+            "bounding_rectangle": {
+              "left": 618,
+              "top": 58,
+              "right": 710,
+              "bottom": 122
+            },
+            "children": []
+          },
+          {
+            "name": "Maximize Calculator",
+            "control_type": "ButtonControl",
+            "automation_id": "Maximize",
+            "bounding_rectangle": {
+              "left": 710,
+              "top": 58,
+              "right": 802,
+              "bottom": 122
+            },
+            "children": []
+          },
+          {
+            "name": "Close Calculator",
+            "control_type": "ButtonControl",
+            "automation_id": "Close",
+            "bounding_rectangle": {
+              "left": 802,
+              "top": 58,
+              "right": 894,
+              "bottom": 122
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "name": "Calculator",
+        "control_type": "WindowControl",
+        "automation_id": "",
+        "bounding_rectangle": {
+          "left": 254,
+          "top": 58,
+          "right": 894,
+          "bottom": 1122
+        },
+        "children": [
+          {
+            "name": "",
+            "control_type": "ImageControl",
+            "automation_id": "AppIcon",
+            "bounding_rectangle": {
+              "left": 286,
+              "top": 70,
+              "right": 326,
+              "bottom": 110
+            },
+            "children": []
+          },
+          {
+            "name": "Calculator",
+            "control_type": "TextControl",
+            "automation_id": "AppName",
+            "bounding_rectangle": {
+              "left": 350,
+              "top": 74,
+              "right": 459,
+              "bottom": 106
+            },
+            "children": []
+          },
+          {
+            "name": "",
+            "control_type": "CustomControl",
+            "automation_id": "NavView",
+            "bounding_rectangle": {
+              "left": 254,
+              "top": 122,
+              "right": 894,
+              "bottom": 1122
+            },
+            "children": [
+              {
+                "name": "Open Navigation",
+                "control_type": "ButtonControl",
+                "automation_id": "TogglePaneButton",
+                "bounding_rectangle": {
+                  "left": 262,
+                  "top": 134,
+                  "right": 342,
+                  "bottom": 206
+                },
+                "children": [
+                  {
+                    "name": "",
+                    "control_type": "TextControl",
+                    "automation_id": "PaneTitleTextBlock",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "",
+                "control_type": "GroupControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 254,
+                  "top": 138,
+                  "right": 894,
+                  "bottom": 1114
+                },
+                "children": [
+                  {
+                    "name": "Expression is ",
+                    "control_type": "TextControl",
+                    "automation_id": "CalculatorExpression",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "Display is 0",
+                    "control_type": "TextControl",
+                    "automation_id": "CalculatorResults",
+                    "bounding_rectangle": {
+                      "left": 254,
+                      "top": 264,
+                      "right": 894,
+                      "bottom": 414
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "Open history flyout",
+                    "control_type": "ButtonControl",
+                    "automation_id": "HistoryButton",
+                    "bounding_rectangle": {
+                      "left": 814,
+                      "top": 138,
+                      "right": 878,
+                      "bottom": 202
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "Memory controls",
+                    "control_type": "GroupControl",
+                    "automation_id": "MemoryPanel",
+                    "bounding_rectangle": {
+                      "left": 262,
+                      "top": 416,
+                      "right": 886,
+                      "bottom": 478
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "Display controls",
+                    "control_type": "GroupControl",
+                    "automation_id": "DisplayControls",
+                    "bounding_rectangle": {
+                      "left": 262,
+                      "top": 482,
+                      "right": 886,
+                      "bottom": 584
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "Standard functions",
+                    "control_type": "GroupControl",
+                    "automation_id": "StandardFunctions",
+                    "bounding_rectangle": {
+                      "left": 262,
+                      "top": 588,
+                      "right": 729,
+                      "bottom": 690
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "Standard operators",
+                    "control_type": "GroupControl",
+                    "automation_id": "StandardOperators",
+                    "bounding_rectangle": {
+                      "left": 733,
+                      "top": 588,
+                      "right": 886,
+                      "bottom": 1114
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "Number pad",
+                    "control_type": "GroupControl",
+                    "automation_id": "NumberPad",
+                    "bounding_rectangle": {
+                      "left": 262,
+                      "top": 694,
+                      "right": 729,
+                      "bottom": 1114
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "Positive negative",
+                    "control_type": "ButtonControl",
+                    "automation_id": "negateButton",
+                    "bounding_rectangle": {
+                      "left": 262,
+                      "top": 1012,
+                      "right": 415,
+                      "bottom": 1114
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "Standard Calculator mode",
+                "control_type": "TextControl",
+                "automation_id": "Header",
+                "bounding_rectangle": {
+                  "left": 350,
+                  "top": 140,
+                  "right": 514,
+                  "bottom": 194
+                },
+                "children": []
+              },
+              {
+                "name": "Keep on top",
+                "control_type": "ButtonControl",
+                "automation_id": "NormalAlwaysOnTopButton",
+                "bounding_rectangle": {
+                  "left": 534,
+                  "top": 138,
+                  "right": 598,
+                  "bottom": 202
+                },
+                "children": [
+                  {
+                    "name": "\uee49",
+                    "control_type": "TextControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 550,
+                      "top": 154,
+                      "right": 582,
+                      "bottom": 186
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "",
+        "control_type": "PaneControl",
+        "automation_id": "",
+        "bounding_rectangle": {
+          "left": 254,
+          "top": 122,
+          "right": 894,
+          "bottom": 1122
+        },
+        "children": []
+      }
+    ]
+  },
+  "chrome.exe": {
+    "name": "Context-Aware Image Descriptions for Web Accessibility - Google Chrome",
+    "control_type": "PaneControl",
+    "automation_id": "",
+    "bounding_rectangle": {
+      "left": -13,
+      "top": -13,
+      "right": 3853,
+      "bottom": 2077
+    },
+    "children": [
+      {
+        "name": "",
+        "control_type": "PaneControl",
+        "automation_id": "",
+        "bounding_rectangle": {
+          "left": -2,
+          "top": 2020,
+          "right": 394,
+          "bottom": 2066
+        },
+        "children": [
+          {
+            "name": "",
+            "control_type": "PaneControl",
+            "automation_id": "",
+            "bounding_rectangle": {
+              "left": -2,
+              "top": 2020,
+              "right": 394,
+              "bottom": 2066
+            },
+            "children": [
+              {
+                "name": "https://arxiv.org/pdf/2409.03054v1",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 10,
+                  "top": 2022,
+                  "right": 382,
+                  "bottom": 2064
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Restore pages?",
+        "control_type": "PaneControl",
+        "automation_id": "",
+        "bounding_rectangle": {
+          "left": 3184,
+          "top": 152,
+          "right": 3852,
+          "bottom": 472
+        },
+        "children": [
+          {
+            "name": "",
+            "control_type": "PaneControl",
+            "automation_id": "",
+            "bounding_rectangle": {
+              "left": 3184,
+              "top": 152,
+              "right": 3852,
+              "bottom": 472
+            },
+            "children": [
+              {
+                "name": "",
+                "control_type": "PaneControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 3184,
+                  "top": 152,
+                  "right": 3852,
+                  "bottom": 472
+                },
+                "children": [
+                  {
+                    "name": "",
+                    "control_type": "PaneControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 3238,
+                      "top": 202,
+                      "right": 3734,
+                      "bottom": 250
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "Close",
+                    "control_type": "ButtonControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 3758,
+                      "top": 202,
+                      "right": 3806,
+                      "bottom": 246
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "PaneControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 3198,
+                      "top": 250,
+                      "right": 3838,
+                      "bottom": 454
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Context-Aware Image Descriptions for Web Accessibility",
+        "control_type": "DocumentControl",
+        "automation_id": "10595472",
+        "bounding_rectangle": {
+          "left": 0,
+          "top": 174,
+          "right": 3840,
+          "bottom": 2064
+        },
+        "children": [
+          {
+            "name": "",
+            "control_type": "GroupControl",
+            "automation_id": "",
+            "bounding_rectangle": {
+              "left": 905,
+              "top": 294,
+              "right": 2905,
+              "bottom": 580
+            },
+            "children": [
+              {
+                "name": "Context-Aware Image Descriptions for Web Accessibility",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 1009,
+                  "top": 294,
+                  "right": 2801,
+                  "bottom": 376
+                },
+                "children": []
+              },
+              {
+                "name": "",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 1575,
+                  "top": 396,
+                  "right": 2235,
+                  "bottom": 458
+                },
+                "children": [
+                  {
+                    "name": "Ananya Gubbi Mohanbabu",
+                    "control_type": "HyperlinkControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 1575,
+                      "top": 405,
+                      "right": 2033,
+                      "bottom": 448
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": ", ",
+                    "control_type": "TextControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 2032,
+                      "top": 405,
+                      "right": 2052,
+                      "bottom": 448
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "Amy Pavel",
+                    "control_type": "HyperlinkControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 2051,
+                      "top": 405,
+                      "right": 2235,
+                      "bottom": 448
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 1705,
+                  "top": 467,
+                  "right": 2105,
+                  "bottom": 519
+                },
+                "children": [
+                  {
+                    "name": "University of Texas at Austin",
+                    "control_type": "TextControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 1705,
+                      "top": 474,
+                      "right": 2105,
+                      "bottom": 511
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 1801,
+                  "top": 528,
+                  "right": 2009,
+                  "bottom": 580
+                },
+                "children": [
+                  {
+                    "name": "ASSETS 2024",
+                    "control_type": "TextControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 1801,
+                      "top": 535,
+                      "right": 2009,
+                      "bottom": 572
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "\ud83d\udcc4 PDF",
+            "control_type": "HyperlinkControl",
+            "automation_id": "",
+            "bounding_rectangle": {
+              "left": 1537,
+              "top": 659,
+              "right": 1735,
+              "bottom": 751
+            },
+            "children": []
+          },
+          {
+            "name": "\ud83d\udcbb Code",
+            "control_type": "HyperlinkControl",
+            "automation_id": "",
+            "bounding_rectangle": {
+              "left": 1804,
+              "top": 659,
+              "right": 2014,
+              "bottom": 751
+            },
+            "children": []
+          },
+          {
+            "name": "\u2699 arXiv",
+            "control_type": "HyperlinkControl",
+            "automation_id": "",
+            "bounding_rectangle": {
+              "left": 2083,
+              "top": 659,
+              "right": 2273,
+              "bottom": 751
+            },
+            "children": []
+          },
+          {
+            "name": "The figure shows information from left to right. The leftmost frame shows an e-commerce webpage where the image appears. An arrow points to the right from this picture to the image that the user selects on the webpage to obtain context-aware image description. An arrow from the selected image points to the right to the context-free description generated by GPT-4V. Arrows from the webpage labeled \u201cextracted webpage context\u201d and user selected image point to the rightmost frame that contains the context-aware description.",
+            "control_type": "ImageControl",
+            "automation_id": "",
+            "bounding_rectangle": {
+              "left": 905,
+              "top": 831,
+              "right": 2905,
+              "bottom": 1543
+            },
+            "children": []
+          },
+          {
+            "name": "",
+            "control_type": "TextControl",
+            "automation_id": "",
+            "bounding_rectangle": {
+              "left": 1105,
+              "top": 1582,
+              "right": 2705,
+              "bottom": 1736
+            },
+            "children": [
+              {
+                "name": "Our system provides context-aware descriptions for images by considering the image along with extracted details from the image source to craft a description that uses correct visual terminology (e.g., chenille texture rather than velvet) and focuses on the relevant item (e.g., the sofa rather than the room).",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 1138,
+                  "top": 1589,
+                  "right": 2672,
+                  "bottom": 1728
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "",
+            "control_type": "GroupControl",
+            "automation_id": "abstract",
+            "bounding_rectangle": {
+              "left": 905,
+              "top": 1975,
+              "right": 2905,
+              "bottom": 2892
+            },
+            "children": [
+              {
+                "name": "Abstract",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 945,
+                  "top": 2015,
+                  "right": 2865,
+                  "bottom": 2106
+                },
+                "children": []
+              },
+              {
+                "name": "",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": [
+                  {
+                    "name": "Blind and low vision (BLV) internet users access images on the web via text descriptions. New vision-to-language models such as GPT-V, Gemini, and LLaVa can now provide detailed image descriptions on-demand. While prior research and guidelines state that BLV audiences' information preferences depend on the context of the image, existing tools for accessing vision-to-language models provide only context-free image descriptions by generating descriptions for the image alone without considering the surrounding webpage context. To explore how to integrate image context into image descriptions, we designed a Chrome Extension that automatically extracts webpage context to inform GPT-4V-generated image descriptions. We gained feedback from 12 BLV participants in a user study comparing typical context-free image descriptions to context-aware image descriptions. We then further evaluated our context-informed image descriptions with a technical evaluation. Our user evaluation demonstrated that BLV participants frequently prefer context-aware descriptions to context-free descriptions. BLV participants also rated context-aware descriptions significantly higher in quality, imaginability, relevance, and plausibility. All participants shared that they wanted to use context-aware descriptions in the future and highlighted the potential for use in online shopping, social media, news, and personal interest blogs.",
+                    "control_type": "TextControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "",
+            "control_type": "GroupControl",
+            "automation_id": "problem",
+            "bounding_rectangle": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            },
+            "children": [
+              {
+                "name": "Types of Webpage Context",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": []
+              },
+              {
+                "name": "",
+                "control_type": "TableControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": [
+                  {
+                    "name": "",
+                    "control_type": "GroupControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "\n",
+                "control_type": "CustomControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": []
+              },
+              {
+                "name": "",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": [
+                  {
+                    "name": "Examples of webpage context that may impact the visual interpretation of an image and how the image is described. Most of these webpage elements are selected intentionally by webpage authors (e.g., position of text content) to convey importance and structure to audience members, but others are dynamically added (e.g., advertisements)",
+                    "control_type": "TextControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "",
+            "control_type": "GroupControl",
+            "automation_id": "pipeline",
+            "bounding_rectangle": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            },
+            "children": [
+              {
+                "name": "Pipeline",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": []
+              },
+              {
+                "name": "The figure shows a diagram of system pipeline. From left to right, the diagram shows 6 groupings or columns, all connected by arrows pointing to the right. The first group includes Selected Image and Webpage. From Selected Image, there are two arrows pointing right to Alt and Image which are in the second group. From Webpage, there are three arrows pointing right to Title, URL, and Text (also in the second group). In the third column, there is an arrow pointing from URL to Purpose, and from Text there is an arrow pointing to the right to \u201cText to Image Distance (pixels), Text to Image Location (L, R, T,B), and Text to Image Similarity (CLIPScore). The Image also points to the right to Long Context-free Image Description and Initial Context-aware Image Description in the fourth group. Image, Alt, Title and Initial Context-aware Image Description all point to the right to Visually Concrete Text in the fifth column. The Long Context-free description points to the right to Short Context-free Image Description. The Visually Concrete Text and The Image point to the right to Long Context-Aware Image Description in the right in the sixth group. The Long Context-Aware Image Description points downwards to the Short Context-Aware Image Description.",
+                "control_type": "ImageControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": []
+              },
+              {
+                "name": "",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": [
+                  {
+                    "name": "The system takes a webpage and a selected webpage image as selected by the user, then extracts all of the text elements on the page. It analyzes the webpage to get an image relevance score for each text element. Our score considers the distance between the text element and the target image, position of the text in comparison to the image, and the CLIP score similarity between the image and the text. For each text element, we combine these scores together to achieve the final relevance score. We use the extracted context text and its scores to inform the final context-aware description.",
+                    "control_type": "TextControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "",
+            "control_type": "GroupControl",
+            "automation_id": "system",
+            "bounding_rectangle": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            },
+            "children": [
+              {
+                "name": "System",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": []
+              },
+              {
+                "name": "An image of our chrome extension window on the left and the original webpage window with image on right. The extension window shows the user-selected image with short and long context-aware descriptions followed by short and long context-free descriptions. Users can optionally view the longer descriptions by clicking on the button below the shorter descriptions. The image selected is of Obama and his family.",
+                "control_type": "ImageControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": []
+              },
+              {
+                "name": "",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": [
+                  {
+                    "name": "When a user clicks on an image in a website (right), our extension adds both long and short versions of the context-free and context-aware descriptions to a separate extension window (left).",
+                    "control_type": "TextControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "",
+            "control_type": "GroupControl",
+            "automation_id": "results",
+            "bounding_rectangle": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            },
+            "children": [
+              {
+                "name": "Results",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": []
+              },
+              {
+                "name": "",
+                "control_type": "TableControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": [
+                  {
+                    "name": "",
+                    "control_type": "GroupControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": [
+                  {
+                    "name": "Example context-free and context-aware descriptions for Task 1 in the user study",
+                    "control_type": "TextControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "\n",
+                "control_type": "CustomControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": []
+              },
+              {
+                "name": "\n",
+                "control_type": "CustomControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": []
+              },
+              {
+                "name": "",
+                "control_type": "TableControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": [
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "CustomControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "\n",
+                "control_type": "CustomControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": []
+              },
+              {
+                "name": "",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": [
+                  {
+                    "name": "Example context-free and context-aware descriptions for a website and image selected by P8.",
+                    "control_type": "TextControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "",
+            "control_type": "GroupControl",
+            "automation_id": "bibtex",
+            "bounding_rectangle": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            },
+            "children": [
+              {
+                "name": "BibTeX",
+                "control_type": "TextControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": []
+              },
+              {
+                "name": "",
+                "control_type": "GroupControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0
+                },
+                "children": [
+                  {
+                    "name": "@article{mohanbabu2024context,\n    title={Context-Aware Image Descriptions for Web Accessibility},\n    author={Mohanbabu, Ananya Gubbi and Pavel, Amy},\n    journal={arXiv preprint arXiv:2409.03054},\n    year={2024}\n}\n",
+                    "control_type": "TextControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "",
+        "control_type": "TitleBarControl",
+        "automation_id": "",
+        "bounding_rectangle": {
+          "left": 0,
+          "top": -10,
+          "right": 3840,
+          "bottom": 0
+        },
+        "children": [
+          {
+            "name": "System",
+            "control_type": "MenuBarControl",
+            "automation_id": "MenuBar",
+            "bounding_rectangle": {
+              "left": 0,
+              "top": 0,
+              "right": 44,
+              "bottom": 44
+            },
+            "children": [
+              {
+                "name": "System",
+                "control_type": "MenuItemControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 44,
+                  "bottom": 44
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "Minimize",
+            "control_type": "ButtonControl",
+            "automation_id": "",
+            "bounding_rectangle": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            },
+            "children": []
+          },
+          {
+            "name": "Restore",
+            "control_type": "ButtonControl",
+            "automation_id": "",
+            "bounding_rectangle": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            },
+            "children": []
+          },
+          {
+            "name": "Close",
+            "control_type": "ButtonControl",
+            "automation_id": "",
+            "bounding_rectangle": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "name": "",
+        "control_type": "PaneControl",
+        "automation_id": "",
+        "bounding_rectangle": {
+          "left": 0,
+          "top": 0,
+          "right": 3840,
+          "bottom": 2064
+        },
+        "children": [
+          {
+            "name": "",
+            "control_type": "PaneControl",
+            "automation_id": "",
+            "bounding_rectangle": {
+              "left": 0,
+              "top": 0,
+              "right": 3840,
+              "bottom": 2064
+            },
+            "children": [
+              {
+                "name": "",
+                "control_type": "PaneControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 3566,
+                  "top": 0,
+                  "right": 3840,
+                  "bottom": 80
+                },
+                "children": [
+                  {
+                    "name": "Minimize",
+                    "control_type": "ButtonControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 3566,
+                      "top": 0,
+                      "right": 3656,
+                      "bottom": 80
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "Restore",
+                    "control_type": "ButtonControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 3656,
+                      "top": 0,
+                      "right": 3748,
+                      "bottom": 80
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "Close",
+                    "control_type": "ButtonControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 3748,
+                      "top": 0,
+                      "right": 3840,
+                      "bottom": 80
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "",
+                "control_type": "PaneControl",
+                "automation_id": "",
+                "bounding_rectangle": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 3840,
+                  "bottom": 2064
+                },
+                "children": [
+                  {
+                    "name": "",
+                    "control_type": "PaneControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 3840,
+                      "bottom": 174
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "PaneControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 174,
+                      "right": 3840,
+                      "bottom": 2064
+                    },
+                    "children": []
+                  },
+                  {
+                    "name": "",
+                    "control_type": "PaneControl",
+                    "automation_id": "",
+                    "bounding_rectangle": {
+                      "left": 0,
+                      "top": 0,
+                      "right": 0,
+                      "bottom": 0
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

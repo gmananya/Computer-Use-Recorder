@@ -1,0 +1,894 @@
+[
+  {
+    "timestamp": 1753766279.5662386,
+    "application": "chrome.exe",
+    "window_title": "Restore pages?",
+    "cursor_position": [
+      1134,
+      140
+    ],
+    "focused_element": {
+      "name": "Restore pages?",
+      "control_type": "PaneControl"
+    },
+    "element_under_cursor": {
+      "name": "New Tab - Google Chrome",
+      "control_type": "WindowControl",
+      "bounding_rect": {
+        "left": -13,
+        "top": -13,
+        "right": 3853,
+        "bottom": 2077
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  },
+  {
+    "timestamp": 1753766282.3317928,
+    "application": "chrome.exe",
+    "window_title": "New Tab - Google Chrome",
+    "cursor_position": [
+      1134,
+      140
+    ],
+    "focused_element": {
+      "name": "Address and search bar",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 240,
+        "top": 92,
+        "right": 3456,
+        "bottom": 160
+      }
+    },
+    "event": "key_press",
+    "key": "a"
+  },
+  {
+    "timestamp": 1753766282.7095766,
+    "application": "chrome.exe",
+    "window_title": "New Tab - Google Chrome",
+    "cursor_position": [
+      1134,
+      140
+    ],
+    "focused_element": {
+      "name": "Address and search bar",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 240,
+        "top": 92,
+        "right": 3456,
+        "bottom": 160
+      }
+    },
+    "event": "key_press",
+    "key": "m"
+  },
+  {
+    "timestamp": 1753766282.9606597,
+    "application": "chrome.exe",
+    "window_title": "New Tab - Google Chrome",
+    "cursor_position": [
+      1134,
+      140
+    ],
+    "focused_element": {
+      "name": "Address and search bar",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 240,
+        "top": 92,
+        "right": 3456,
+        "bottom": 160
+      }
+    },
+    "event": "key_press",
+    "key": "y"
+  },
+  {
+    "timestamp": 1753766283.1414242,
+    "application": "chrome.exe",
+    "window_title": "New Tab - Google Chrome",
+    "cursor_position": [
+      1134,
+      140
+    ],
+    "focused_element": {
+      "name": "Address and search bar",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 240,
+        "top": 92,
+        "right": 3456,
+        "bottom": 160
+      }
+    },
+    "event": "key_press",
+    "key": "Key.space"
+  },
+  {
+    "timestamp": 1753766283.387069,
+    "application": "chrome.exe",
+    "window_title": "New Tab - Google Chrome",
+    "cursor_position": [
+      1134,
+      140
+    ],
+    "focused_element": {
+      "name": "Address and search bar",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 240,
+        "top": 92,
+        "right": 3456,
+        "bottom": 160
+      }
+    },
+    "event": "key_press",
+    "key": "p"
+  },
+  {
+    "timestamp": 1753766283.5404434,
+    "application": "chrome.exe",
+    "window_title": "New Tab - Google Chrome",
+    "cursor_position": [
+      1134,
+      140
+    ],
+    "focused_element": {
+      "name": "Address and search bar",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 240,
+        "top": 92,
+        "right": 3456,
+        "bottom": 160
+      }
+    },
+    "event": "key_press",
+    "key": "a"
+  },
+  {
+    "timestamp": 1753766283.6576593,
+    "application": "chrome.exe",
+    "window_title": "New Tab - Google Chrome",
+    "cursor_position": [
+      1134,
+      140
+    ],
+    "focused_element": {
+      "name": "Address and search bar",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 240,
+        "top": 92,
+        "right": 3456,
+        "bottom": 160
+      }
+    },
+    "event": "key_press",
+    "key": "v"
+  },
+  {
+    "timestamp": 1753766283.756692,
+    "application": "chrome.exe",
+    "window_title": "New Tab - Google Chrome",
+    "cursor_position": [
+      1134,
+      140
+    ],
+    "focused_element": {
+      "name": "Address and search bar",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 240,
+        "top": 92,
+        "right": 3456,
+        "bottom": 160
+      }
+    },
+    "event": "key_press",
+    "key": "e"
+  },
+  {
+    "timestamp": 1753766283.8801515,
+    "application": "chrome.exe",
+    "window_title": "New Tab - Google Chrome",
+    "cursor_position": [
+      1134,
+      140
+    ],
+    "focused_element": {
+      "name": "Address and search bar",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 240,
+        "top": 92,
+        "right": 3456,
+        "bottom": 160
+      }
+    },
+    "event": "key_press",
+    "key": "l"
+  },
+  {
+    "timestamp": 1753766284.5348856,
+    "application": "chrome.exe",
+    "window_title": "New Tab - Google Chrome",
+    "cursor_position": [
+      1134,
+      140
+    ],
+    "focused_element": {
+      "name": "New Tab",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "Address and search bar",
+      "control_type": "EditControl",
+      "bounding_rect": {
+        "left": 314,
+        "top": 102,
+        "right": 3368,
+        "bottom": 150
+      }
+    },
+    "event": "key_press",
+    "key": "Key.enter"
+  },
+  {
+    "timestamp": 1753766286.6900802,
+    "application": "chrome.exe",
+    "window_title": "amy pavel - Google Search - Google Chrome",
+    "cursor_position": [
+      688,
+      566
+    ],
+    "focused_element": {
+      "name": "amy pavel - Google Search",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "https://amypavel.com",
+      "control_type": "TextControl",
+      "bounding_rect": {
+        "left": 540,
+        "top": 544,
+        "right": 767,
+        "bottom": 571
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  },
+  {
+    "timestamp": 1753766291.6449208,
+    "application": "chrome.exe",
+    "window_title": "amypavel.com - Google Chrome",
+    "cursor_position": [
+      1286,
+      1650
+    ],
+    "focused_element": {
+      "name": "",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "GroupControl",
+      "bounding_rect": {
+        "left": 0,
+        "top": 174,
+        "right": 3810,
+        "bottom": 21745
+      }
+    },
+    "event": "scroll",
+    "delta": [
+      0,
+      -1
+    ]
+  },
+  {
+    "timestamp": 1753766291.752854,
+    "application": "chrome.exe",
+    "window_title": "amypavel.com - Google Chrome",
+    "cursor_position": [
+      1286,
+      1650
+    ],
+    "focused_element": {
+      "name": "",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "GroupControl",
+      "bounding_rect": {
+        "left": 0,
+        "top": -26,
+        "right": 3810,
+        "bottom": 21545
+      }
+    },
+    "event": "scroll",
+    "delta": [
+      0,
+      -1
+    ]
+  },
+  {
+    "timestamp": 1753766291.8584,
+    "application": "chrome.exe",
+    "window_title": "amypavel.com - Google Chrome",
+    "cursor_position": [
+      1286,
+      1650
+    ],
+    "focused_element": {
+      "name": "",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "GroupControl",
+      "bounding_rect": {
+        "left": 0,
+        "top": -426,
+        "right": 3810,
+        "bottom": 21145
+      }
+    },
+    "event": "scroll",
+    "delta": [
+      1,
+      0
+    ]
+  },
+  {
+    "timestamp": 1753766291.9414458,
+    "application": "chrome.exe",
+    "window_title": "amypavel.com - Google Chrome",
+    "cursor_position": [
+      1286,
+      1650
+    ],
+    "focused_element": {
+      "name": "",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "GroupControl",
+      "bounding_rect": {
+        "left": 0,
+        "top": -426,
+        "right": 3810,
+        "bottom": 21145
+      }
+    },
+    "event": "scroll",
+    "delta": [
+      0,
+      -1
+    ]
+  },
+  {
+    "timestamp": 1753766292.018065,
+    "application": "chrome.exe",
+    "window_title": "amypavel.com - Google Chrome",
+    "cursor_position": [
+      1286,
+      1650
+    ],
+    "focused_element": {
+      "name": "",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "GroupControl",
+      "bounding_rect": {
+        "left": 0,
+        "top": -626,
+        "right": 3810,
+        "bottom": 20945
+      }
+    },
+    "event": "scroll",
+    "delta": [
+      0,
+      -1
+    ]
+  },
+  {
+    "timestamp": 1753766292.8566692,
+    "application": "chrome.exe",
+    "window_title": "amypavel.com - Google Chrome",
+    "cursor_position": [
+      1286,
+      1650
+    ],
+    "focused_element": {
+      "name": "",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "GroupControl",
+      "bounding_rect": {
+        "left": 0,
+        "top": -1026,
+        "right": 3810,
+        "bottom": 20545
+      }
+    },
+    "event": "scroll",
+    "delta": [
+      0,
+      -1
+    ]
+  },
+  {
+    "timestamp": 1753766293.0123184,
+    "application": "chrome.exe",
+    "window_title": "amypavel.com - Google Chrome",
+    "cursor_position": [
+      1286,
+      1650
+    ],
+    "focused_element": {
+      "name": "",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "GroupControl",
+      "bounding_rect": {
+        "left": 0,
+        "top": -1226,
+        "right": 3810,
+        "bottom": 20345
+      }
+    },
+    "event": "scroll",
+    "delta": [
+      1,
+      0
+    ]
+  },
+  {
+    "timestamp": 1753766293.2184658,
+    "application": "chrome.exe",
+    "window_title": "amypavel.com - Google Chrome",
+    "cursor_position": [
+      1286,
+      1650
+    ],
+    "focused_element": {
+      "name": "",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "GroupControl",
+      "bounding_rect": {
+        "left": 0,
+        "top": -1226,
+        "right": 3810,
+        "bottom": 20345
+      }
+    },
+    "event": "scroll",
+    "delta": [
+      0,
+      -1
+    ]
+  },
+  {
+    "timestamp": 1753766293.4267056,
+    "application": "chrome.exe",
+    "window_title": "amypavel.com - Google Chrome",
+    "cursor_position": [
+      1286,
+      1650
+    ],
+    "focused_element": {
+      "name": "",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "GroupControl",
+      "bounding_rect": {
+        "left": 0,
+        "top": -1426,
+        "right": 3810,
+        "bottom": 20145
+      }
+    },
+    "event": "scroll",
+    "delta": [
+      0,
+      -1
+    ]
+  },
+  {
+    "timestamp": 1753766293.6924398,
+    "application": "chrome.exe",
+    "window_title": "amypavel.com - Google Chrome",
+    "cursor_position": [
+      1286,
+      1650
+    ],
+    "focused_element": {
+      "name": "",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "GroupControl",
+      "bounding_rect": {
+        "left": 0,
+        "top": -1626,
+        "right": 3810,
+        "bottom": 19945
+      }
+    },
+    "event": "scroll",
+    "delta": [
+      1,
+      0
+    ]
+  },
+  {
+    "timestamp": 1753766293.8544264,
+    "application": "chrome.exe",
+    "window_title": "amypavel.com - Google Chrome",
+    "cursor_position": [
+      1286,
+      1650
+    ],
+    "focused_element": {
+      "name": "",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "GroupControl",
+      "bounding_rect": {
+        "left": 0,
+        "top": -1626,
+        "right": 3810,
+        "bottom": 19945
+      }
+    },
+    "event": "scroll",
+    "delta": [
+      0,
+      -1
+    ]
+  },
+  {
+    "timestamp": 1753766292.5804644,
+    "application": "chrome.exe",
+    "window_title": "amypavel.com - Google Chrome",
+    "cursor_position": [
+      1286,
+      1650
+    ],
+    "focused_element": {
+      "name": "",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "GroupControl",
+      "bounding_rect": {
+        "left": 0,
+        "top": -1026,
+        "right": 3810,
+        "bottom": 20545
+      }
+    },
+    "event": "scroll",
+    "delta": [
+      1,
+      0
+    ]
+  },
+  {
+    "timestamp": 1753766292.276265,
+    "application": "chrome.exe",
+    "window_title": "amypavel.com - Google Chrome",
+    "cursor_position": [
+      1286,
+      1650
+    ],
+    "focused_element": {
+      "name": "",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "GroupControl",
+      "bounding_rect": {
+        "left": 0,
+        "top": -626,
+        "right": 3810,
+        "bottom": 20745
+      }
+    },
+    "event": "scroll",
+    "delta": [
+      0,
+      -1
+    ]
+  },
+  {
+    "timestamp": 1753766291.3599763,
+    "application": "chrome.exe",
+    "window_title": "amypavel.com - Google Chrome",
+    "cursor_position": [
+      1286,
+      1650
+    ],
+    "focused_element": {
+      "name": "",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "GroupControl",
+      "bounding_rect": {
+        "left": 0,
+        "top": 174,
+        "right": 3810,
+        "bottom": 21745
+      }
+    },
+    "event": "scroll",
+    "delta": [
+      0,
+      -1
+    ]
+  },
+  {
+    "timestamp": 1753766295.6148388,
+    "application": "chrome.exe",
+    "window_title": "amypavel.com - Google Chrome",
+    "cursor_position": [
+      1816,
+      1154
+    ],
+    "focused_element": {
+      "name": "",
+      "control_type": "DocumentControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "DocumentControl",
+      "bounding_rect": {
+        "left": 0,
+        "top": 174,
+        "right": 3840,
+        "bottom": 2064
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  },
+  {
+    "timestamp": 1753766304.9465957,
+    "application": "chrome.exe",
+    "window_title": "Context-Aware Image Descriptions for Web Accessibility - Google Chrome",
+    "cursor_position": [
+      1906,
+      676
+    ],
+    "focused_element": {
+      "name": "\ud83d\udcc4 PDF",
+      "control_type": "HyperlinkControl"
+    },
+    "element_under_cursor": {
+      "name": "\ud83d\udcbb Code",
+      "control_type": "HyperlinkControl",
+      "bounding_rect": {
+        "left": 1804,
+        "top": 659,
+        "right": 2014,
+        "bottom": 751
+      }
+    },
+    "event": "key_press",
+    "key": "Key.tab"
+  },
+  {
+    "timestamp": 1753766305.5721023,
+    "application": "chrome.exe",
+    "window_title": "Context-Aware Image Descriptions for Web Accessibility - Google Chrome",
+    "cursor_position": [
+      1906,
+      676
+    ],
+    "focused_element": {
+      "name": "\ud83d\udcbb Code",
+      "control_type": "HyperlinkControl"
+    },
+    "element_under_cursor": {
+      "name": "\ud83d\udcbb Code",
+      "control_type": "HyperlinkControl",
+      "bounding_rect": {
+        "left": 1804,
+        "top": 659,
+        "right": 2014,
+        "bottom": 751
+      }
+    },
+    "event": "key_press",
+    "key": "Key.tab"
+  },
+  {
+    "timestamp": 1753766305.8775723,
+    "application": "chrome.exe",
+    "window_title": "Context-Aware Image Descriptions for Web Accessibility - Google Chrome",
+    "cursor_position": [
+      1906,
+      676
+    ],
+    "focused_element": {
+      "name": "\u2699 arXiv",
+      "control_type": "HyperlinkControl"
+    },
+    "element_under_cursor": {
+      "name": "\ud83d\udcbb Code",
+      "control_type": "HyperlinkControl",
+      "bounding_rect": {
+        "left": 1804,
+        "top": 659,
+        "right": 2014,
+        "bottom": 751
+      }
+    },
+    "event": "key_press",
+    "key": "Key.tab"
+  },
+  {
+    "timestamp": 1753766306.383046,
+    "application": "chrome.exe",
+    "window_title": "Context-Aware Image Descriptions for Web Accessibility - Google Chrome",
+    "cursor_position": [
+      1906,
+      676
+    ],
+    "focused_element": {
+      "name": "View site information",
+      "control_type": "MenuItemControl"
+    },
+    "element_under_cursor": {
+      "name": "\ud83d\udcbb Code",
+      "control_type": "HyperlinkControl",
+      "bounding_rect": {
+        "left": 1804,
+        "top": 659,
+        "right": 2014,
+        "bottom": 751
+      }
+    },
+    "event": "key_press",
+    "key": "Key.tab"
+  },
+  {
+    "timestamp": 1753766306.564193,
+    "application": "chrome.exe",
+    "window_title": "Context-Aware Image Descriptions for Web Accessibility - Google Chrome",
+    "cursor_position": [
+      1906,
+      676
+    ],
+    "focused_element": {
+      "name": "Address and search bar",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "\ud83d\udcbb Code",
+      "control_type": "HyperlinkControl",
+      "bounding_rect": {
+        "left": 1804,
+        "top": 659,
+        "right": 2014,
+        "bottom": 751
+      }
+    },
+    "event": "key_press",
+    "key": "Key.tab"
+  },
+  {
+    "timestamp": 1753766307.804592,
+    "application": "chrome.exe",
+    "window_title": "Context-Aware Image Descriptions for Web Accessibility - Google Chrome",
+    "cursor_position": [
+      1906,
+      676
+    ],
+    "focused_element": {
+      "name": "Address and search bar",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "\ud83d\udcbb Code",
+      "control_type": "HyperlinkControl",
+      "bounding_rect": {
+        "left": 1804,
+        "top": 659,
+        "right": 2014,
+        "bottom": 751
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  },
+  {
+    "timestamp": 1753766318.3489532,
+    "application": "chrome.exe",
+    "window_title": "UT-CS-HCI/context-aware-image-descriptions - Google Chrome",
+    "cursor_position": [
+      2484,
+      1958
+    ],
+    "focused_element": {
+      "name": "UT-CS-HCI",
+      "control_type": "HyperlinkControl"
+    },
+    "element_under_cursor": {
+      "name": "",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 0,
+        "top": 0,
+        "right": 1920,
+        "bottom": 1080
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  }
+]

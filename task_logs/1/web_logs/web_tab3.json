@@ -1,0 +1,1977 @@
+{
+  "url": "https://ananyagm.com/context-aware-image-descriptions.html",
+  "title": "Context-Aware Image Descriptions for Web Accessibility",
+  "accessibility_tree": {
+    "tag": "BODY",
+    "id": "",
+    "class": "",
+    "role": null,
+    "ariaLabel": null,
+    "name": null,
+    "text": "Context-Aware Image Descriptions for Web Accessibility\n\nAnanya Gubbi Mohanbabu, Amy Pavel\n\nUniversit",
+    "children": [
+      {
+        "tag": "DIV",
+        "id": "",
+        "class": "container",
+        "role": null,
+        "ariaLabel": null,
+        "name": null,
+        "text": "Context-Aware Image Descriptions for Web Accessibility\n\nAnanya Gubbi Mohanbabu, Amy Pavel\n\nUniversit",
+        "children": [
+          {
+            "tag": "HEADER",
+            "id": "",
+            "class": "",
+            "role": null,
+            "ariaLabel": null,
+            "name": null,
+            "text": "Context-Aware Image Descriptions for Web Accessibility\n\nAnanya Gubbi Mohanbabu, Amy Pavel\n\nUniversit",
+            "children": [
+              {
+                "tag": "H1",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "Context-Aware Image Descriptions for Web Accessibility",
+                "children": []
+              },
+              {
+                "tag": "P",
+                "id": "",
+                "class": "authors",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "Ananya Gubbi Mohanbabu, Amy Pavel",
+                "children": [
+                  {
+                    "tag": "A",
+                    "id": "",
+                    "class": "author",
+                    "role": null,
+                    "ariaLabel": null,
+                    "name": null,
+                    "text": "Ananya Gubbi Mohanbabu",
+                    "children": []
+                  },
+                  {
+                    "tag": "A",
+                    "id": "",
+                    "class": "author",
+                    "role": null,
+                    "ariaLabel": null,
+                    "name": null,
+                    "text": "Amy Pavel",
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "P",
+                "id": "",
+                "class": "institution",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "University of Texas at Austin",
+                "children": []
+              },
+              {
+                "tag": "P",
+                "id": "",
+                "class": "conference",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "ASSETS 2024",
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "class": "buttons",
+            "role": null,
+            "ariaLabel": null,
+            "name": null,
+            "text": "📄 PDF\n💻 Code\n⚙ arXiv",
+            "children": [
+              {
+                "tag": "A",
+                "id": "",
+                "class": "button pdf",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "📄 PDF",
+                "children": []
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "class": "button code",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "💻 Code",
+                "children": []
+              },
+              {
+                "tag": "A",
+                "id": "",
+                "class": "button arxiv",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "⚙ arXiv",
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "class": "image-section",
+            "role": null,
+            "ariaLabel": null,
+            "name": null,
+            "text": "Our system provides context-aware descriptions for images by considering the image along with extrac",
+            "children": [
+              {
+                "tag": "IMG",
+                "id": "",
+                "class": "section-image",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "",
+                "children": []
+              },
+              {
+                "tag": "P",
+                "id": "",
+                "class": "description",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "Our system provides context-aware descriptions for images by considering the image along with extrac",
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "SECTION",
+            "id": "abstract",
+            "class": "",
+            "role": null,
+            "ariaLabel": null,
+            "name": null,
+            "text": "Abstract\n\nBlind and low vision (BLV) internet users access images on the web via text descriptions. ",
+            "children": [
+              {
+                "tag": "H2",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "Abstract",
+                "children": []
+              },
+              {
+                "tag": "P",
+                "id": "",
+                "class": "abstract-text",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "Blind and low vision (BLV) internet users access images on the web via text descriptions. New vision",
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "SECTION",
+            "id": "problem",
+            "class": "",
+            "role": null,
+            "ariaLabel": null,
+            "name": null,
+            "text": "Types of Webpage Context\nCategory\tType\tExamples\tFunction\nContent\tURL\tgoogle.com\tPurpose\nTitle\ttitle ",
+            "children": [
+              {
+                "tag": "H2",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "Types of Webpage Context",
+                "children": []
+              },
+              {
+                "tag": "TABLE",
+                "id": "",
+                "class": "custom-table",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "Category\tType\tExamples\tFunction\nContent\tURL\tgoogle.com\tPurpose\nTitle\ttitle tag\tPurpose, visual conce",
+                "children": [
+                  {
+                    "tag": "THEAD",
+                    "id": "",
+                    "class": "",
+                    "role": null,
+                    "ariaLabel": null,
+                    "name": null,
+                    "text": "Category\tType\tExamples\tFunction\n",
+                    "children": [
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Category\tType\tExamples\tFunction",
+                        "children": [
+                          {
+                            "tag": "TH",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Category",
+                            "children": []
+                          },
+                          {
+                            "tag": "TH",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Type",
+                            "children": []
+                          },
+                          {
+                            "tag": "TH",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Examples",
+                            "children": []
+                          },
+                          {
+                            "tag": "TH",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Function",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "TBODY",
+                    "id": "",
+                    "class": "",
+                    "role": null,
+                    "ariaLabel": null,
+                    "name": null,
+                    "text": "Content\tURL\tgoogle.com\tPurpose\nTitle\ttitle tag\tPurpose, visual concepts\nMain Text\tarticle, post text",
+                    "children": [
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Content\tURL\tgoogle.com\tPurpose",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Content",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "URL",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "google.com",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Purpose",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Title\ttitle tag\tPurpose, visual concepts",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Title",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "title tag",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Purpose, visual concepts",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Main Text\tarticle, post text\tPurpose, visual concepts",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Main Text",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "article, post text",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Purpose, visual concepts",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Tags\th1, h3, a, p\tText importance or purpose",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Tags",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "h1, h3, a, p",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Text importance or purpose",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Alt Text\talt tag\tImage content, purpose, visual concepts",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Alt Text",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "alt tag",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Image content, purpose, visual concepts",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Caption\tfigcaption\tImage content, purpose, visual concepts",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Caption",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "figcaption",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Image content, purpose, visual concepts",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Media\timage, video\tPurpose",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Media",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "image, video",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Purpose",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Content Appearance\tSize\twidth, height\tPurpose, importance, relationship",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Content Appearance",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Size",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "width, height",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Purpose, importance, relationship",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Position\tx, y, alignment\tPurpose, importance, relationship",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Position",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "x, y, alignment",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Purpose, importance, relationship",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Color\tcolor\tPurpose, importance, relationship",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Color",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "color",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Purpose, importance, relationship",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Font\tfamily, weight\tPurpose, importance, relationship",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Font",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "family, weight",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Purpose, importance, relationship",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Visibility\thidden\tPurpose, importance, relationship",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Visibility",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "hidden",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Purpose, importance, relationship",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Other\ttexture, opacity\tPurpose, importance, relationship",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Other",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "texture, opacity",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Purpose, importance, relationship",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Media\tthumbnail, fullscreen\tPurpose, importance, relationship",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Media",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "thumbnail, fullscreen",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Purpose, importance, relationship",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Image Appearance\tSize\tthumbnail, fullscreen\tPurpose, importance, relationship",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Image Appearance",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Size",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "thumbnail, fullscreen",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Purpose, importance, relationship",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Position\ttop vs. mid article\tPurpose, importance, relationship",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Position",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "top vs. mid article",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Purpose, importance, relationship",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Other\tcontrast, opacity\tPurpose, importance, relationship",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Other",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "contrast, opacity",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Purpose, importance, relationship",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "BR",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "",
+                "children": []
+              },
+              {
+                "tag": "P",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "Examples of webpage context that may impact the visual interpretation of an image and how the image ",
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "SECTION",
+            "id": "pipeline",
+            "class": "",
+            "role": null,
+            "ariaLabel": null,
+            "name": null,
+            "text": "Pipeline\n\nThe system takes a webpage and a selected webpage image as selected by the user, then extr",
+            "children": [
+              {
+                "tag": "H2",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "Pipeline",
+                "children": []
+              },
+              {
+                "tag": "IMG",
+                "id": "",
+                "class": "section-image",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "",
+                "children": []
+              },
+              {
+                "tag": "P",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "The system takes a webpage and a selected webpage image as selected by the user, then extracts all o",
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "SECTION",
+            "id": "system",
+            "class": "",
+            "role": null,
+            "ariaLabel": null,
+            "name": null,
+            "text": "System\n\nWhen a user clicks on an image in a website (right), our extension adds both long and short ",
+            "children": [
+              {
+                "tag": "H2",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "System",
+                "children": []
+              },
+              {
+                "tag": "IMG",
+                "id": "",
+                "class": "section-image",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "",
+                "children": []
+              },
+              {
+                "tag": "P",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "When a user clicks on an image in a website (right), our extension adds both long and short versions",
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "SECTION",
+            "id": "results",
+            "class": "",
+            "role": null,
+            "ariaLabel": null,
+            "name": null,
+            "text": "Results\nImage\tContext-Free Descriptions\tContext-Aware Descriptions\n\tThe image shows a smiling person",
+            "children": [
+              {
+                "tag": "H2",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "Results",
+                "children": []
+              },
+              {
+                "tag": "TABLE",
+                "id": "",
+                "class": "description-table",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "Image\tContext-Free Descriptions\tContext-Aware Descriptions\n\tThe image shows a smiling person with vi",
+                "children": [
+                  {
+                    "tag": "THEAD",
+                    "id": "",
+                    "class": "",
+                    "role": null,
+                    "ariaLabel": null,
+                    "name": null,
+                    "text": "Image\tContext-Free Descriptions\tContext-Aware Descriptions\n",
+                    "children": [
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "Image\tContext-Free Descriptions\tContext-Aware Descriptions",
+                        "children": [
+                          {
+                            "tag": "TH",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Image",
+                            "children": []
+                          },
+                          {
+                            "tag": "TH",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Context-Free Descriptions",
+                            "children": []
+                          },
+                          {
+                            "tag": "TH",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Context-Aware Descriptions",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "TBODY",
+                    "id": "",
+                    "class": "",
+                    "role": null,
+                    "ariaLabel": null,
+                    "name": null,
+                    "text": "\tThe image shows a smiling person with vibrant black and neon green hair, holding multiple gold gram",
+                    "children": [
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "\tThe image shows a smiling person with vibrant black and neon green hair, holding multiple gold gram",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "",
+                            "children": [
+                              {
+                                "tag": "IMG",
+                                "id": "",
+                                "class": "",
+                                "role": null,
+                                "ariaLabel": null,
+                                "name": null,
+                                "text": "",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "The image shows a smiling person with vibrant black and neon green hair, holding multiple gold gramo",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "In the image, Billie Eilish stands joyfully holding multiple golden Grammy trophies. Her distinctive",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "\tA man and woman walk side by side, the man in a dark navy suit and the woman in an elegant black dr",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "",
+                            "children": [
+                              {
+                                "tag": "IMG",
+                                "id": "",
+                                "class": "",
+                                "role": null,
+                                "ariaLabel": null,
+                                "name": null,
+                                "text": "",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "A man and woman walk side by side, the man in a dark navy suit and the woman in an elegant black dre",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Harry is in a navy suit with a white shirt and blue tie, sporting a watch, and has red hair and a be",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "\tThe image shows a person modeling a sleeveless maxi dress with pastel floral patterns and a flowing",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "",
+                            "children": [
+                              {
+                                "tag": "IMG",
+                                "id": "",
+                                "class": "",
+                                "role": null,
+                                "ariaLabel": null,
+                                "name": null,
+                                "text": "",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "The image shows a person modeling a sleeveless maxi dress with pastel floral patterns and a flowing,",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "The image shows a person in a V-neck sleeveless maxi dress with a bohemian style, marked by thin str",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "\tA family of four poses outdoors, smiling at the camera. On the left is a young woman in a blue polk",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "",
+                            "children": [
+                              {
+                                "tag": "IMG",
+                                "id": "",
+                                "class": "",
+                                "role": null,
+                                "ariaLabel": null,
+                                "name": null,
+                                "text": "",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "A family of four poses outdoors, smiling at the camera. On the left is a young woman in a blue polka",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Four people pose for a photo amidst cherry blossoms. On the left, Malia is in a blue sleeveless dres",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "\tAn elegant bronze-finished sofa with dark brown solid wood frame and silver accents set against a w",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "",
+                            "children": [
+                              {
+                                "tag": "IMG",
+                                "id": "",
+                                "class": "",
+                                "role": null,
+                                "ariaLabel": null,
+                                "name": null,
+                                "text": "",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "An elegant bronze-finished sofa with dark brown solid wood frame and silver accents set against a wa",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "The image depicts a classically styled room with a large, traditional sofa upholstered in warm beige",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "\tThe image depicts a peaceful mountain landscape at dawn or dusk with snow-capped peaks bathed in go",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "",
+                            "children": [
+                              {
+                                "tag": "IMG",
+                                "id": "",
+                                "class": "",
+                                "role": null,
+                                "ariaLabel": null,
+                                "name": null,
+                                "text": "",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "The image depicts a peaceful mountain landscape at dawn or dusk with snow-capped peaks bathed in gol",
+                            "children": []
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "The image shows an individual trekking on a rugged terrain with a sweeping view of the snow-capped A",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "P",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "Example context-free and context-aware descriptions for Task 1 in the user study",
+                "children": []
+              },
+              {
+                "tag": "BR",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "",
+                "children": []
+              },
+              {
+                "tag": "BR",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "",
+                "children": []
+              },
+              {
+                "tag": "TABLE",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "P8 Image\tContext-Free Description\n\tThe image shows two modern, sporty cars - a red Mercedes-Benz and",
+                "children": [
+                  {
+                    "tag": "TBODY",
+                    "id": "",
+                    "class": "",
+                    "role": null,
+                    "ariaLabel": null,
+                    "name": null,
+                    "text": "P8 Image\tContext-Free Description\n\tThe image shows two modern, sporty cars - a red Mercedes-Benz and",
+                    "children": [
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "P8 Image\tContext-Free Description",
+                        "children": [
+                          {
+                            "tag": "TH",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "P8 Image",
+                            "children": []
+                          },
+                          {
+                            "tag": "TH",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Context-Free Description",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "\tThe image shows two modern, sporty cars - a red Mercedes-Benz and a bright red BMW - driving side b",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "",
+                            "children": [
+                              {
+                                "tag": "IMG",
+                                "id": "",
+                                "class": "",
+                                "role": null,
+                                "ariaLabel": null,
+                                "name": null,
+                                "text": "",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "The image shows two modern, sporty cars - a red Mercedes-Benz and a bright red BMW - driving side by",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "P8 Website\tContext-Aware Description",
+                        "children": [
+                          {
+                            "tag": "TH",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "P8 Website",
+                            "children": []
+                          },
+                          {
+                            "tag": "TH",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Context-Aware Description",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "TR",
+                        "id": "",
+                        "class": "",
+                        "role": null,
+                        "ariaLabel": null,
+                        "name": null,
+                        "text": "\tTwo red German sports sedans, a Mercedes-AMG C 43 and a BMW M340i, are positioned side by side on a",
+                        "children": [
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "",
+                            "children": [
+                              {
+                                "tag": "IMG",
+                                "id": "",
+                                "class": "",
+                                "role": null,
+                                "ariaLabel": null,
+                                "name": null,
+                                "text": "",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "TD",
+                            "id": "",
+                            "class": "",
+                            "role": null,
+                            "ariaLabel": null,
+                            "name": null,
+                            "text": "Two red German sports sedans, a Mercedes-AMG C 43 and a BMW M340i, are positioned side by side on a ",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "BR",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "",
+                "children": []
+              },
+              {
+                "tag": "P",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "Example context-free and context-aware descriptions for a website and image selected by P8.",
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "SECTION",
+            "id": "bibtex",
+            "class": "",
+            "role": null,
+            "ariaLabel": null,
+            "name": null,
+            "text": "BibTeX\n@article{mohanbabu2024context,\n    title={Context-Aware Image Descriptions for Web Accessibil",
+            "children": [
+              {
+                "tag": "H2",
+                "id": "",
+                "class": "",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "BibTeX",
+                "children": []
+              },
+              {
+                "tag": "DIV",
+                "id": "",
+                "class": "bibtex-code",
+                "role": null,
+                "ariaLabel": null,
+                "name": null,
+                "text": "@article{mohanbabu2024context,\n    title={Context-Aware Image Descriptions for Web Accessibility},\n ",
+                "children": [
+                  {
+                    "tag": "PRE",
+                    "id": "",
+                    "class": "",
+                    "role": null,
+                    "ariaLabel": null,
+                    "name": null,
+                    "text": "@article{mohanbabu2024context,\n    title={Context-Aware Image Descriptions for Web Accessibility},\n ",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "dom_snapshot_base64": "PGh0bWwgbGFuZz0iZW4iPjxoZWFkPgogICAgPG1ldGEgY2hhcnNldD0iVVRGLTgiPgogICAgPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCwgaW5pdGlhbC1zY2FsZT0xLjAiPgogICAgPHRpdGxlPkNvbnRleHQtQXdhcmUgSW1hZ2UgRGVzY3JpcHRpb25zIGZvciBXZWIgQWNjZXNzaWJpbGl0eTwvdGl0bGU+CiAgICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9InByb2plY3QtcGFnZS5jc3MiPgo8L2hlYWQ+Cjxib2R5PgogICAgPGRpdiBjbGFzcz0iY29udGFpbmVyIj4KICAgICAgICA8aGVhZGVyPgogICAgICAgICAgICA8aDE+Q29udGV4dC1Bd2FyZSBJbWFnZSBEZXNjcmlwdGlvbnMgZm9yIFdlYiBBY2Nlc3NpYmlsaXR5PC9oMT4KICAgICAgICAgICAgPHAgY2xhc3M9ImF1dGhvcnMiPgogICAgICAgICAgICAgICAgPGEgaHJlZj0iaHR0cHM6Ly9hbmFueWFnbS5jb20vIiBjbGFzcz0iYXV0aG9yIj5BbmFueWEgR3ViYmkgTW9oYW5iYWJ1PC9hPiwKICAgICAgICAgICAgICAgIDwhLS0gPHN1cD4qPC9zdXA+LCAgLS0+CiAgICAgICAgICAgICAgICA8YSBocmVmPSJodHRwczovL2FteXBhdmVsLmNvbS8iIGNsYXNzPSJhdXRob3IiPkFteSBQYXZlbDwvYT4KICAgICAgICAgICAgICAgIDwhLS0gPHN1cD4qPC9zdXA+LCAgLS0+CiAgICAgICAgICAgIDwvcD4KICAgICAgICAgICAgPHAgY2xhc3M9Imluc3RpdHV0aW9uIj5Vbml2ZXJzaXR5IG9mIFRleGFzIGF0IEF1c3RpbjwvcD4KICAgICAgICAgICAgPHAgY2xhc3M9ImNvbmZlcmVuY2UiPkFTU0VUUyAyMDI0PC9wPgogICAgICAgICAgICA8IS0tIDxwIGNsYXNzPSJlcXVhbC1jb250cmlidXRpb24iPipJbmRpY2F0ZXMgRXF1YWwgQ29udHJpYnV0aW9uPC9wPiAtLT4KICAgICAgICA8L2hlYWRlcj4KCiAgICAgICAgPGRpdiBjbGFzcz0iYnV0dG9ucyI+CiAgICAgICAgICAgIDxhIGhyZWY9Imh0dHBzOi8vYXJ4aXYub3JnL3BkZi8yNDA5LjAzMDU0djEiIGNsYXNzPSJidXR0b24gcGRmIiBzdHlsZT0iYm9yZGVyLXJhZGl1czogNnB4Ij7wn5OEIFBERjwvYT4KICAgICAgICAgICAgPCEtLSA8YSBocmVmPSIjIiBjbGFzcz0iYnV0dG9uIHN1cHBsZW1lbnRhcnkiPvCfk4QgU3VwcGxlbWVudGFyeTwvYT4gLS0+CiAgICAgICAgICAgIDxhIGhyZWY9Imh0dHBzOi8vZ2l0aHViLmNvbS9VVC1DUy1IQ0kvY29udGV4dC1hd2FyZS1pbWFnZS1kZXNjcmlwdGlvbnMiIGNsYXNzPSJidXR0b24gY29kZSIgc3R5bGU9ImJvcmRlci1yYWRpdXM6IDZweCI+8J+SuyBDb2RlPC9hPgogICAgICAgICAgICA8YSBocmVmPSJodHRwczovL2FyeGl2Lm9yZy9hYnMvMjQwOS4wMzA1NHYxIiBjbGFzcz0iYnV0dG9uIGFyeGl2IiBzdHlsZT0iYm9yZGVyLXJhZGl1czogNnB4Ij7impkgYXJYaXY8L2E+CiAgICAgICAgPC9kaXY+CgogICAgICAgIDxkaXYgY2xhc3M9ImltYWdlLXNlY3Rpb24iPgogICAgICAgICAgICA8aW1nIHNyYz0ibWVkaWEvVGVhc2VyLnBuZyIgYWx0PSJUaGUgZmlndXJlIHNob3dzIGluZm9ybWF0aW9uIGZyb20gbGVmdCB0byByaWdodC4gVGhlIGxlZnRtb3N0IGZyYW1lIHNob3dzIGFuIGUtY29tbWVyY2Ugd2VicGFnZSB3aGVyZSB0aGUgaW1hZ2UgYXBwZWFycy4gQW4gYXJyb3cgcG9pbnRzIHRvIHRoZSByaWdodCBmcm9tIHRoaXMgcGljdHVyZSB0byB0aGUgaW1hZ2UgdGhhdCB0aGUgdXNlciBzZWxlY3RzIG9uIHRoZSB3ZWJwYWdlIHRvIG9idGFpbiBjb250ZXh0LWF3YXJlIGltYWdlIGRlc2NyaXB0aW9uLiBBbiBhcnJvdyBmcm9tIHRoZSBzZWxlY3RlZCBpbWFnZSBwb2ludHMgdG8gdGhlIHJpZ2h0IHRvIHRoZSBjb250ZXh0LWZyZWUgZGVzY3JpcHRpb24gZ2VuZXJhdGVkIGJ5IEdQVC00Vi4gQXJyb3dzIGZyb20gdGhlIHdlYnBhZ2UgbGFiZWxlZCDigJxleHRyYWN0ZWQgd2VicGFnZSBjb250ZXh04oCdIGFuZCB1c2VyIHNlbGVjdGVkIGltYWdlIHBvaW50IHRvIHRoZSByaWdodG1vc3QgZnJhbWUgdGhhdCBjb250YWlucyB0aGUgY29udGV4dC1hd2FyZSBkZXNjcmlwdGlvbi4iIGNsYXNzPSJzZWN0aW9uLWltYWdlIj4KICAgICAgICAgICAgPHAgY2xhc3M9ImRlc2NyaXB0aW9uIj4KICAgICAgICAgICAgICAgIE91ciBzeXN0ZW0gcHJvdmlkZXMgY29udGV4dC1hd2FyZSBkZXNjcmlwdGlvbnMgZm9yIGltYWdlcyBieSBjb25zaWRlcmluZyB0aGUgaW1hZ2UgYWxvbmcgd2l0aCBleHRyYWN0ZWQgZGV0YWlscwogICAgICAgICAgICAgICAgZnJvbSB0aGUgaW1hZ2Ugc291cmNlIHRvIGNyYWZ0IGEgZGVzY3JpcHRpb24gdGhhdCB1c2VzIGNvcnJlY3QgdmlzdWFsIHRlcm1pbm9sb2d5IChlLmcuLCBjaGVuaWxsZSB0ZXh0dXJlIHJhdGhlciB0aGFuIHZlbHZldCkgYW5kCiAgICAgICAgICAgICAgICBmb2N1c2VzIG9uIHRoZSByZWxldmFudCBpdGVtIChlLmcuLCB0aGUgc29mYSByYXRoZXIgdGhhbiB0aGUgcm9vbSkuCiAgICAgICAgICAgIDwvcD4KICAgICAgICA8L2Rpdj4KCiAgICAgICAgPCEtLSBBYnN0cmFjdCBTZWN0aW9uIC0tPgogICAgICAgIDxzZWN0aW9uIGlkPSJhYnN0cmFjdCI+CiAgICAgICAgICAgIDxoMj5BYnN0cmFjdDwvaDI+CiAgICAgICAgICAgIDxwIGNsYXNzPSJhYnN0cmFjdC10ZXh0Ij5CbGluZCBhbmQgbG93IHZpc2lvbiAoQkxWKSBpbnRlcm5ldCB1c2VycyBhY2Nlc3MgaW1hZ2VzIG9uIHRoZSB3ZWIgdmlhIHRleHQgZGVzY3JpcHRpb25zLiAKICAgICAgICAgICAgICAgIE5ldyB2aXNpb24tdG8tbGFuZ3VhZ2UgbW9kZWxzIHN1Y2ggYXMgR1BULVYsIEdlbWluaSwgYW5kIExMYVZhIGNhbiBub3cgcHJvdmlkZSBkZXRhaWxlZCBpbWFnZSBkZXNjcmlwdGlvbnMgb24tZGVtYW5kLiAKICAgICAgICAgICAgICAgIFdoaWxlIHByaW9yIHJlc2VhcmNoIGFuZCBndWlkZWxpbmVzIHN0YXRlIHRoYXQgQkxWIGF1ZGllbmNlcycgaW5mb3JtYXRpb24gcHJlZmVyZW5jZXMgZGVwZW5kIG9uIHRoZSBjb250ZXh0IG9mIHRoZSBpbWFnZSwgCiAgICAgICAgICAgICAgICBleGlzdGluZyB0b29scyBmb3IgYWNjZXNzaW5nIHZpc2lvbi10by1sYW5ndWFnZSBtb2RlbHMgcHJvdmlkZSBvbmx5IGNvbnRleHQtZnJlZSBpbWFnZSBkZXNjcmlwdGlvbnMgYnkgZ2VuZXJhdGluZyBkZXNjcmlwdGlvbnMgCiAgICAgICAgICAgICAgICBmb3IgdGhlIGltYWdlIGFsb25lIHdpdGhvdXQgY29uc2lkZXJpbmcgdGhlIHN1cnJvdW5kaW5nIHdlYnBhZ2UgY29udGV4dC4gVG8gZXhwbG9yZSBob3cgdG8gaW50ZWdyYXRlIGltYWdlIGNvbnRleHQgaW50byBpbWFnZSBkZXNjcmlwdGlvbnMsIAogICAgICAgICAgICAgICAgd2UgZGVzaWduZWQgYSBDaHJvbWUgRXh0ZW5zaW9uIHRoYXQgYXV0b21hdGljYWxseSBleHRyYWN0cyB3ZWJwYWdlIGNvbnRleHQgdG8gaW5mb3JtIEdQVC00Vi1nZW5lcmF0ZWQgaW1hZ2UgZGVzY3JpcHRpb25zLiAKICAgICAgICAgICAgICAgIFdlIGdhaW5lZCBmZWVkYmFjayBmcm9tIDEyIEJMViBwYXJ0aWNpcGFudHMgaW4gYSB1c2VyIHN0dWR5IGNvbXBhcmluZyB0eXBpY2FsIGNvbnRleHQtZnJlZSBpbWFnZSBkZXNjcmlwdGlvbnMgdG8gY29udGV4dC1hd2FyZSBpbWFnZSBkZXNjcmlwdGlvbnMuIAogICAgICAgICAgICAgICAgV2UgdGhlbiBmdXJ0aGVyIGV2YWx1YXRlZCBvdXIgY29udGV4dC1pbmZvcm1lZCBpbWFnZSBkZXNjcmlwdGlvbnMgd2l0aCBhIHRlY2huaWNhbCBldmFsdWF0aW9uLiAKICAgICAgICAgICAgICAgIE91ciB1c2VyIGV2YWx1YXRpb24gZGVtb25zdHJhdGVkIHRoYXQgQkxWIHBhcnRpY2lwYW50cyBmcmVxdWVudGx5IHByZWZlciBjb250ZXh0LWF3YXJlIGRlc2NyaXB0aW9ucyB0byBjb250ZXh0LWZyZWUgZGVzY3JpcHRpb25zLiAKICAgICAgICAgICAgICAgIEJMViBwYXJ0aWNpcGFudHMgYWxzbyByYXRlZCBjb250ZXh0LWF3YXJlIGRlc2NyaXB0aW9ucyBzaWduaWZpY2FudGx5IGhpZ2hlciBpbiBxdWFsaXR5LCBpbWFnaW5hYmlsaXR5LCByZWxldmFuY2UsIGFuZCBwbGF1c2liaWxpdHkuIAogICAgICAgICAgICAgICAgQWxsIHBhcnRpY2lwYW50cyBzaGFyZWQgdGhhdCB0aGV5IHdhbnRlZCB0byB1c2UgY29udGV4dC1hd2FyZSBkZXNjcmlwdGlvbnMgaW4gdGhlIGZ1dHVyZSBhbmQgaGlnaGxpZ2h0ZWQgdGhlIHBvdGVudGlhbCBmb3IgdXNlIAogICAgICAgICAgICAgICAgaW4gb25saW5lIHNob3BwaW5nLCBzb2NpYWwgbWVkaWEsIG5ld3MsIGFuZCBwZXJzb25hbCBpbnRlcmVzdCBibG9ncy48L3A+CiAgICAgICAgPC9zZWN0aW9uPgoKICAgICAgICA8IS0tIEFic3RyYWN0IFNlY3Rpb24gLS0+CiAgICAgICAgPHNlY3Rpb24gaWQ9InByb2JsZW0iPgogICAgICAgICAgICA8aDI+VHlwZXMgb2YgV2VicGFnZSBDb250ZXh0PC9oMj4KICAgICAgICAgICAgPHRhYmxlIGNsYXNzPSJjdXN0b20tdGFibGUiPgogICAgICAgICAgICAgICAgPHRoZWFkPgogICAgICAgICAgICAgICAgICAgIDx0cj4KICAgICAgICAgICAgICAgICAgICAgICAgPHRoPkNhdGVnb3J5PC90aD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRoPlR5cGU8L3RoPgogICAgICAgICAgICAgICAgICAgICAgICA8dGg+RXhhbXBsZXM8L3RoPgogICAgICAgICAgICAgICAgICAgICAgICA8dGg+RnVuY3Rpb248L3RoPgogICAgICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgICA8L3RoZWFkPgogICAgICAgICAgICAgICAgPHRib2R5PgogICAgICAgICAgICAgICAgICAgIDx0cj4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkIHJvd3NwYW49IjciPkNvbnRlbnQ8L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+VVJMPC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPmdvb2dsZS5jb208L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+UHVycG9zZTwvdGQ+CiAgICAgICAgICAgICAgICAgICAgPC90cj4KICAgICAgICAgICAgICAgICAgICA8dHI+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5UaXRsZTwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD50aXRsZSB0YWc8L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+UHVycG9zZSwgdmlzdWFsIGNvbmNlcHRzPC90ZD4KICAgICAgICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICAgICAgICAgIDx0cj4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPk1haW4gVGV4dDwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5hcnRpY2xlLCBwb3N0IHRleHQ8L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+UHVycG9zZSwgdmlzdWFsIGNvbmNlcHRzPC90ZD4KICAgICAgICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICAgICAgICAgIDx0cj4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPlRhZ3M8L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+aDEsIGgzLCBhLCBwPC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPlRleHQgaW1wb3J0YW5jZSBvciBwdXJwb3NlPC90ZD4KICAgICAgICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICAgICAgICAgIDx0cj4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPkFsdCBUZXh0PC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPmFsdCB0YWc8L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+SW1hZ2UgY29udGVudCwgcHVycG9zZSwgdmlzdWFsIGNvbmNlcHRzPC90ZD4KICAgICAgICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICAgICAgICAgIDx0cj4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPkNhcHRpb248L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+ZmlnY2FwdGlvbjwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5JbWFnZSBjb250ZW50LCBwdXJwb3NlLCB2aXN1YWwgY29uY2VwdHM8L3RkPgogICAgICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgICAgICAgPHRyPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+TWVkaWE8L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+aW1hZ2UsIHZpZGVvPC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPlB1cnBvc2U8L3RkPgogICAgICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgICAgICAgPHRyPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQgcm93c3Bhbj0iNyI+Q29udGVudCBBcHBlYXJhbmNlPC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPlNpemU8L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+d2lkdGgsIGhlaWdodDwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5QdXJwb3NlLCBpbXBvcnRhbmNlLCByZWxhdGlvbnNoaXA8L3RkPgogICAgICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgICAgICAgPHRyPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+UG9zaXRpb248L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+eCwgeSwgYWxpZ25tZW50PC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPlB1cnBvc2UsIGltcG9ydGFuY2UsIHJlbGF0aW9uc2hpcDwvdGQ+CiAgICAgICAgICAgICAgICAgICAgPC90cj4KICAgICAgICAgICAgICAgICAgICA8dHI+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5Db2xvcjwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5jb2xvcjwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5QdXJwb3NlLCBpbXBvcnRhbmNlLCByZWxhdGlvbnNoaXA8L3RkPgogICAgICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgICAgICAgPHRyPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+Rm9udDwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5mYW1pbHksIHdlaWdodDwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5QdXJwb3NlLCBpbXBvcnRhbmNlLCByZWxhdGlvbnNoaXA8L3RkPgogICAgICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgICAgICAgPHRyPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+VmlzaWJpbGl0eTwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5oaWRkZW48L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+UHVycG9zZSwgaW1wb3J0YW5jZSwgcmVsYXRpb25zaGlwPC90ZD4KICAgICAgICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICAgICAgICAgIDx0cj4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPk90aGVyPC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPnRleHR1cmUsIG9wYWNpdHk8L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+UHVycG9zZSwgaW1wb3J0YW5jZSwgcmVsYXRpb25zaGlwPC90ZD4KICAgICAgICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICAgICAgICAgIDx0cj4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPk1lZGlhPC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPnRodW1ibmFpbCwgZnVsbHNjcmVlbjwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5QdXJwb3NlLCBpbXBvcnRhbmNlLCByZWxhdGlvbnNoaXA8L3RkPgogICAgICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgICAgICAgPHRyPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQgcm93c3Bhbj0iNCI+SW1hZ2UgQXBwZWFyYW5jZTwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5TaXplPC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPnRodW1ibmFpbCwgZnVsbHNjcmVlbjwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5QdXJwb3NlLCBpbXBvcnRhbmNlLCByZWxhdGlvbnNoaXA8L3RkPgogICAgICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgICAgICAgPHRyPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+UG9zaXRpb248L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+dG9wIHZzLiBtaWQgYXJ0aWNsZTwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5QdXJwb3NlLCBpbXBvcnRhbmNlLCByZWxhdGlvbnNoaXA8L3RkPgogICAgICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgICAgICAgPHRyPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+T3RoZXI8L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+Y29udHJhc3QsIG9wYWNpdHk8L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+UHVycG9zZSwgaW1wb3J0YW5jZSwgcmVsYXRpb25zaGlwPC90ZD4KICAgICAgICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICAgICAgPC90Ym9keT4KICAgICAgICAgICAgPC90YWJsZT4KICAgICAgICAgICAgPGJyPgogICAgICAgICAgICA8IS0tIDxpbWcgc3JjPSJtZWRpYS9XZWJwYWdlLUNvbnRleHQucG5nIiBhbHQ9IkZvdXIgZnJhbWVzIGNvbnRhaW5pbmcgaW1hZ2UgY29udGV4dHMgKHNjcmVlbnNob3Qgb2Ygd2VicGFnZSBhbmQgYWx0IHRleHQgb2YgaW1hZ2UgaW4gdmlldykgYWNyb3NzIG5ld3MsIHRyYXZlbCwgc29jaWFsIG1lZGlhLCBhbmQgc2hvcHBpbmcgY2F0ZWdvcmllcyBmcm9tIGxlZnQgdG8gcmlnaHQuIEZvciB0aGUgbmV3cyBhcnRpY2xlIGluIHRoZSBsZWZ0bW9zdCBmcmFtZSB3aXRoIGFuIGltYWdlIG9mIGEgY2FyIHN1Ym1lcmdlZCBpbiBhIHBvb2wsIHRoZSBhbHQgdGV4dCBpcyBtaXNzaW5nLiBUaGUgZnJhbWUgdG8gaXRzIHJpZ2h0IGlzIGEgdHJhdmVsIGJsb2cgY29udGFpbmluZyBhbiBpbWFnZSB3aXRoIHBpbmsgY2hlcnJ5IHRyZWVzIG9uIGVpdGhlciBzaWRlIG9mIGEgcm9hZCB3aXRoIGFsdCB0ZXh0IOKAnEEgY2xvc2UtdXAgb2YgYSBwaW5rIGNoZXJyeSB0cmVl4oCdIHdyaXR0ZW4gYmVsb3cgdGhlIGZyYW1lLiBUaGUgbmV4dCBmcmFtZSBpcyBhIHNjcmVlbnNob3Qgb2YgYSBwb3N0IG9uIFggcGxhdGZvcm0uIEl0IGlzIGFuIGltYWdlIG9mIFN0ZXBoZW4gQ3VycnkgaW4gYSBncmF5IHN1aXQuIEl0IGNvbnRhaW5zIHRoZSBhbHQgdGV4dCDigJxJbWFnZeKAnSBiZWxvdyB0aGUgZnJhbWUuIFRoZSBsYXN0IGFuZCByaWdodG1vc3QgZnJhbWUgaXMgYSBzY3JlZW4gZ3JhYiBvZiBhbiBlLWNvbW1lcmNlIHdlYnNpdGUgc2VsbGluZyBzb2Zhcy4gSXQgaGFzIHRoZSBhbHQgdGV4dCDigJxCZWlnZSBCcm93biBJdGFsaWFuIExlYXRoZXIgU29mYSBTZXQgMyBQY3MgQ29udGVtcG9yYXJ5IEVTRiA0MDXigJ0gYmVsb3cgdGhlIGZyYW1lLiIgY2xhc3M9InNlY3Rpb24taW1hZ2UiICBzdHlsZT0id2lkdGg6IDcwJTsgYWxpZ24tY29udGVudDogY2VudGVyOyI+IC0tPgogICAgICAgICAgICA8cD5FeGFtcGxlcyBvZiB3ZWJwYWdlIGNvbnRleHQgdGhhdCBtYXkgaW1wYWN0IHRoZQogICAgICAgICAgICAgICAgdmlzdWFsIGludGVycHJldGF0aW9uIG9mIGFuIGltYWdlIGFuZCBob3cgdGhlIGltYWdlIGlzIGRlc2NyaWJlZC4gTW9zdCBvZiB0aGVzZSB3ZWJwYWdlIGVsZW1lbnRzIGFyZSBzZWxlY3RlZCBpbnRlbnRpb25hbGx5IGJ5IHdlYnBhZ2UgYXV0aG9ycyAoZS5nLiwgcG9zaXRpb24gb2YgdGV4dCBjb250ZW50KSB0bwogICAgICAgICAgICAgICAgY29udmV5IGltcG9ydGFuY2UgYW5kIHN0cnVjdHVyZSB0byBhdWRpZW5jZSBtZW1iZXJzLCBidXQgb3RoZXJzIGFyZSBkeW5hbWljYWxseSBhZGRlZCAoZS5nLiwgYWR2ZXJ0aXNlbWVudHMpPC9wPgogICAgICAgIDwvc2VjdGlvbj4KCiAgICAgICAgPCEtLSBQaXBlbGluZSBTZWN0aW9uIC0tPgogICAgICAgIDxzZWN0aW9uIGlkPSJwaXBlbGluZSI+CiAgICAgICAgICAgIDxoMj5QaXBlbGluZTwvaDI+CiAgICAgICAgICAgIDxpbWcgc3JjPSJtZWRpYS9TeXN0ZW0ucG5nIiBhbHQ9IlRoZSBmaWd1cmUgc2hvd3MgYSBkaWFncmFtIG9mIHN5c3RlbSBwaXBlbGluZS4gRnJvbSBsZWZ0IHRvIHJpZ2h0LCB0aGUgZGlhZ3JhbSBzaG93cyA2IGdyb3VwaW5ncyBvciBjb2x1bW5zLCBhbGwgY29ubmVjdGVkIGJ5IGFycm93cyBwb2ludGluZyB0byB0aGUgcmlnaHQuIFRoZSBmaXJzdCBncm91cCBpbmNsdWRlcyBTZWxlY3RlZCBJbWFnZSBhbmQgV2VicGFnZS4gRnJvbSBTZWxlY3RlZCBJbWFnZSwgdGhlcmUgYXJlIHR3byBhcnJvd3MgcG9pbnRpbmcgcmlnaHQgdG8gQWx0IGFuZCBJbWFnZSB3aGljaCBhcmUgaW4gdGhlIHNlY29uZCBncm91cC4gRnJvbSBXZWJwYWdlLCB0aGVyZSBhcmUgdGhyZWUgYXJyb3dzIHBvaW50aW5nIHJpZ2h0IHRvIFRpdGxlLCBVUkwsIGFuZCBUZXh0IChhbHNvIGluIHRoZSBzZWNvbmQgZ3JvdXApLiBJbiB0aGUgdGhpcmQgY29sdW1uLCB0aGVyZSBpcyBhbiBhcnJvdyBwb2ludGluZyBmcm9tIFVSTCB0byBQdXJwb3NlLCBhbmQgZnJvbSBUZXh0IHRoZXJlIGlzIGFuIGFycm93IHBvaW50aW5nIHRvIHRoZSByaWdodCB0byDigJxUZXh0IHRvIEltYWdlIERpc3RhbmNlIChwaXhlbHMpLCBUZXh0IHRvIEltYWdlIExvY2F0aW9uIChMLCBSLCBULEIpLCBhbmQgVGV4dCB0byBJbWFnZSBTaW1pbGFyaXR5IChDTElQU2NvcmUpLiBUaGUgSW1hZ2UgYWxzbyBwb2ludHMgdG8gdGhlIHJpZ2h0IHRvIExvbmcgQ29udGV4dC1mcmVlIEltYWdlIERlc2NyaXB0aW9uIGFuZCBJbml0aWFsIENvbnRleHQtYXdhcmUgSW1hZ2UgRGVzY3JpcHRpb24gaW4gdGhlIGZvdXJ0aCBncm91cC4gSW1hZ2UsIEFsdCwgVGl0bGUgYW5kIEluaXRpYWwgQ29udGV4dC1hd2FyZSBJbWFnZSBEZXNjcmlwdGlvbiBhbGwgcG9pbnQgdG8gdGhlIHJpZ2h0IHRvIFZpc3VhbGx5IENvbmNyZXRlIFRleHQgaW4gdGhlIGZpZnRoIGNvbHVtbi4gVGhlIExvbmcgQ29udGV4dC1mcmVlIGRlc2NyaXB0aW9uIHBvaW50cyB0byB0aGUgcmlnaHQgdG8gU2hvcnQgQ29udGV4dC1mcmVlIEltYWdlIERlc2NyaXB0aW9uLiBUaGUgVmlzdWFsbHkgQ29uY3JldGUgVGV4dCBhbmQgVGhlIEltYWdlIHBvaW50IHRvIHRoZSByaWdodCB0byBMb25nIENvbnRleHQtQXdhcmUgSW1hZ2UgRGVzY3JpcHRpb24gaW4gdGhlIHJpZ2h0IGluIHRoZSBzaXh0aCBncm91cC4gVGhlIExvbmcgQ29udGV4dC1Bd2FyZSBJbWFnZSBEZXNjcmlwdGlvbiBwb2ludHMgZG93bndhcmRzIHRvIHRoZSBTaG9ydCBDb250ZXh0LUF3YXJlIEltYWdlIERlc2NyaXB0aW9uLiIgY2xhc3M9InNlY3Rpb24taW1hZ2UiPgogICAgICAgICAgICA8cD5UaGUgc3lzdGVtIHRha2VzIGEgd2VicGFnZSBhbmQgYSBzZWxlY3RlZCB3ZWJwYWdlIGltYWdlIGFzIHNlbGVjdGVkIGJ5IHRoZSB1c2VyLCB0aGVuIGV4dHJhY3RzIGFsbCBvZiB0aGUgdGV4dCBlbGVtZW50cyBvbiB0aGUgcGFnZS4gCiAgICAgICAgICAgICAgICBJdCBhbmFseXplcyB0aGUgd2VicGFnZSB0byBnZXQgYW4gaW1hZ2UgcmVsZXZhbmNlIHNjb3JlIGZvciBlYWNoIHRleHQgZWxlbWVudC4gT3VyIHNjb3JlIGNvbnNpZGVycyB0aGUgZGlzdGFuY2UgYmV0d2VlbiB0aGUgdGV4dCBlbGVtZW50IGFuZCB0aGUgdGFyZ2V0IGltYWdlLCAKICAgICAgICAgICAgICAgIHBvc2l0aW9uIG9mIHRoZSB0ZXh0IGluIGNvbXBhcmlzb24gdG8gdGhlIGltYWdlLCBhbmQgdGhlIENMSVAgc2NvcmUgc2ltaWxhcml0eSBiZXR3ZWVuIHRoZSBpbWFnZSBhbmQgdGhlIHRleHQuIAogICAgICAgICAgICAgICAgRm9yIGVhY2ggdGV4dCBlbGVtZW50LCB3ZSBjb21iaW5lIHRoZXNlIHNjb3JlcyB0b2dldGhlciB0byBhY2hpZXZlIHRoZSBmaW5hbCByZWxldmFuY2Ugc2NvcmUuIFdlIHVzZSB0aGUgZXh0cmFjdGVkIGNvbnRleHQgdGV4dCBhbmQgaXRzIHNjb3JlcyB0byBpbmZvcm0gdGhlIGZpbmFsIGNvbnRleHQtYXdhcmUgZGVzY3JpcHRpb24uCiAgICAgICAgICAgICAgICA8L3A+CiAgICAgICAgPC9zZWN0aW9uPgoKICAgICAgICA8IS0tIFN5c3RlbSBTZWN0aW9uIC0tPgogICAgICAgIDxzZWN0aW9uIGlkPSJzeXN0ZW0iPgogICAgICAgICAgICA8aDI+U3lzdGVtPC9oMj4KICAgICAgICAgICAgPGltZyBzcmM9Im1lZGlhL0ludGVyZmFjZS5wbmciIGFsdD0iQW4gaW1hZ2Ugb2Ygb3VyIGNocm9tZSBleHRlbnNpb24gd2luZG93IG9uIHRoZSBsZWZ0IGFuZCB0aGUgb3JpZ2luYWwgd2VicGFnZSB3aW5kb3cgd2l0aCBpbWFnZSBvbiByaWdodC4gVGhlIGV4dGVuc2lvbiB3aW5kb3cgc2hvd3MgdGhlIHVzZXItc2VsZWN0ZWQgaW1hZ2Ugd2l0aCBzaG9ydCBhbmQgbG9uZyBjb250ZXh0LWF3YXJlIGRlc2NyaXB0aW9ucyBmb2xsb3dlZCBieSBzaG9ydCBhbmQgbG9uZyBjb250ZXh0LWZyZWUgZGVzY3JpcHRpb25zLiBVc2VycyBjYW4gb3B0aW9uYWxseSB2aWV3IHRoZSBsb25nZXIgZGVzY3JpcHRpb25zIGJ5IGNsaWNraW5nIG9uIHRoZSBidXR0b24gYmVsb3cgdGhlIHNob3J0ZXIgZGVzY3JpcHRpb25zLiBUaGUgaW1hZ2Ugc2VsZWN0ZWQgaXMgb2YgT2JhbWEgYW5kIGhpcyBmYW1pbHkuIiBjbGFzcz0ic2VjdGlvbi1pbWFnZSIgc3R5bGU9IndpZHRoOiA2MCU7IGFsaWduLWNvbnRlbnQ6IGNlbnRlcjsiPgogICAgICAgICAgICA8cD5XaGVuIGEgdXNlciBjbGlja3Mgb24gYW4gaW1hZ2UgaW4gYSB3ZWJzaXRlIChyaWdodCksIG91ciBleHRlbnNpb24gYWRkcyBib3RoIGxvbmcgYW5kIHNob3J0IHZlcnNpb25zIG9mIHRoZSBjb250ZXh0LWZyZWUgYW5kIGNvbnRleHQtYXdhcmUgZGVzY3JpcHRpb25zIHRvIGEgc2VwYXJhdGUgZXh0ZW5zaW9uIHdpbmRvdyAobGVmdCkuPC9wPgogICAgICAgIDwvc2VjdGlvbj4KCiAgICAgICAgPCEtLSBSZXN1bHRzIFNlY3Rpb24gLS0+CiAgICAgICAgPHNlY3Rpb24gaWQ9InJlc3VsdHMiPgogICAgICAgICAgICA8aDI+UmVzdWx0czwvaDI+CiAgICAgICAgICAgIDx0YWJsZSBjbGFzcz0iZGVzY3JpcHRpb24tdGFibGUiPgogICAgICAgICAgICAgICAgPHRoZWFkPgogICAgICAgICAgICAgICAgICAgIDx0cj4KICAgICAgICAgICAgICAgICAgICAgICAgPHRoPkltYWdlPC90aD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRoPkNvbnRleHQtRnJlZSBEZXNjcmlwdGlvbnM8L3RoPgogICAgICAgICAgICAgICAgICAgICAgICA8dGg+Q29udGV4dC1Bd2FyZSBEZXNjcmlwdGlvbnM8L3RoPgogICAgICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgICA8L3RoZWFkPgogICAgICAgICAgICAgICAgPHRib2R5PgogICAgICAgICAgICAgICAgICAgIDx0cj4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPjxpbWcgc3JjPSJtZWRpYS8xLmpwZWciIGFsdD0iSW1hZ2UgMSI+PC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPlRoZSBpbWFnZSBzaG93cyBhIHNtaWxpbmcgcGVyc29uIHdpdGggdmlicmFudCBibGFjayBhbmQgbmVvbiBncmVlbiBoYWlyLCBob2xkaW5nIG11bHRpcGxlIGdvbGQgZ3JhbW9waG9uZSB0cm9waGllcyBhZ2FpbnN0IGEgd2hpdGUgYmFja2dyb3VuZCB3aXRoIGJsdXJyZWQgZ29sZCBzeW1ib2xzLiBUaGV5IHdlYXIgYSBsb29zZSwgYmxhY2sgYW5kIGdyZWVuIHBhdHRlcm5lZCBvdXRmaXQgd2l0aCBtZXRhbGxpYyBkZXRhaWxzLCBjb252ZXlpbmcgYSBzZW5zZSBvZiBhY2NvbXBsaXNobWVudCBhbmQgcHJpZGUgaW4gdGhlaXIgbXVzaWMgaW5kdXN0cnkgYWNoaWV2ZW1lbnRzLjwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5JbiB0aGUgaW1hZ2UsIEJpbGxpZSBFaWxpc2ggc3RhbmRzIGpveWZ1bGx5IGhvbGRpbmcgbXVsdGlwbGUgZ29sZGVuIEdyYW1teSB0cm9waGllcy4gSGVyIGRpc3RpbmN0aXZlIGdyZWVuIGFuZCBibGFjayBoYWlyIHN0YW5kcyBvdXQgYWdhaW5zdCBhIGJhY2tkcm9wIG9mIGJsdXJyZWQgR3JhbW15IHRyb3BoaWVzLiBUaGUgZ29sZGVuIGdsZWFtIG9mIHRoZSBhd2FyZHMgc2hlJ3MgaG9sZGluZyBzeW1ib2xpemVzIGJvdGggYSBicmFuZCB0cmFuc2Zvcm1hdGlvbiBhbmQgaGVyIHJpc2UgYXMgYSBnbG9iYWwgcGhlbm9tZW5vbi4gVGhlIGFlc3RoZXRpYyBlbWJvZGllcyB0aGUgR3JhbW15IEF3YXJkcycgaWNvbm9ncmFwaHkgYW5kIGNlbGVicmF0ZXMgbXVzaWNhbCBhY2hpZXZlbWVudHMsIG1hcmtpbmcgYSBzaWduaWZpY2FudCBtb21lbnQgaW4gQmlsbGllIEVpbGlzaCdzIGNhcmVlci48L3RkPgogICAgICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgICAgICAgPHRyPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+PGltZyBzcmM9Im1lZGlhLzIud2VicCIgYWx0PSJJbWFnZSAyIj48L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+QSBtYW4gYW5kIHdvbWFuIHdhbGsgc2lkZSBieSBzaWRlLCB0aGUgbWFuIGluIGEgZGFyayBuYXZ5IHN1aXQgYW5kIHRoZSB3b21hbiBpbiBhbiBlbGVnYW50IGJsYWNrIGRyZXNzLCBib3RoIHdpdGggc2VyaW91cyBleHByZXNzaW9ucy4gVGhlIGJsdXJyZWQgYmFja2dyb3VuZCBoaW50cyBhdCBhIGZvcm1hbCBzZXR0aW5nIHdpdGggYSBsYXJnZSBidWlsZGluZyBhbmQgYSBibGFjayBjYXIgcGFydGlhbGx5IHZpc2libGUuIFRoZSBkZXNhdHVyYXRlZCBjb2xvcnMgbWFrZSB0aGUgc3ViamVjdHMgc3RhbmQgb3V0IGFzIHRoZSBmb2NhbCBwb2ludCBvZiB0aGUgaW1hZ2UuPC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPkhhcnJ5IGlzIGluIGEgbmF2eSBzdWl0IHdpdGggYSB3aGl0ZSBzaGlydCBhbmQgYmx1ZSB0aWUsIHNwb3J0aW5nIGEgd2F0Y2gsIGFuZCBoYXMgcmVkIGhhaXIgYW5kIGEgYmVhcmQuIE1lZ2hhbiB3ZWFycyBhIGNoaWMgYmxhY2sgZHJlc3Mgd2l0aCBhIGJvYXQgbmVja2xpbmUgYW5kIHRocmVlLXF1YXJ0ZXIgc2xlZXZlcy4gQmVoaW5kIHRoZW0gaXMgYSBibHVycmVkIGhpc3RvcmljIGJ1aWxkaW5nIHdpdGggYXJjaGVzLCBhbmQgdGhlcmUncyBhIGdsaW1wc2Ugb2YgYSBibGFjayB2ZWhpY2xlIHRvIEhhcnJ5J3Mgc2lkZS5UaGVpciBhdHRpcmUgYW5kIHRoZSBzZXR0aW5nIHN1Z2dlc3QgdGhleSdyZSBhdHRlbmRpbmcgYSBzaWduaWZpY2FudCBldmVudC48L3RkPgogICAgICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgICAgICAgPHRyPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+PGltZyBzcmM9Im1lZGlhLzMuYXZpZiIgYWx0PSJJbWFnZSAzIj48L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+VGhlIGltYWdlIHNob3dzIGEgcGVyc29uIG1vZGVsaW5nIGEgc2xlZXZlbGVzcyBtYXhpIGRyZXNzIHdpdGggcGFzdGVsIGZsb3JhbCBwYXR0ZXJucyBhbmQgYSBmbG93aW5nLCB0aWVyZWQgc2tpcnQuIFRoZSBtb2RlbCBpcyB3ZWFyaW5nIGZsYXQsIHN0cmFwcHkgc2FuZGFscyBhbmQgcG9zaW5nIHdpdGggb25lIGhpcCBjb2NrZWQsIGVtcGhhc2l6aW5nIHRoZSBkcmVzcydzIGJvaGVtaWFuIGFlc3RoZXRpYy4gVGhlIGltYWdlIGhhcyBnb29kIGxpZ2h0aW5nIGFuZCBhbiBpbnZpc2libGUgYmFja2dyb3VuZCwgaGlnaGxpZ2h0aW5nIHRoZSBkcmVzcyBhbmQgbW9kZWwuPC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPlRoZSBpbWFnZSBzaG93cyBhIHBlcnNvbiBpbiBhIFYtbmVjayBzbGVldmVsZXNzIG1heGkgZHJlc3Mgd2l0aCBhIGJvaGVtaWFuIHN0eWxlLCBtYXJrZWQgYnkgdGhpbiBzdHJhcHMgYW5kIGEgZmxvd2luZyBza2lydCB3aXRoIGFuIGFzeW1tZXRyaWNhbCBoZW0uIFRoZSBkcmVzcyBmZWF0dXJlcyBhIGJsdWViZWxsIGFuZCBwYWlzbGV5IHByaW50IGluIHBpbmssIHdoaXRlLCBhbmQgZ3JlZW4uIFRoZSBwZXJzb24gYXBwZWFycyB0byBiZSB0d2lybGluZywgYWNjZW50dWF0aW5nIHRoZSBza2lydCdzIG1vdmVtZW50LjwvdGQ+CiAgICAgICAgICAgICAgICAgICAgPC90cj4KICAgICAgICAgICAgICAgICAgICA8dHI+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD48aW1nIHNyYz0ibWVkaWEvNC53ZWJwIiBhbHQ9IkltYWdlIDQiPjwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5BIGZhbWlseSBvZiBmb3VyIHBvc2VzIG91dGRvb3JzLCBzbWlsaW5nIGF0IHRoZSBjYW1lcmEuIE9uIHRoZSBsZWZ0IGlzIGEgeW91bmcgd29tYW4gaW4gYSBibHVlIHBvbGthLWRvdHRlZCBkcmVzcywgbmV4dCB0byBoZXIgaXMgYSB3b21hbiBpbiBhIHRlYWwgZHJlc3MsIHRoZW4gYSBtYW4gaW4gYSBzdWl0LCBhbmQgZmluYWxseSBhbm90aGVyIHlvdW5nIHdvbWFuIGluIGEgYnJpZ2h0IG9yYW5nZSBhbmQgbmVvbiB5ZWxsb3ctZ3JlZW4gZHJlc3MuIFRoZXkgc3RhbmQgaW4gZnJvbnQgb2YgYSB0cmVlIHdpdGggcGluayBibG9zc29tcy48L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+Rm91ciBwZW9wbGUgcG9zZSBmb3IgYSBwaG90byBhbWlkc3QgY2hlcnJ5IGJsb3Nzb21zLiBPbiB0aGUgbGVmdCwgTWFsaWEgaXMgaW4gYSBibHVlIHNsZWV2ZWxlc3MgZHJlc3Mgd2l0aCBwb2xrYSBkb3RzLiBOZXh0IHRvIGhlciwgTWljaGVsbGUgc3BvcnRzIGEgdGVhbCBkcmVzcy4gQmFyYWNrIHN0YW5kcyBpbiB0aGUgY2VudGVyIGluIGEgZGFyayBzdWl0LCB3aGl0ZSBzaGlydCwgYW5kIGdyYXkgdGllLiBPbiB0aGUgcmlnaHQsIFNhc2hhIHdlYXJzIGEgY29sb3ItYmxvY2tlZCBkcmVzcyB3aXRoIGEgY29yYWwgdG9wIGFuZCB5ZWxsb3cgc2tpcnQsIGFjY2VudGVkIGJ5IGEgd2hpdGUgYmVsdC4gVGhleSBhbGwgc21pbGUsIGFuZCB0aGUgV2hpdGUgSG91c2UgaXMgdmlzaWJsZSBiZWhpbmQgdGhlbSBpbiB3aGF0IHNlZW1zIHRvIGJlIHRoZSBSb3NlIEdhcmRlbi48L3RkPgogICAgICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgICAgICAgPHRyPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQ+PGltZyBzcmM9Im1lZGlhLzUuanBnIiBhbHQ9IkltYWdlIDUiPjwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD5BbiBlbGVnYW50IGJyb256ZS1maW5pc2hlZCBzb2ZhIHdpdGggZGFyayBicm93biBzb2xpZCB3b29kIGZyYW1lIGFuZCBzaWx2ZXIgYWNjZW50cyBzZXQgYWdhaW5zdCBhIHdhcm1seSBsaXQgcm9vbSwgdXBob2xzdGVyZWQgaW4gYmVpZ2UgcGVhcmwgZmFicmljIHdpdGggY2hlbmlsbGUgdGV4dHVyZSwgc3RyaXBlZCBzZWF0IGN1c2hpb25zLCBidXR0b24tdHVmdGVkIGJhY2tzLCBhbmQgY29vcmRpbmF0aW5nIHRocm93IHBpbGxvd3MuPC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPlRoZSBpbWFnZSBkZXBpY3RzIGEgY2xhc3NpY2FsbHkgc3R5bGVkIHJvb20gd2l0aCBhIGxhcmdlLCB0cmFkaXRpb25hbCBzb2ZhIHVwaG9sc3RlcmVkIGluIHdhcm0gYmVpZ2UgdmVsdmV0LWxpa2UgZmFicmljIGFuZCBvcm5hdGUgd29vZGVuIGFjY2VudHMuIEEgc21hbGwgc2lkZSB0YWJsZSBob2xkcyBhIHZhc2Ugb2YgZmxvd2Vycywgd2hpbGUgc2hlZXIgY3VydGFpbnMgbGV0IGluIG5hdHVyYWwgbGlnaHQgZnJvbSB0aGUgd2luZG93LiBBIHBhdHRlcm5lZCBhcmVhIHJ1Zywgd29vZGVuIGNvZmZlZSB0YWJsZSB3aXRoIGJvb2tzLCBtYXRjaGluZyB0YWJsZSBsYW1wcywgYW5kIGEgZnJhbWVkIHBpY3R1cmUgYWRkIHRvIHRoZSByb29tJ3MgZWxlZ2FudCBhbmQgaW52aXRpbmcgYW1iaWFuY2UuPC90ZD4KICAgICAgICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICAgICAgICAgIDx0cj4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPjxpbWcgc3JjPSJtZWRpYS82LndlYnAiIGFsdD0iSW1hZ2UgNiI+PC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPlRoZSBpbWFnZSBkZXBpY3RzIGEgcGVhY2VmdWwgbW91bnRhaW4gbGFuZHNjYXBlIGF0IGRhd24gb3IgZHVzayB3aXRoIHNub3ctY2FwcGVkIHBlYWtzIGJhdGhlZCBpbiBnb2xkZW4gc3VubGlnaHQgYWdhaW5zdCBhIGdyYWRpZW50IGJsdWUgc2t5LiBBIGhpa2VyIGluIGEgeWVsbG93IGphY2tldCBzdGFuZHMgb24gYSByb2NreSBsZWRnZSwgZ2F6aW5nIGFjcm9zcyBtaXN0eSBoaWxscyBhbmQgdmFsbGV5cywgZW1ib2R5aW5nIGEgc2Vuc2Ugb2Ygd29uZGVyIGFuZCBhZHZlbnR1cmUuPC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkPlRoZSBpbWFnZSBzaG93cyBhbiBpbmRpdmlkdWFsIHRyZWtraW5nIG9uIGEgcnVnZ2VkIHRlcnJhaW4gd2l0aCBhIHN3ZWVwaW5nIHZpZXcgb2YgdGhlIHNub3ctY2FwcGVkIEFubmFwdXJuYSBSYW5nZSBpbiB0aGUgSGltYWxheWFzLiBQb3NpdGlvbmVkIG9uIHRoZSBsZWZ0LCB0aGUgcGVyc29uIGlzIGNsYWQgaW4gYSB5ZWxsb3cgamFja2V0IGFuZCBiZWFuaWUsIGhvbGRpbmcgYSBjYW1lcmEgb3IgZGV2aWNlIHRvIHRoZWlyIGZhY2UsIHBvc3NpYmx5IGNhcHR1cmluZyB0aGUgdmlzdGEuIFRoZSBtb3VudGFpbnMsIGlsbHVtaW5hdGVkIGJ5IHRoZSBzb2Z0IGxpZ2h0IG9mIHRoZSBzdW4sIGZvcm0gYSBzdHJpa2luZyBiYWNrZ3JvdW5kLCBjcmVhdGluZyBhbiBhdG1vc3BoZXJlIG9mIHNlcmVuaXR5IGFuZCBhZHZlbnR1cmUuPC90ZD4KICAgICAgICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICAgICAgPC90Ym9keT4KICAgICAgICAgICAgPC90YWJsZT4KICAgICAgICAgICAgPCEtLSA8aW1nIHNyYz0ibWVkaWEvVGFzay0xLnBuZyIgYWx0PSJBIHZlcnRpY2FsIGJhciBncmFwaCBzaG93aW5nIHRoZSBwZXJjZW50YWdlIG9mIGRlc2NyaXB0aW9uIHNlbnRlbmNlcyBmb3IgbG9uZyBhbmQgc2hvcnQgdmVyc2lvbnMgb2YgY29udGV4dC1mcmVlLCBjb250ZXh0LUhUTUwsIGFuZCBjb250ZXh0LWF3YXJlIGRlc2NyaXB0aW9ucyBhY3Jvc3MgMyBjcml0ZXJpYTogYWNjdXJhY3ksIG9iamVjdGl2aXR5LCBhbmQgcmVsZXZhbmNlLiBUaGUgeS1heGlzIGlzIHRoZSBwZXJjZW50YWdlIG9mIGRlc2NyaXB0aW9uIHNlbnRlbmNlcy4gVGhlIHgtYXhpcyBpcyB0aGUgYWNjdXJhY3ksIG9iamVjdGl2aXR5LCBhbmQgcmVsZXZhbmNlIGNyaXRlcmlhLiBFYWNoIGNyaXRlcmlhIGlzIGV2YWx1YXRlZCBmb3IgYWxsIHNpeGVzIHZlcnNpb25zOiBsb25nIGNvbnRleHQtZnJlZSwgbG9uZyBjb250ZXh0LUhUTUwsIGxvbmcgY29udGV4dC1hd2FyZSwgc2hvcnQgY29udGV4dC1IVE1MLCBhbmQgc2hvcnQgY29udGV4dC1hd2FyZS4gVGhlIGVycm9yIGJhcnMgYXJlIDk1JSBjb25maWRlbmNlIGludGVydmFscy4gVGhlIHBlcmNlbnRhZ2Ugb2YgY29udGV4dC1hd2FyZSBkZXNjcmlwdGlvbiBzZW50ZW5jZXMgYXJlIGhpZ2hlciBmb3IgYm90aCBsb25nIGFuZCBzaG9ydCB2ZXJzaW9ucyBjb21wYXJlZCB0byB0aGUgbG9uZyBhbmQgc2hvcnQgdmVyc2lvbnMgb2YgY29udGV4dC1mcmVlIGNvbnRleHQtSFRNTCBkZXNjcmlwdGlvbnMgcmVzcGVjdGl2ZWx5IGZvciBhbGwgMyBjcml0ZXJpYS4iIGNsYXNzPSJzZWN0aW9uLWltYWdlIj4gLS0+CiAgICAgICAgICAgIDxwPkV4YW1wbGUgY29udGV4dC1mcmVlIGFuZCBjb250ZXh0LWF3YXJlIGRlc2NyaXB0aW9ucyBmb3IgVGFzayAxIGluIHRoZSB1c2VyIHN0dWR5PC9wPgogICAgICAgICAgICA8YnI+PGJyPgogICAgICAgICAgICA8dGFibGU+CiAgICAgICAgICAgICAgICA8dGJvZHk+PHRyPgogICAgICAgICAgICAgICAgICAgIDx0aD5QOCBJbWFnZTwvdGg+CiAgICAgICAgICAgICAgICAgICAgPHRoPkNvbnRleHQtRnJlZSBEZXNjcmlwdGlvbjwvdGg+CiAgICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICAgICAgPHRyPgogICAgICAgICAgICAgICAgICAgIDx0ZD48aW1nIHNyYz0ibWVkaWEvY2FyLmpwZWciIGFsdD0iVHdvIHJlZCBHZXJtYW4gc3BvcnRzIGNhcnMgcmFjaW5nIG9uIGEgdHJhY2suIj48L3RkPgogICAgICAgICAgICAgICAgICAgIDx0ZD5UaGUgaW1hZ2Ugc2hvd3MgdHdvIG1vZGVybiwgc3BvcnR5IGNhcnMgLSBhIHJlZCBNZXJjZWRlcy1CZW56IGFuZCBhIGJyaWdodCByZWQgQk1XIC0gZHJpdmluZyBzaWRlIGJ5IHNpZGUgb24gYW4gYXNwaGFsdCByb2FkIHdpdGggYSBkcnkgbGFuZHNjYXBlLiBCb3RoIGNhcnMgc2hvd2Nhc2UgYWdncmVzc2l2ZSBkZXNpZ25zIHdpdGggTEVEIGhlYWRsaWdodHMgYW5kIGRpc3RpbmN0IGJyYW5kIGdyaWxsZXMuIFRoZSBCTVcgaXMgc2xpZ2h0bHkgYWhlYWQsIGhpbnRpbmcgYXQgYSBjb21wZXRpdGlvbi48L3RkPgogICAgICAgICAgICAgICAgPC90cj4KICAgICAgICAgICAgICAgIDx0cj4KICAgICAgICAgICAgICAgICAgICA8dGg+UDggV2Vic2l0ZTwvdGg+CiAgICAgICAgICAgICAgICAgICAgPHRoPkNvbnRleHQtQXdhcmUgRGVzY3JpcHRpb248L3RoPgogICAgICAgICAgICAgICAgPC90cj4KICAgICAgICAgICAgICAgIDx0cj4KICAgICAgICAgICAgICAgICAgICA8dGQ+PGltZyBzcmM9Im1lZGlhL3dlYnNpdGUtY2FyLnBuZyIgYWx0PSJTY3JlZW5zaG90IG9mIGEgY2FyIGNvbXBhcmlzb24gYXJ0aWNsZS4iPjwvdGQ+CiAgICAgICAgICAgICAgICAgICAgPHRkPlR3byByZWQgR2VybWFuIHNwb3J0cyBzZWRhbnMsIGEgTWVyY2VkZXMtQU1HIEMgNDMgYW5kIGEgQk1XIE0zNDBpLCBhcmUgcG9zaXRpb25lZCBzaWRlIGJ5IHNpZGUgb24gYSByYWNlIHRyYWNrLCBzaG93aW5nIG9mZiB0aGVpciBkZXNpZ25zIGFuZCBwZXJmb3JtYW5jZSBmZWF0dXJlcy4gVGhlIE1lcmNlZGVzIGRpc3BsYXlzIGl0cyBlbWJsZW1hdGljIGdyaWxsZSBhbmQgZHluYW1pYyBoZWFkbGlnaHRzLCB3aGlsZSB0aGUgQk1XIHNob3djYXNlcyBpdHMgc2lnbmF0dXJlIGtpZG5leSBncmlsbGUgYW5kIHNoYXJwIGhlYWRsaWdodCBjb250b3Vycy4gQm90aCBjYXJzIGZlYXR1cmUgYWxsb3kgd2hlZWxzLCBsb3ctcHJvZmlsZSB0aXJlcywgYW5kIE1haGFyYXNodHJhIGxpY2Vuc2UgcGxhdGVzLjwvdGQ+CiAgICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICA8L3Rib2R5PjwvdGFibGU+CiAgICAgICAgICAgIDxicj4KICAgICAgICAgICAgPCEtLSA8aW1nIHNyYz0ibWVkaWEvVGFzay0yLnBuZyIgYWx0PSJUaGUgaW1hZ2UgaXMgZnJvbSB0b3AgdG8gYm90dG9tLiBPbiB0aGUgdG9wLWxlZnQgc2lkZSB0aGVyZSBpcyBhbiBpbWFnZSBvZiB0d28gcmVkIGNhcnMgb24gYSB0YXIgcm9hZC4gVG8gaXRzIHJpZ2h0IGlzIHRoZSBjb250ZXh0LWZyZWUgZGVzY3JpcHRpb24gb2YgdGhlIGltYWdlIHRoYXQgcmVhZHMg4oCcVGhlIGltYWdlIHNob3dzIG1vZGVybiBzcG9ydHkgY2FycyAtIGEgcmVkIE1lcmNlZGVzLUJlbnogYW5kIGEgYnJpZ2h0IOKApm9uIGFuIGFzcGhhbHQgcm9hZC4uVGhlIEJNVyBpcyBzbGlnaHRseSBhaGVhZCwgaGludGluZyBhdCBhIGNvbXBldGl0aW9uLi7igJ0uIFRvIHRoZSBib3R0b20tbGVmdCwgaXMgYW4gaW1hZ2Ugb2YgdGhlIHdlYnBhZ2Ugd2hlcmUgdGhlIGltYWdlIGFwcGVhcnMuIFRoZSBjb250ZXh0LWF3YXJlIGRlc2NyaXB0aW9uIG9mIHRoZSBpbWFnZSBpcyBwcmVzZW50IHRvIHRoZSByaWdodCBvZiB0aGUgaW1hZ2Ugb2YgdGhlIHdlYnNpdGUgYW5kIHJlYWRzLCDigJxUd28gcmVkIEdlcm1hbiBzcG9ydHMgc2VkYW5zLCBhIE1lcmNlZGVzLUFNRyBDNDMg4oCmIE1lcmNlZGVzIGRpc3BsYXlzIGl0cyBlbWJsZW1hdGljIGdyaWxsZSBhbmQgZHluYW1pYyBoZWFkbGlnaHRzIOKApiBhbmQgTWFoYXJhc2h0cmEgbGljZW5zZSBwbGF0ZXPigKbigJ0uIiBjbGFzcz0ic2VjdGlvbi1pbWFnZSIgc3R5bGU9IndpZHRoOiA2MCU7IGFsaWduLWNvbnRlbnQ6IGNlbnRlcjsiPiAtLT4KICAgICAgICAgICAgPHA+RXhhbXBsZSBjb250ZXh0LWZyZWUgYW5kIGNvbnRleHQtYXdhcmUgZGVzY3JpcHRpb25zIGZvciBhIHdlYnNpdGUgYW5kIGltYWdlIHNlbGVjdGVkIGJ5IFA4LjwvcD4KCiAgICAgICAgPC9zZWN0aW9uPgoKICAgICAgICA8IS0tIEJpYlRlWCBTZWN0aW9uIC0tPgogICAgICAgIDxzZWN0aW9uIGlkPSJiaWJ0ZXgiPgogICAgICAgICAgICA8aDI+QmliVGVYPC9oMj4KICAgICAgICAgICAgPGRpdiBjbGFzcz0iYmlidGV4LWNvZGUiPgo8cHJlPkBhcnRpY2xle21vaGFuYmFidTIwMjRjb250ZXh0LAogICAgdGl0bGU9e0NvbnRleHQtQXdhcmUgSW1hZ2UgRGVzY3JpcHRpb25zIGZvciBXZWIgQWNjZXNzaWJpbGl0eX0sCiAgICBhdXRob3I9e01vaGFuYmFidSwgQW5hbnlhIEd1YmJpIGFuZCBQYXZlbCwgQW15fSwKICAgIGpvdXJuYWw9e2FyWGl2IHByZXByaW50IGFyWGl2OjI0MDkuMDMwNTR9LAogICAgeWVhcj17MjAyNH0KfQo8L3ByZT4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9zZWN0aW9uPgoKICAgIDwvZGl2PgoKCjwvYm9keT48L2h0bWw+",
+  "order": 3,
+  "interactions": [
+    {
+      "type": "focus",
+      "timestamp": 1753766300827,
+      "selector": ".author",
+      "element": {
+        "tag": "A",
+        "id": "",
+        "class": "author",
+        "role": null,
+        "ariaLabel": null,
+        "name": null,
+        "text": "Ananya Gubbi Mohanbabu"
+      }
+    },
+    {
+      "type": "blur",
+      "selector": ".author",
+      "element": {
+        "tag": "A",
+        "id": "",
+        "class": "author",
+        "role": null,
+        "ariaLabel": null,
+        "name": null,
+        "text": "Ananya Gubbi Mohanbabu"
+      }
+    },
+    {
+      "type": "focus",
+      "timestamp": 1753766304285,
+      "selector": ".author",
+      "element": {
+        "tag": "A",
+        "id": "",
+        "class": "author",
+        "role": null,
+        "ariaLabel": null,
+        "name": null,
+        "text": "Amy Pavel"
+      }
+    },
+    {
+      "type": "blur",
+      "selector": ".author",
+      "element": {
+        "tag": "A",
+        "id": "",
+        "class": "author",
+        "role": null,
+        "ariaLabel": null,
+        "name": null,
+        "text": "Amy Pavel"
+      }
+    },
+    {
+      "timestamp": 1753766304864,
+      "type": "key_press",
+      "key": "Tab"
+    },
+    {
+      "timestamp": 1753766305408,
+      "type": "key_press",
+      "key": "Tab"
+    },
+    {
+      "type": "blur",
+      "selector": ".button.pdf",
+      "element": {
+        "tag": "A",
+        "id": "",
+        "class": "button pdf",
+        "role": null,
+        "ariaLabel": null,
+        "name": null,
+        "text": "📄 PDF"
+      }
+    },
+    {
+      "type": "focus",
+      "timestamp": 1753766305409,
+      "selector": ".button.code",
+      "element": {
+        "tag": "A",
+        "id": "",
+        "class": "button code",
+        "role": null,
+        "ariaLabel": null,
+        "name": null,
+        "text": "💻 Code"
+      }
+    },
+    {
+      "timestamp": 1753766305800,
+      "type": "key_press",
+      "key": "Tab"
+    },
+    {
+      "type": "blur",
+      "selector": ".button.code",
+      "element": {
+        "tag": "A",
+        "id": "",
+        "class": "button code",
+        "role": null,
+        "ariaLabel": null,
+        "name": null,
+        "text": "💻 Code"
+      }
+    },
+    {
+      "type": "focus",
+      "timestamp": 1753766305801,
+      "selector": ".button.arxiv",
+      "element": {
+        "tag": "A",
+        "id": "",
+        "class": "button arxiv",
+        "role": null,
+        "ariaLabel": null,
+        "name": null,
+        "text": "⚙ arXiv"
+      }
+    },
+    {
+      "timestamp": 1753766306263,
+      "type": "key_press",
+      "key": "Tab"
+    },
+    {
+      "type": "blur",
+      "selector": ".button.arxiv",
+      "element": {
+        "tag": "A",
+        "id": "",
+        "class": "button arxiv",
+        "role": null,
+        "ariaLabel": null,
+        "name": null,
+        "text": "⚙ arXiv"
+      }
+    },
+    {
+      "type": "focus",
+      "timestamp": 1753766307818,
+      "selector": ".button.code",
+      "element": {
+        "tag": "A",
+        "id": "",
+        "class": "button code",
+        "role": null,
+        "ariaLabel": null,
+        "name": null,
+        "text": "💻 Code"
+      }
+    },
+    {
+      "timestamp": 1753766307894,
+      "type": "mouse_click",
+      "x": 953,
+      "y": 251,
+      "element": {
+        "tag": "A",
+        "id": "",
+        "class": "button code",
+        "role": null,
+        "ariaLabel": null,
+        "name": null,
+        "text": "💻 Code"
+      },
+      "selector": ".button.code"
+    }
+  ]
+}

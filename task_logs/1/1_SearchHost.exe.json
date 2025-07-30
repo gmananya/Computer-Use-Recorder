@@ -1,0 +1,277 @@
+[
+  {
+    "timestamp": 1753766221.4719806,
+    "application": "SearchHost.exe",
+    "window_title": "Search",
+    "cursor_position": [
+      1660,
+      2106
+    ],
+    "focused_element": {
+      "name": "Search box",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "Search box",
+      "control_type": "EditControl",
+      "bounding_rect": {
+        "left": 1393,
+        "top": 2080,
+        "right": 1833,
+        "bottom": 2144
+      }
+    },
+    "event": "key_press",
+    "key": "c"
+  },
+  {
+    "timestamp": 1753766222.5001154,
+    "application": "SearchHost.exe",
+    "window_title": "Search",
+    "cursor_position": [
+      1648,
+      1610
+    ],
+    "focused_element": {
+      "name": "Search box",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "CoreInput",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 1395,
+        "top": 590,
+        "right": 2943,
+        "bottom": 2038
+      }
+    },
+    "event": "key_press",
+    "key": "a"
+  },
+  {
+    "timestamp": 1753766222.5416946,
+    "application": "SearchHost.exe",
+    "window_title": "Search",
+    "cursor_position": [
+      1648,
+      1610
+    ],
+    "focused_element": {
+      "name": "Search box",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "CoreInput",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 1395,
+        "top": 590,
+        "right": 2943,
+        "bottom": 2038
+      }
+    },
+    "event": "key_press",
+    "key": "l"
+  },
+  {
+    "timestamp": 1753766224.3123617,
+    "application": "SearchHost.exe",
+    "window_title": "Search",
+    "cursor_position": [
+      1648,
+      1610
+    ],
+    "focused_element": {
+      "name": "Search box",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "CoreInput",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 1395,
+        "top": 590,
+        "right": 2943,
+        "bottom": 2038
+      }
+    },
+    "event": "key_press",
+    "key": "c"
+  },
+  {
+    "timestamp": 1753766224.3846376,
+    "application": "SearchHost.exe",
+    "window_title": "Search",
+    "cursor_position": [
+      1648,
+      1610
+    ],
+    "focused_element": {
+      "name": "Search box",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "CoreInput",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 1395,
+        "top": 590,
+        "right": 2943,
+        "bottom": 2038
+      }
+    },
+    "event": "key_press",
+    "key": "u"
+  },
+  {
+    "timestamp": 1753766224.6186626,
+    "application": "SearchHost.exe",
+    "window_title": "Search",
+    "cursor_position": [
+      1648,
+      1610
+    ],
+    "focused_element": {
+      "name": "Search box",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "CoreInput",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 1395,
+        "top": 590,
+        "right": 2943,
+        "bottom": 2038
+      }
+    },
+    "event": "key_press",
+    "key": "l"
+  },
+  {
+    "timestamp": 1753766224.7651744,
+    "application": "SearchHost.exe",
+    "window_title": "Search",
+    "cursor_position": [
+      1648,
+      1610
+    ],
+    "focused_element": {
+      "name": "Search box",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "CoreInput",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 1395,
+        "top": 590,
+        "right": 2943,
+        "bottom": 2038
+      }
+    },
+    "event": "key_press",
+    "key": "a"
+  },
+  {
+    "timestamp": 1753766224.9520226,
+    "application": "SearchHost.exe",
+    "window_title": "Search",
+    "cursor_position": [
+      1648,
+      1610
+    ],
+    "focused_element": {
+      "name": "Search box",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "CoreInput",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 1395,
+        "top": 590,
+        "right": 2943,
+        "bottom": 2038
+      }
+    },
+    "event": "key_press",
+    "key": "t"
+  },
+  {
+    "timestamp": 1753766225.111247,
+    "application": "SearchHost.exe",
+    "window_title": "Search",
+    "cursor_position": [
+      1648,
+      1610
+    ],
+    "focused_element": {
+      "name": "Search box",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "CoreInput",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 1395,
+        "top": 590,
+        "right": 2943,
+        "bottom": 2038
+      }
+    },
+    "event": "key_press",
+    "key": "o"
+  },
+  {
+    "timestamp": 1753766226.221585,
+    "application": "SearchHost.exe",
+    "window_title": "Search",
+    "cursor_position": [
+      1648,
+      1610
+    ],
+    "focused_element": {
+      "name": "Search box",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "CoreInput",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 1395,
+        "top": 590,
+        "right": 2943,
+        "bottom": 2038
+      }
+    },
+    "event": "key_press",
+    "key": "r"
+  },
+  {
+    "timestamp": 1753766227.3675017,
+    "application": "SearchHost.exe",
+    "window_title": "Search",
+    "cursor_position": [
+      1704,
+      868
+    ],
+    "focused_element": {
+      "name": "Search box",
+      "control_type": "EditControl"
+    },
+    "element_under_cursor": {
+      "name": "CoreInput",
+      "control_type": "PaneControl",
+      "bounding_rect": {
+        "left": 1395,
+        "top": 590,
+        "right": 2943,
+        "bottom": 2038
+      }
+    },
+    "event": "mouse_click",
+    "button": "Button.left"
+  }
+]

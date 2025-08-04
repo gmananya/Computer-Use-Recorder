@@ -4,27 +4,15 @@
   <meta charset="UTF-8" />
   <title>Web Interaction Replay</title>
   <style>
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    #log {
-      padding: 12px;
-      background: #222;
-      color: #0f0;
-      font-family: monospace;
-    }
-    iframe {
-      width: 100%;
-      height: 90vh;
-      border: none;
-    }
+    body { font-family: system-ui, sans-serif; margin: 0; }
+    #log { padding: 10px 12px; background:#111; color:#0f0; font: 13px/1.4 monospace; }
+    iframe { width: 100%; height: calc(100vh - 40px); border: 0; display:block; }
   </style>
 </head>
 <body>
-  <div id="log">Waiting for actions...</div>
-  <iframe id="replayFrame" width="100%" height="600"></iframe>
-  <script src="replay_web.js"></script>
+  <div id="log">Waiting for actions…</div>
+  <!-- sandbox keeps the page contained; same-origin lets us manipulate the DOM we loaded -->
+  <iframe id="replayFrame" sandbox="allow-scripts allow-same-origin"></iframe>
+  <script src="/replay_web.js"></script>
 </body>
 </html>

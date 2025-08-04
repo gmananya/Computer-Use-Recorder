@@ -1,20 +1,32 @@
-// replay_web.js
-
+// replay/replay_web.js
 const iframe = document.getElementById("replayFrame");
-const logDiv = document.getElementById("log");
-const possibleFiles = Array.from({ length: 8 }, (_, i) => `web_tab${i + 1}.json`); // Edit upper limit as needed
-let currentFileIndex = 0;
-let lastFocusedElement = null;
+const logDiv  = document.getElementById("log");
 
-function wait(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+let omniboxBuffer = "";
+let isOnNewTab = false;
+let lastLoadedDomURL = null;
+let lastLoadedDomBase64 = null;
+let currentReplayId = 0;
+
+const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+async function queryWithRetry(doc, selector, timeout = 1500, interval = 100) {
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    try {
+      const el = doc.querySelector(selector);
+      if (el) return el;
+    } catch {}
+    await wait(interval);
+  }
+  return null;
 }
 
 function highlightBox(targetDoc, x, y) {
   const highlight = targetDoc.createElement("div");
   highlight.style.position = "absolute";
-  highlight.style.top = `${y}px`;
-  highlight.style.left = `${x}px`;
+  highlight.style.top = `${y - 20}px`;
+  highlight.style.left = `${x - 20}px`;
   highlight.style.width = "40px";
   highlight.style.height = "40px";
   highlight.style.border = "3px solid red";
@@ -26,181 +38,313 @@ function highlightBox(targetDoc, x, y) {
   setTimeout(() => highlight.remove(), 1000);
 }
 
-function simulateKey(targetWin, key) {
-  const event = new KeyboardEvent("keydown", { key });
-  targetWin.document.dispatchEvent(event);
-  if (lastFocusedElement && lastFocusedElement.tagName === 'INPUT') {
-    lastFocusedElement.value += key;
-    lastFocusedElement.dispatchEvent(new Event('input', { bubbles: true }));
-    lastFocusedElement.dispatchEvent(new Event('change', { bubbles: true }));
-  }
-}
-
-function simulateInput(targetDoc, selector, value) {
-  const inputEl = targetDoc.querySelector(selector);
-  if (inputEl) {
-    lastFocusedElement = inputEl;
-    inputEl.focus();
-    const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
-    setter.call(inputEl, value);
-    inputEl.dispatchEvent(new Event('input', { bubbles: true }));
-    inputEl.dispatchEvent(new Event('change', { bubbles: true }));
-    const rect = inputEl.getBoundingClientRect();
-    highlightBox(targetDoc, rect.left, rect.top);
-  } else {
-    console.warn("simulateInput: No element found for selector", selector);
-  }
-}
-
-async function fetchLog(filename) {
-  try {
-    const response = await fetch(filename);
-    if (!response.ok) throw new Error("Failed to load log: " + filename);
-    const json = await response.json();
-    json.__filename = filename;
-    return json;
-  } catch (err) {
-    console.error("Error fetching log:", err);
-    throw err;
-  }
-}
-
 function sanitizeDOM(html) {
   const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  doc.querySelectorAll('script, meta[http-equiv], link[rel=preload], link[rel=modulepreload], iframe').forEach(el => el.remove());
+  const doc = parser.parseFromString(html, "text/html");
+  doc.querySelectorAll("script, meta[http-equiv], link[rel=preload], link[rel=modulepreload], iframe")
+    .forEach(el => el.remove());
+  for (const el of doc.querySelectorAll("*")) {
+    for (const { name } of Array.from(el.attributes)) {
+      if (name.toLowerCase().startsWith("on")) el.removeAttribute(name);
+    }
+  }
+  const neuter = (el, attr) => {
+    const v = el.getAttribute(attr);
+    if (!v) return;
+    if (v.startsWith("/")) {
+      if (attr === "src" && el.tagName === "IMG") {
+        el.setAttribute("src","data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==");
+      } else {
+        el.setAttribute(attr, "about:blank#blocked");
+      }
+    }
+  };
+  doc.querySelectorAll("img[src], link[href], a[href], form[action], source[srcset]").forEach(el => {
+    if (el.hasAttribute("src"))    neuter(el, "src");
+    if (el.hasAttribute("href"))   neuter(el, "href");
+    if (el.hasAttribute("action")) neuter(el, "action");
+    if (el.hasAttribute("srcset")) el.setAttribute("srcset", "");
+  });
   return doc.documentElement.outerHTML;
 }
 
-async function replayInteractions(log) {
-  logDiv.innerText = `Replaying: ${log.title || log.__filename || ''}`;
+function ensureGhost(win) {
+  try {
+    if (!win || win.__ghostInstalled) return;
+    win.__ghostInstalled = true;
+    const d = win.document;
+    const cur = d.createElement("div");
+    cur.id = "replay-ghost-cursor";
+    Object.assign(cur.style, {
+      position: "fixed", width: "14px", height: "14px", borderRadius: "50%",
+      border: "2px solid rgba(0,0,0,.7)", background: "rgba(255,255,255,.85)",
+      boxShadow: "0 0 6px rgba(0,0,0,.25)",
+      pointerEvents: "none", zIndex: 2147483647,
+      left: `${ghostX}px`,
+      top: `${ghostY}px`,
+      transform: "translate(-7px,-7px)", transition: "left 120ms ease, top 120ms ease"
+    });
+    d.documentElement.appendChild(cur);
+    win.__ghostMove = (x, y) => { 
+      ghostX = x; ghostY = y;
+      cur.style.left = `${x}px`; cur.style.top = `${y}px`; 
+    };
+    win.__ghostClick = () => {
+      const ring = d.createElement("div");
+      Object.assign(ring.style, {
+        position: "fixed", width: "24px", height: "24px", borderRadius: "50%",
+        border: "2px solid rgba(0,0,0,.45)", pointerEvents: "none",
+        zIndex: 2147483647, left: cur.style.left, top: cur.style.top,
+        transform: "translate(-12px,-12px)", opacity: 1, transition: "opacity 400ms ease, transform 400ms ease"
+      });
+      d.documentElement.appendChild(ring);
+      requestAnimationFrame(() => {
+        ring.style.opacity = 0;
+        ring.style.transform = "translate(-12px,-12px) scale(1.7)";
+      });
+      setTimeout(() => ring.remove(), 420);
+    };
+  } catch {}
+}
 
-  // Load DOM snapshot only if provided
-  if (log.dom_snapshot_base64) {
-    const rawHTML = decodeURIComponent(escape(atob(log.dom_snapshot_base64)));
-    const sanitizedHTML = sanitizeDOM(rawHTML);
-    const blobURL = URL.createObjectURL(new Blob([sanitizedHTML], { type: 'text/html' }));
-    iframe.src = blobURL;
-    await new Promise(resolve => { iframe.onload = () => resolve(); });
+
+function ghostToElement(win, el) {
+  try {
+    const r = el.getBoundingClientRect();
+    // Compute midpoint of the element
+    ghostX = Math.max(3, Math.min(win.innerWidth - 3, r.left + r.width / 2));
+    ghostY = Math.max(3, Math.min(win.innerHeight - 3, r.top  + r.height / 2));
+    win.__ghostMove?.(ghostX, ghostY);
+  } catch {}
+}
+
+
+function installGuards(win) {
+  try {
+    if (!win || win.__guardsInstalled) return;
+    win.__guardsInstalled = true;
+    const doc = win.document;
+    try { win.open = function(){ console.debug("[WEB] window.open blocked"); return null; }; } catch {}
+    let base = doc.querySelector("base");
+    if (!base) { base = doc.createElement("base"); doc.head?.appendChild(base); }
+    base.setAttribute("target", "_self");
+    doc.addEventListener("click", (e) => {
+      const a = e.target.closest?.("a[href]");
+      if (!a) return;
+      if (win.__allowNextAnchorNav) {
+        delete win.__allowNextAnchorNav;
+        return;
+      }
+      e.preventDefault(); e.stopPropagation();
+      console.debug("[WEB] blocked anchor nav:", a.getAttribute("href"));
+    }, true);
+    doc.addEventListener("submit", (e) => {
+      e.preventDefault(); e.stopPropagation();
+      console.debug("[WEB] blocked form submit");
+    }, true);
+    ensureGhost(win);
+  } catch (e) {
+    console.warn("[WEB] installGuards error:", e);
   }
+}
 
-  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-  lastFocusedElement = null;
-  const interactions = log.interactions || [];
-  let startTime = interactions[0]?.timestamp || 0;
+// === DOM/Page Loader ===
+async function loadDOM(dom_snapshot_base64, dom_url, navLabel) {
+  return new Promise((resolve) => {
+    iframe.onload = () => {
+      installGuards(iframe.contentWindow);
+      resolve();
+    };
+    if (dom_snapshot_base64 && dom_snapshot_base64 !== lastLoadedDomBase64) {
+      console.log("[REPLAY] Loading base64 snapshot", navLabel||"");
+      lastLoadedDomBase64 = dom_snapshot_base64;
+      lastLoadedDomURL = null;
+      const raw = decodeURIComponent(escape(atob(dom_snapshot_base64)));
+      const sanitized = sanitizeDOM(raw);
+      const blobURL = URL.createObjectURL(new Blob([sanitized], { type: "text/html" }));
+      iframe.src = blobURL;
+    } else if (dom_url && dom_url !== lastLoadedDomURL) {
+      console.log("[REPLAY] Loading dom_url", dom_url, navLabel||"");
+      lastLoadedDomURL = dom_url;
+      lastLoadedDomBase64 = null;
+      iframe.src = dom_url;
+    } else if (!dom_snapshot_base64 && !dom_url) {
+      console.log("[REPLAY] Loading newtab.html (fallback)", navLabel||"");
+      lastLoadedDomBase64 = null;
+      lastLoadedDomURL = null;
+      iframe.src = "newtab.html";
+    } else {
+      // Already loaded, just resolve.
+      resolve();
+    }
+  });
+}
 
-  for (const action of interactions) {
-    const now = action.timestamp || 0;
-    const delay = Math.max(0, now - startTime);
-    startTime = now;
+// === Omnibox Helper ===
+function setOmnibox(val) {
+  try {
+    const w = iframe.contentWindow;
+    const d = iframe.contentDocument || w?.document;
+    const set = w?.setOmnibox;
+    if (typeof set === "function") { set(val); return; }
+    const inp = d?.getElementById("omnibox") || d?.querySelector("input");
+    if (inp) {
+      inp.value = val;
+      inp.dispatchEvent(new Event("input", { bubbles: true }));
+      inp.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+  } catch {}
+}
 
-    await wait(delay + 400);
+// === Main Replay Function ===
+async function replayInteractions(log, replayId) {
+  logDiv.innerText = `Replaying: ${log.title || log.__filename || ""}`;
+  const actions = log.interactions || [];
+  let t0 = actions[0]?.timestamp || 0;
+  let isFirstNewTab = false;
+
+  for (const act of actions) {
+    if (replayId !== currentReplayId) return; // bail if another replay started
+
+    const now = act.timestamp || 0;
+    const delay = Math.max(0, now - t0);
+    t0 = now;
+    await wait(delay + 100);
+
+    const type = (act.type || act.event || "").toLowerCase();
+    console.log(`[REPLAY] Event:`, act);
+
+    // === DOM/PAGE SNAPSHOT NAVIGATION ===
+    let pageNav = false;
+    if (type === "newtab_boot") {
+      await loadDOM(null, null, "newtab_boot");
+      isOnNewTab = true;
+      isFirstNewTab = true;
+      pageNav = true;
+    } else if (act.dom_snapshot_base64 || act.dom_url || act.next_dom_snapshot_base64 || act.next_dom_url) {
+      let toLoadBase64 = act.dom_snapshot_base64 || act.next_dom_snapshot_base64;
+      let toLoadUrl = act.dom_url || act.next_dom_url;
+      await loadDOM(toLoadBase64, toLoadUrl, type);
+      isOnNewTab = false;
+      pageNav = true;
+    }
+
+    // Always update reference to iframe context after possible nav
+    const w = iframe.contentWindow;
+    const d = iframe.contentDocument || w?.document;
+
+    // === NEWTAB TYPING ===
+    if (isOnNewTab && type === "key_press") {
+      const raw = act.key || "";
+      const k = raw.toLowerCase();
+      if (k.includes("backspace")) omniboxBuffer = omniboxBuffer.slice(0, -1);
+      else if (k === " " || k.includes("space")) omniboxBuffer += " ";
+      else if (k.includes("enter") || act.enter) {
+        // Loading handled above, reset buffer
+        isOnNewTab = false;
+      } else if (raw.length === 1) {
+        omniboxBuffer += raw;
+      }
+      setOmnibox(omniboxBuffer);
+      continue;
+    }
 
     try {
-      const t = action.type || action.event; // support both
-      switch (t) {
+      switch (type) {
         case "scroll":
-          iframe.contentWindow.scrollTo(action.scrollLeft, action.scrollTop);
+          w?.scrollTo(act.scrollLeft || 0, act.scrollTop || 0);
           break;
-        case "mouse_click":
-          if (action.selector) {
-            const el = iframeDoc.querySelector(action.selector);
+
+        case "mouse_click": {
+          let el = null;
+          if (act.selector) {
+            el = await queryWithRetry(d, act.selector);
+          }
+          if (!el) {
+            const textHint = (act.element?.text || act.title || "").trim();
+            if (textHint) {
+              const candidates = Array.from(d.querySelectorAll("a, button, [role='button'], [role='link']"));
+              el = candidates.find(c => c.textContent && c.textContent.trim().toLowerCase().includes(textHint.toLowerCase()));
+            }
+          }
+          if (!el && act.x != null && act.y != null) {
+            el = d.elementFromPoint(act.x, act.y);
             if (el) {
-              el.click();
-              el.focus();
-              const rect = el.getBoundingClientRect();
-              highlightBox(iframeDoc, rect.left, rect.top);
+              el.focus?.();
+              el.click?.();
+              highlightBox(d, act.x, act.y);
               break;
             }
           }
-          if (action.x != null && action.y != null) {
-            const element = iframeDoc.elementFromPoint(action.x, action.y);
-            if (element) {
-              element.focus();
-            }
-            highlightBox(iframeDoc, action.x, action.y);
-          }
-          break;
-        case "key_press":
-          if (action.key) simulateKey(iframe.contentWindow, action.key);
-          break;
-        case "blur":
-          if (action.element?.value !== undefined && action.element?.id) {
-            simulateInput(iframeDoc, `#${action.element.id}`, action.element.value);
-          }
-          break;
-        case "input":
-          if (action.selector && action.element?.value !== undefined) {
-            simulateInput(iframeDoc, action.selector, action.element.value);
-          }
-          break;
-        case "focus":
-          if (action.selector) {
-            const el = iframeDoc.querySelector(action.selector);
-            if (el) {
-              el.focus();
-              lastFocusedElement = el;
+          if (el) {
+            ghostToElement(w, el);
+            w.__ghostClick?.();
+            highlightBox(d, el.getBoundingClientRect().left + el.getBoundingClientRect().width / 2, el.getBoundingClientRect().top + el.getBoundingClientRect().height / 2);
+            if (el.tagName === "A" && el.getAttribute("href")) {
+              w.__allowNextAnchorNav = true;
+              try { el.click(); } catch {}
+              await wait(200);
+              const href = el.getAttribute("href");
+              if (href && w.location.href === window.location.href) {
+                // still same → force navigation
+              }
+            } else {
+              try { el.focus?.(); } catch {}
+              try { el.click?.(); } catch {}
             }
           }
           break;
-        default:
-          console.log("⚠️ Unhandled action type:", t);
-      }
+        }
 
-      console.log(`Replayed: ${action.type}`, action);
+        case "input":
+          if (act.selector && act.element?.value !== undefined) {
+            const elInput = await queryWithRetry(d, act.selector);
+            if (elInput) {
+              const proto = elInput.tagName === "TEXTAREA"
+                ? window.HTMLTextAreaElement.prototype
+                : window.HTMLInputElement.prototype;
+              const setter = Object.getOwnPropertyDescriptor(proto, "value")?.set;
+              if (setter) setter.call(elInput, act.element.value);
+              elInput.dispatchEvent(new Event("input", { bubbles: true }));
+              elInput.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+          }
+          break;
+
+        case "focus":
+        case "blur":
+        case "key_press":
+        case "page":
+        default:
+          // Unhandled or handled elsewhere
+          break;
+      }
     } catch (e) {
-      console.error(`Error replaying ${action.type}:`, e);
+      console.error(`Error replaying ${type}:`, e);
     }
   }
-
-  logDiv.innerText += ` ✔`;
+  logDiv.innerText += " ✔";
 }
 
-// async function playNextLog() {
-//   if (currentFileIndex >= possibleFiles.length) {
-//     logDiv.innerText = "✅ All replays finished.";
-//     return;
-//   }
-//   const filename = possibleFiles[currentFileIndex++];
-//   try {
-//     const log = await fetchLog(filename);
-//     await replayInteractions(log);
-//     await wait(1500); // pause between tabs
-//     playNextLog();
-//   } catch (err) {
-//     console.warn("Skipping missing or invalid log:", filename);
-//     playNextLog();
-//   }
-// }
-
-// playNextLog();
-
+// === Poller ===
 async function pollAndReplay() {
   while (true) {
     try {
-      const res = await fetch("http://localhost:8090/next");
+      const res = await fetch("/next");
+      if (!res.ok) { await wait(300); continue; }
       const data = await res.json();
-      if (data.status === "empty") { await wait(300); continue; }
-      console.log("📦 Received from server:", data);
-
-      if (data.status === "empty") {
-        await wait(500); // wait and retry
-        continue;
-      }
-
-      // Reconstruct base64 if snapshot is present
-      const interactions = [data];
-      const replayData = { interactions: [data] };
+      if (data.status === "empty" || data.status === "not_owner") { await wait(200); continue; }
+      currentReplayId++;
+      const replayData = { interactions: [data], title: data.window_title || data.title || "" };
       if (data.dom_snapshot_base64) replayData.dom_snapshot_base64 = data.dom_snapshot_base64;
-
-      await replayInteractions(replayData);
-      await wait(500); // pause between actions
+      if (data.dom_url)             replayData.dom_url             = data.dom_url;
+      await replayInteractions(replayData, currentReplayId);
+      await wait(160);
     } catch (e) {
       console.error("Polling error:", e);
-      await wait(1000);
+      await wait(700);
     }
   }
 }
 
-pollAndReplay(); // 🔁 start polling
-
+pollAndReplay();

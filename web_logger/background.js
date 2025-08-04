@@ -1,25 +1,35 @@
 // background.js
 
+function shouldInject(tab) {
+  const url = tab?.url || "";
+
+  // Only inject on real web pages (http/https)
+  if (!/^https?:\/\//i.test(url)) return false;
+
+  // Never inject into your local replayer UI
+  if (/^http:\/\/(localhost|127\.0\.0\.1):8090/i.test(url)) return false;
+
+  return true;
+}
+
+function inject(tabId) {
+  chrome.scripting.executeScript({
+    target: { tabId },
+    files: ["content.js"]
+  }).catch(err => console.warn("[ext] inject failed", tabId, err));
+}
+
 chrome.runtime.onInstalled.addListener(() => {
   console.log("Extension installed.");
-  chrome.tabs.query({}, function(tabs) {
-    for (let tab of tabs) {
-      if (tab.id && tab.url.startsWith("http")) {
-        chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          files: ["content.js"]
-        });
-      }
+  chrome.tabs.query({}, (tabs) => {
+    for (const tab of tabs) {
+      if (tab.id && shouldInject(tab)) inject(tab.id);
     }
   });
 });
 
-// re-inject content script on tab updates
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === "complete" && tab.url.startsWith("http")) {
-    chrome.scripting.executeScript({
-      target: { tabId },
-      files: ["content.js"]
-    });
+  if (changeInfo.status === "complete" && shouldInject(tab)) {
+    inject(tabId);
   }
 });

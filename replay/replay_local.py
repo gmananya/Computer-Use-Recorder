@@ -15,7 +15,7 @@ import ctypes
 
 # ============================== CONFIG =================================
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_TASK = "8"
+DEFAULT_TASK = "7"
 TASK_DIR = PROJECT_ROOT / "task_logs" / DEFAULT_TASK
 JS_REPLAY_ENDPOINT = "http://localhost:8090/replay"
 
@@ -560,6 +560,37 @@ def load_from_metadata(task_dir: Path) -> List[Dict]:
                 if snap_b64:
                     first_enter["next_dom_snapshot_base64"] = snap_b64
         events.extend(newtab_events)
+
+    # === SYNTHETIC PAGELAOD EVENTS FOR WEB TABS WITH NO INTERACTIONS ===
+    for item in web_pages:
+        page = item["page"]
+        inters = page.get("interactions", [])
+        title = page.get("title", "")
+        url = page.get("url", "")
+        dom_url = page.get("dom_url") or page.get("dom_file")
+        snap = page.get("dom_snapshot_base64")
+        ts = ts_to_seconds(page.get("created_at"))
+        if inters and len(inters) > 0:
+            continue  # skip tabs with interactions
+        if not title or not dom_url:
+            continue  # skip synthetic pageloads for blank/unknown tabs
+        prev_max_ts = max([e["_ts_s"] for e in events], default=0)
+        ts = max(prev_max_ts + 0.001, ts)
+        event = {
+            "application": "chrome.exe",
+            "window_title": title,
+            "url": url,
+            "is_web": True,
+            "type": "page_load",
+            "_ts_s": ts,
+        }
+        if dom_url:
+            event["dom_url"] = dom_url if str(dom_url).startswith("/") else f"/{dom_url}"
+        if snap:
+            event["dom_snapshot_base64"] = snap
+        events.append(event)
+        dbg(f"added synthetic page_load for tab {title} at {ts}")
+
 
     # C) extension web interactions
     for item in web_pages:

@@ -1,2 +1,2 @@
 cd replay
-python -m http.server 8000  
+python replay_server.py

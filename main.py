@@ -652,6 +652,7 @@ class TaskGUI:
             if not any(a.get("app") == app_name and a.get("order") == order for a in listed):
                 listed.append({"order": order, "app": app_name, "log_file": app_entry["log_file"]})
                 m["summary"]["apps"] = len(listed)
+            print(f"[META] Ensuring {app_name} (order={order}) in apps_by_order")
             return app_entry
 
         def _maybe_record_accessibility_change(now_ts):

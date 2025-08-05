@@ -50,8 +50,9 @@ def _save_meta(m):
         print("[WebLogServer] metadata write failed:", e)
 
 def _tab_key(d):
-    sid = d.get("tab_session_id")
-    return f"sid::{sid}" if sid else f"{d.get('url')}::{d.get('title')}"
+    sid = d.get("tab_session_id", "")
+    url = d.get("url", "")
+    return f"{sid}::{url}"
 
 def _tab_json_name(order, created_ms): return f"web_tab{order}_{created_ms}.json"
 def _tab_dom_name(order, created_ms):  return f"web_tab{order}_{created_ms}.html"
@@ -82,12 +83,14 @@ class WebLogHandler(BaseHTTPRequestHandler):
             url = data.get("url", "")
             title = data.get("title", "")
             inters = data.get("interactions", []) or []
+            real_inters = [ev for ev in inters if ev.get("type") != "page"]
             dom_b64 = data.get("dom_snapshot_base64")
             a11y_tree = data.get("accessibility_tree")
             ts_now = int(data.get("timestamp") or (datetime.utcnow().timestamp() * 1000))
 
             global order_counter
             key = _tab_key(data)
+            # Always set up or update tab info
             if key not in interactions_by_tab:
                 interactions_by_tab[key] = {
                     "url": url, "title": title, "order": order_counter,
@@ -95,26 +98,34 @@ class WebLogHandler(BaseHTTPRequestHandler):
                     "dom_file": None, "dom_url": None,
                     "a11y_file": None, "a11y_url": None
                 }
-                # write separate DOM & a11y files if provided (first event for tab)
-                web_dir = _web_folder()
-                order = order_counter
-                created = ts_now
-                if dom_b64:
-                    dom_name = _tab_dom_name(order, created)
-                    with open(os.path.join(web_dir, dom_name), "wb") as hf:
-                        hf.write(b64decode(dom_b64))
-                    interactions_by_tab[key]["dom_file"] = os.path.join("task_logs", CURRENT_TASK, "web_logs", dom_name).replace("\\", "/")
-                    interactions_by_tab[key]["dom_url"]  = "/" + interactions_by_tab[key]["dom_file"]
-                if a11y_tree:
-                    a11y_name = _tab_a11y_name(order, created)
-                    with open(os.path.join(web_dir, a11y_name), "w", encoding="utf-8") as jf:
-                        json.dump(a11y_tree, jf, indent=2)
-                    interactions_by_tab[key]["a11y_file"] = os.path.join("task_logs", CURRENT_TASK, "web_logs", a11y_name).replace("\\", "/")
-                    interactions_by_tab[key]["a11y_url"]  = "/" + interactions_by_tab[key]["a11y_file"]
                 order_counter += 1
 
             tab = interactions_by_tab[key]
-            tab["interactions"].extend(inters)
+            web_dir = _web_folder()
+            order = tab["order"]
+            created = tab["created_at"]
+
+            # Always (re)write HTML and a11y if provided
+            if dom_b64:
+                dom_name = _tab_dom_name(order, created)
+                with open(os.path.join(web_dir, dom_name), "wb") as hf:
+                    hf.write(b64decode(dom_b64))
+                tab["dom_file"] = os.path.join("task_logs", CURRENT_TASK, "web_logs", dom_name).replace("\\", "/")
+                tab["dom_url"] = "/" + tab["dom_file"]
+
+            if "accessibility_tree" in data:
+                tree = data["accessibility_tree"] or {"error": "empty"}
+                a11y_name = _tab_a11y_name(order, created)
+                with open(os.path.join(web_dir, a11y_name), "w", encoding="utf-8") as jf:
+                    json.dump(tree, jf, indent=2)
+                tab["a11y_file"] = os.path.join("task_logs", CURRENT_TASK, "web_logs", a11y_name).replace("\\", "/")
+                tab["a11y_url"] = "/" + tab["a11y_file"]
+
+
+
+            tab = interactions_by_tab[key]
+            # tab["interactions"].extend(inters)
+            tab["interactions"].extend(real_inters)
 
             # Persist per-tab JSON (links to files)
             web_dir = _web_folder()

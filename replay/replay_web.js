@@ -38,6 +38,26 @@ function highlightBox(targetDoc, x, y) {
   setTimeout(() => highlight.remove(), 1000);
 }
 
+function injectLinkInterceptor(iframe) {
+  try {
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.addEventListener('click', function(e) {
+      const a = e.target.closest('a[href]');
+      if (a) {
+        e.preventDefault();
+        // This message is received by your parent window (replay UI)
+        window.parent.postMessage(
+          { type: 'replay-link-click', href: a.getAttribute('href') },
+          '*'
+        );
+      }
+    }, true);
+  } catch (err) {
+    console.warn('[Replay] Failed to inject link interceptor:', err);
+  }
+}
+
+
 function sanitizeDOM(html) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
@@ -153,6 +173,7 @@ async function loadDOM(dom_snapshot_base64, dom_url, navLabel) {
   return new Promise((resolve) => {
     iframe.onload = () => {
       installGuards(iframe.contentWindow);
+      injectLinkInterceptor(iframe);
       resolve();
     };
     if (dom_snapshot_base64 && dom_snapshot_base64 !== lastLoadedDomBase64) {
@@ -227,7 +248,11 @@ async function replayInteractions(log, replayId) {
       await loadDOM(toLoadBase64, toLoadUrl, type);
       isOnNewTab = false;
       pageNav = true;
+    } else if (type === "page_load") {
+      await loadDOM(act.dom_snapshot_base64, act.dom_url, "page_load");
+      continue;
     }
+
 
     // Always update reference to iframe context after possible nav
     const w = iframe.contentWindow;

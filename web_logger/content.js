@@ -1,8 +1,10 @@
 // content.js
+console.log("[cu] Content script injected on", location.href);
+
 (() => {
   // ---- one-time install guard (prevents double listeners / var re-declare) ----
   if (window.__CU_INSTALLED__) {
-    console.debug("[cu] content script already installed");
+      console.log("[cu] Already installed, skipping", location.href);
     return;
   }
   window.__CU_INSTALLED__ = true;
@@ -15,6 +17,13 @@
     console.debug("[cu] skipping on this page:", here);
     return;
   }
+
+  try {
+  window.open = function() {
+    console.log("[cu] window.open blocked");
+    return null;
+  };
+} catch (e) {}
 
   // ---- config / state ----
   const LOG_URL = "http://localhost:8765/log_web"; // unchanged
@@ -31,6 +40,8 @@
 
   // ---- helpers ----
   function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  
 
   function getElementInfo(el) {
     if (!el) return null;
@@ -82,15 +93,43 @@
     return node;
   }
 
-  function getCompressedDOM() {
+  function getCompressedDOMWithCSS() {
     const clone = document.documentElement.cloneNode(true);
-    // Strip risky/irrelevant elements; keep CSS so the snapshot looks right
+    // Inline all external CSS
+    const links = clone.querySelectorAll('link[rel="stylesheet"]');
+    links.forEach(link => {
+      const href = link.getAttribute('href');
+      if (!href) return;
+      const origLink = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).find(l => l.getAttribute('href') === href);
+      if (origLink) {
+        try {
+          const cssText = Array.from(document.styleSheets)
+            .filter(sheet => {
+              try { return sheet.href && sheet.href.includes(href); }
+              catch { return false; }
+            })
+            .map(sheet => {
+              try {
+                return Array.from(sheet.cssRules).map(rule => rule.cssText).join('\n');
+              } catch { return ''; }
+            }).join('\n');
+          if (cssText && cssText.length > 10) {
+            const styleEl = document.createElement("style");
+            styleEl.textContent = cssText;
+            link.parentNode.insertBefore(styleEl, link);
+            link.remove();
+          }
+        } catch (e) { /* ignore failures */ }
+      }
+    });
     clone.querySelectorAll(
       "script, iframe, link[rel='preload'], link[rel='modulepreload'], meta[http-equiv]"
     ).forEach(el => el.remove());
     const html = clone.outerHTML;
     return btoa(unescape(encodeURIComponent(html)));
   }
+
+  
 
   function basePayload() {
     return {
@@ -101,23 +140,22 @@
     };
   }
 
-  function sendToLogger(interaction) {
-    const data = { ...basePayload(), interactions: [interaction] };
 
-    // Include DOM snapshot only once per URL
-    if (!accessibilityTreeSent) {
+function sendToLogger(interaction, forceDom = false) {
+    console.log("[cu] Sending to logger:", interaction);
+    const data = { ...basePayload(), interactions: [interaction] };
+    // Always include DOM/a11y on forced page events, or first on URL
+    if (forceDom || !accessibilityTreeSent) {
       try { data.accessibility_tree = getAccessibilityTree(document.body); } catch {}
-      try { data.dom_snapshot_base64 = getCompressedDOM(); } catch {}
+      // try { data.dom_snapshot_base64 = getCompressedDOM(); } catch {}
+      try { data.dom_snapshot_base64 = getCompressedDOMWithCSS(); } catch {}
       accessibilityTreeSent = true;
     }
-
-    // Be quiet if the logger isn't running
     try {
       fetch(LOG_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-        // Short timeout via AbortController to reduce console noise on refused
         signal: (() => {
           const ctl = new AbortController();
           setTimeout(() => ctl.abort(), 800);
@@ -127,12 +165,48 @@
     } catch {/* swallow */}
   }
 
-  // ---- URL change handling ----
+  let pageEventSent = false;
+
+  function sendPageEventOnce() {
+    if (pageEventSent) return;
+    sendPageEvent();
+    pageEventSent = true;
+  }
+
+
+  function sendPageEvent() {
+  const event = {
+      type: "page",
+      timestamp: Date.now(),
+    };
+    // forcibly include these fields on a page event
+    sendToLogger(event, true);
+    accessibilityTreeSent = true;
+}
+
+
+  document.addEventListener("DOMContentLoaded", () => {
+    accessibilityTreeSent = false;
+    sendPageEventOnce();
+  });
+
+  window.addEventListener("load", () => {
+    accessibilityTreeSent = false;
+    sendPageEventOnce();
+  });
+
+  window.addEventListener("pageshow", () => {
+    accessibilityTreeSent = false;
+    sendPageEventOnce();
+  });
+
+
   async function onUrlChanged() {
+    console.log("[cu] URL changed to:", location.href);
     if (location.href === lastURL) return;
     lastURL = location.href;
     accessibilityTreeSent = false;
-    sendToLogger({ type: "page", timestamp: Date.now() });
+    sendPageEventOnce();
   }
 
   window.addEventListener("popstate", onUrlChanged, true);
@@ -148,6 +222,7 @@
 
   // ---- event capture ----
   document.addEventListener("click", (event) => {
+    console.log("[cu] Click event captured", event.target, location.href);
     const el = event.target;
     sendToLogger({
       type: "mouse_click",
@@ -160,6 +235,7 @@
   }, true);
 
   window.addEventListener("keydown", (event) => {
+    console.log("[cu] Keydown event captured", event.key, location.href);
     if (["Shift", "Alt", "Control", "Meta"].includes(event.key)) return;
     const active = document.activeElement;
     sendToLogger({
@@ -172,6 +248,7 @@
   }, true);
 
   document.addEventListener("input", (event) => {
+    console.log("[cu] Input event captured", event.target, location.href);
     const el = event.target;
     if (!el || !("value" in el)) return;
     sendToLogger({
@@ -184,6 +261,7 @@
 
   document.addEventListener("focus", (event) => {
     const el = event.target;
+    console.log("[cu] Focus event captured", event.target, location.href);
     sendToLogger({
       type: "focus",
       timestamp: Date.now(),
@@ -193,6 +271,7 @@
   }, true);
 
   document.addEventListener("blur", (event) => {
+    console.log("[cu] Blur event captured", event.target, location.href);
     const el = event.target;
     sendToLogger({
       type: "blur",
@@ -203,6 +282,7 @@
   }, true);
 
   window.addEventListener("scroll", () => {
+    console.log("[cu] Scroll event captured", location.href);
     const payload = {
       type: "scroll",
       timestamp: Date.now(),
@@ -219,6 +299,10 @@
     }, 150);
   }, { passive: true });
 
-  // initial page marker
-  sendToLogger({ type: "page", timestamp: Date.now() });
+  window.addEventListener("beforeunload", () => {
+  if (!accessibilityTreeSent) {
+    sendPageEventOnce()
+  }
+});
+
 })();

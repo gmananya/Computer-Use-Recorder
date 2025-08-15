@@ -21,7 +21,10 @@ import win32gui
 import win32process
 
 from pynput import mouse, keyboard
-from obswebsocket import obsws, requests
+
+import obsws_python as obs
+import glob, logging
+from obsws_python.error import OBSSDKRequestError
 
 import web_logger_server as web_logger_server  # local http server that receives web logs
 
@@ -74,6 +77,136 @@ def _get_window_state(hwnd):
 
 def _sanitize_filename(s):
     return re.sub(r"[^A-Za-z0-9._-]+", "_", s or "")
+
+
+
+# obs controller
+
+
+class ObsController:
+    def __init__(self, host="127.0.0.1", port=4455, password="OqOC5wKTGnahpL8L"):
+        self.host, self.port, self.password = host, port, password
+        self.req = None
+        self._record_dir = None
+        self._existing_before = set()
+        self._started_ts = None
+
+    def connect(self):
+        # v5 request client (no event client needed)
+        self.req = obs.ReqClient(host=self.host, port=self.port, password=self.password, timeout=5)
+
+    def _safe_get_record_directory(self):
+        # v5 typed call (if present), else raw
+        try:
+            return self.req.get_record_directory().record_directory
+        except Exception:
+            try:
+                resp = self.req.send("GetRecordDirectory", {})
+                return getattr(resp, "recordDirectory", None) or resp.get("recordDirectory")
+            except Exception:
+                return None
+
+    def set_record_dir(self, folder):
+        self._record_dir = os.path.abspath(folder)
+        os.makedirs(self._record_dir, exist_ok=True)
+        try:
+            self.req.set_record_directory(self._record_dir)  # newer obsws-python
+        except AttributeError:
+            self.req.send("SetRecordDirectory", {"recordDirectory": self._record_dir})  # raw fallback
+        print(f"obs record folder set: {self._record_dir}")
+        return self._record_dir
+
+    def _snapshot_existing(self, rec_dir):
+        try:
+            files = []
+            for ext in ("mkv", "mp4", "mov", "flv"):
+                files += glob.glob(os.path.join(rec_dir, f"*.{ext}"))
+            self._existing_before = set(map(os.path.abspath, files))
+        except Exception:
+            self._existing_before = set()
+
+    def start(self, out_dir):
+        if self.req is None:
+            self.connect()
+
+        rec_dir = self.set_record_dir(out_dir) or out_dir
+        self._snapshot_existing(rec_dir)
+        self._started_ts = time.time()
+
+        # Start recording (v5)
+        self.req.start_record()
+
+        # Poll until active (like your v4 loop)
+        for _ in range(50):  # ~5s
+            try:
+                st = self.req.get_record_status()
+                if getattr(st, "output_active", False):
+                    break
+            except Exception:
+                pass
+            time.sleep(0.1)
+
+        # Confirm recording really started
+        st = self.req.get_record_status()
+        if not getattr(st, "output_active", False):
+            raise RuntimeError("OBS did not start recording (check Output settings/path).")
+
+        print("obs recording started (v5).")
+
+    def _pick_new_file(self):
+        # Prefer new files since start; otherwise newest in dir
+        rec_dir = self._record_dir or self._safe_get_record_directory()
+        if not rec_dir:
+            return None
+        candidates = []
+        for ext in ("mkv", "mp4", "mov", "flv"):
+            candidates += glob.glob(os.path.join(rec_dir, f"*.{ext}"))
+        if not candidates:
+            return None
+
+        abs_set = set(map(os.path.abspath, candidates))
+        new_files = list(abs_set - self._existing_before)
+        if new_files:
+            return max(new_files, key=os.path.getmtime)
+        # Fallback: newest file that’s at/after start
+        newest = max(candidates, key=os.path.getmtime)
+        if self._started_ts and os.path.getmtime(newest) + 1 < self._started_ts:
+            return None
+        return newest
+
+    def stop(self):
+        # Mirror v4: query status, stop if active, then poll until inactive
+        try:
+            st = self.req.get_record_status()
+            active = getattr(st, "output_active", False)
+        except Exception:
+            active = True  # if unsure, attempt to stop
+
+        if active:
+            try:
+                self.req.stop_record()
+            except OBSSDKRequestError as e:
+                if getattr(e, "code", None) == 501:
+                    print("stop_record: 501 (already stopped or never started), continuing…")
+                else:
+                    raise
+
+            # Poll until not recording (like your old GetRecordingStatus loop)
+            for _ in range(40):  # ~4s
+                try:
+                    st2 = self.req.get_record_status()
+                    if not getattr(st2, "output_active", False):
+                        break
+                except Exception:
+                    pass
+                time.sleep(0.1)
+        else:
+            print("stop_record: not recording; skipping StopRecord and trying to locate file…")
+
+        print("obs recording stopped (v5).")
+
+        # v5 doesn’t give filename via GetRecordStatus; pick it from disk (reliable)
+        return self._pick_new_file()
 
 
 # ---------- high contrast via spi (safe fallback if it fails) ----------
@@ -374,90 +507,167 @@ class TaskGUI:
                 continue
 
     # ----- obs -----
-
     def _start_obs(self, out_dir):
         try:
-            self.obs_client = obsws("localhost", 4444, "")
-            self.obs_client.connect()
-            time.sleep(0.5)
-            try:
-                self.obs_client.call(requests.SetRecordingFolder(out_dir))
-                print(f"obs folder set: {out_dir}")
-            except Exception:
-                pass
-            self.obs_client.call(requests.StartRecording())
-            print("obs recording started.")
+            self._obs = ObsController(host="localhost", port=4455, password="OqOC5wKTGnahpL8L")
+            self._obs.start(out_dir)
+            print(f"OBS: recording to {os.path.abspath(out_dir)}")
         except Exception as e:
-            print(f"failed to start obs: {e}")
+            print(f"failed to start obs (v5): {e}")
 
     def _stop_obs(self):
         try:
-            if not self.obs_client:
+            if not hasattr(self, "_obs"): 
                 return None
-            pre = None
-            try:
-                status = self.obs_client.call(requests.GetRecordingStatus())
-                if hasattr(status, "getRecordingFilename"):
-                    pre = status.getRecordingFilename()
-            except Exception:
-                pass
-            try:
-                self.obs_client.call(requests.StopRecording())
-            except Exception as e:
-                print(f"stop recording failed: {e}")
-            for _ in range(40):
-                try:
-                    st = self.obs_client.call(requests.GetRecordingStatus())
-                    if hasattr(st, "getIsRecording") and not st.getIsRecording():
-                        break
-                except Exception:
-                    pass
-                time.sleep(0.25)
-            try:
-                self.obs_client.disconnect()
-            except Exception:
-                pass
-            print("obs recording stopped.")
-            return pre
+            rec_path = self._obs.stop()
+            return rec_path  # may be None if nothing was recorded
         except Exception as e:
-            print(f"failed to stop obs: {e}")
+            print(f"stop_record failed: {e}")
             return None
+
+    # ----- ffmpeg helpers -----
+    def _resolve_ff_binaries(self):
+        """Return (ffmpeg_bin, ffprobe_bin) or (None, None) if not found."""
+        candidates_ffmpeg = [
+            os.environ.get("FFMPEG_BINARY"),
+            os.environ.get("FFMPEG_PATH"),
+            shutil.which("ffmpeg"),
+            r"C:\Program Files\ffmpeg\ffmpeg.exe"
+        ]
+        candidates_ffprobe = [
+            os.environ.get("FFPROBE_BINARY"),
+            shutil.which("ffprobe"),
+            r"C:\Program Files\ffmpeg\ffprobe.exe"
+        ]
+
+        ffmpeg_bin = next((p for p in candidates_ffmpeg if p and os.path.exists(p)), None)
+        ffprobe_bin = next((p for p in candidates_ffprobe if p and os.path.exists(p)), None)
+        return ffmpeg_bin, ffprobe_bin
+
+
+    def _split_mkv(self, rec_path=None):
+        if not rec_path:
+            rec_path = os.path.join(self.log_folder_path, "recording.mkv")
+
+        if not os.path.exists(rec_path):
+            print(f"recording file not found at {rec_path}")
+            return
+
+        ffmpeg_bin, ffprobe_bin = self._resolve_ff_binaries()
+        if not ffmpeg_bin or not ffprobe_bin:
+            print("FFmpeg/ffprobe not found. Add them to PATH or set FFMPEG_BINARY/FFPROBE_BINARY env vars.")
+            return
+
+        # Probe streams to pick the right maps and a safe container for the video copy
+        try:
+            meta = ffmpeg.probe(rec_path, cmd=ffprobe_bin)
+        except ffmpeg.Error as e:
+            print("ffprobe error:", e.stderr.decode() if e.stderr else str(e))
+            return
+
+        streams = meta.get("streams", [])
+        v_streams = [s for s in streams if s.get("codec_type") == "video"]
+        a_streams = [s for s in streams if s.get("codec_type") == "audio"]
+
+        # Choose a container for the video copy (mp4 for h264/hevc/av1, else mkv)
+        v_codec = (v_streams[0].get("codec_name") if v_streams else "").lower()
+        video_ext = "mp4" if v_codec in {"h264", "hevc", "av1"} else "mkv"
+
+        out_screen = os.path.join(self.log_folder_path, f"screen.{video_ext}")
+        out_sys = os.path.join(self.log_folder_path, "system_audio.wav")
+        out_mic = os.path.join(self.log_folder_path, "mic_audio.wav")
+
+        # ffmpeg's map "0:a:N" uses the N-th audio stream *among audio streams*
+        # Build a list in that order so N is correct.
+        audio_nths = [s for s in streams if s.get("codec_type") == "audio"]
+
+        # Heuristic: pick stream with more channels as "system", the other as "mic"
+        if len(audio_nths) >= 1:
+            nths_with_channels = [
+                (i, int(s.get("channels", 0)), s.get("tags", {}).get("title", ""))
+                for i, s in enumerate(audio_nths)
+            ]
+            if len(nths_with_channels) >= 2:
+                sys_nth = max(nths_with_channels, key=lambda t: t[1])[0]
+                # choose the first different from sys_nth
+                mic_nth = next(i for i, _, _ in nths_with_channels if i != sys_nth)
+            else:
+                sys_nth, mic_nth = 0, None
+        else:
+            sys_nth, mic_nth = None, None
+
+        try:
+            # Copy video stream only
+            ffmpeg.input(rec_path).output(
+                out_screen, map="0:v:0", c="copy"
+            ).run(overwrite_output=True, cmd=ffmpeg_bin)
+
+            # Extract "system" audio (or the only audio)
+            if sys_nth is not None:
+                ffmpeg.input(rec_path).output(
+                    out_sys, map=f"0:a:{sys_nth}", acodec="pcm_s16le"
+                ).run(overwrite_output=True, cmd=ffmpeg_bin)
+
+            # Extract "mic" audio if present
+            if mic_nth is not None:
+                ffmpeg.input(rec_path).output(
+                    out_mic, map=f"0:a:{mic_nth}", acodec="pcm_s16le"
+                ).run(overwrite_output=True, cmd=ffmpeg_bin)
+
+            print(
+                "successfully split recording:\n"
+                f"  video -> {out_screen}\n"
+                f"  system audio -> {out_sys if sys_nth is not None else 'N/A'}\n"
+                f"  mic audio -> {out_mic if mic_nth is not None else 'N/A'}"
+            )
+        except FileNotFoundError as e:
+            # happens when ffmpeg.exe isn’t reachable
+            print(f"FFmpeg not found: {e}. Ensure PATH is set or binaries are configured.")
+        except ffmpeg.Error as e:
+            print("ffmpeg error:", e.stderr.decode() if e.stderr else str(e))
 
     def _bring_obs_file(self, src_path):
         if not src_path:
             print("no recording file provided.")
             return None
-        dst = os.path.join(self.log_folder_path, os.path.basename(src_path))
-        for _ in range(20):
+
+        src_path = os.path.abspath(src_path)
+        dst_dir  = os.path.abspath(self.log_folder_path)
+
+        # If OBS already recorded into the task folder, nothing to do.
+        try:
+            if os.path.commonpath([src_path, dst_dir]) == dst_dir:
+                print("recording already in task folder.")
+                return src_path
+        except ValueError:
+            # different drives etc.; proceed to copy/move
+            pass
+
+        # Wait for OBS to release the file handle (event can arrive a hair early)
+        for _ in range(60):  # up to ~30s
             try:
                 with open(src_path, "rb"):
                     break
             except PermissionError:
                 time.sleep(0.5)
-        try:
-            shutil.copy2(src_path, dst)
-            print(f"copied obs recording to task folder: {dst}")
-            return dst
-        except Exception as e:
-            print(f"error moving obs recording: {e}")
-            return None
 
-    def _split_mkv(self, rec_path=None):
-        if not rec_path:
-            rec_path = os.path.join(self.log_folder_path, "recording.mkv")
-        out_screen = os.path.join(self.log_folder_path, "screen.mp4")
-        out_sys = os.path.join(self.log_folder_path, "system_audio.wav")
-        out_mic = os.path.join(self.log_folder_path, "mic_audio.wav")
-        if not os.path.exists(rec_path):
-            print(f"recording file not found at {rec_path}")
-            return
+        dst_path = os.path.join(dst_dir, os.path.basename(src_path))
+
+        # Prefer copy (keeps the original in case you want to archive elsewhere)
         try:
-            ffmpeg.input(rec_path).output(out_screen, map="0:v", c="copy").run(overwrite_output=True)
-            ffmpeg.input(rec_path).output(out_sys, map="0:a:0", acodec="pcm_s16le").run(overwrite_output=True)
-            ffmpeg.input(rec_path).output(out_mic, map="0:a:1", acodec="pcm_s16le").run(overwrite_output=True)
-            print("successfully split .mkv into separate streams.")
-        except ffmpeg.Error as e:
-            print("ffmpeg error:", e.stderr.decode() if e.stderr else str(e))
+            shutil.copy2(src_path, dst_path)
+            print(f"copied obs recording to task folder: {dst_path}")
+            return dst_path
+        except Exception as e:
+            print(f"copy failed: {e}; trying move")
+            try:
+                shutil.move(src_path, dst_path)
+                print(f"moved obs recording to task folder: {dst_path}")
+                return dst_path
+            except Exception as e2:
+                print(f"move failed: {e2}")
+                return None
+
 
     # ----- a11y tree -----
 
@@ -853,7 +1063,6 @@ class TaskGUI:
 
     def run(self):
         self.root.mainloop()
-
 
 if __name__ == "__main__":
     app = TaskGUI()

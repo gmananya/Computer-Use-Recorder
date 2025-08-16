@@ -10,6 +10,7 @@ import tkinter as tk
 import tkinter.font as tkFont
 from tkinter import messagebox, ttk
 
+import math
 import winreg
 import psutil
 import uiautomation as auto
@@ -21,6 +22,7 @@ import win32gui
 import win32process
 
 from pynput import mouse, keyboard
+from pynput.keyboard import Key, KeyCode
 
 import obsws_python as obs
 import glob, logging
@@ -349,7 +351,8 @@ class TaskGUI:
 
         # apps we never log
         self.accessibility_skiplist = {
-            "explorer.exe", "python.exe", "pythonw.exe", "obs64.exe",
+            # "explorer.exe", 
+            "python.exe", "pythonw.exe", "obs64.exe",
             "searchhost.exe", "startmenuexperiencehost.exe", "shellexperiencehost.exe"
         }
 
@@ -770,6 +773,7 @@ class TaskGUI:
 
         self._start_obs(folder_path)
 
+
         def get_current_info():
             hwnd = win32gui.GetForegroundWindow()
             if not hwnd:
@@ -856,7 +860,15 @@ class TaskGUI:
                 "log_file": f"{order}_{app_name}.json",
                 "a11y_tree_files": [],
                 "events": 0,
-                "by_type": {"mouse_click": 0, "key_press": 0, "scroll": 0}
+                "by_type": {
+                    "mouse_click": 0,
+                    "mouse_up": 0,
+                    "mouse_move": 0,
+                    "drag_drop": 0,
+                    "key_press": 0,
+                    "hotkey": 0,
+                    "scroll": 0
+                }
             })
             listed = m["session"].setdefault("apps_by_order", [])
             if not any(a.get("app") == app_name and a.get("order") == order for a in listed):
@@ -864,6 +876,7 @@ class TaskGUI:
                 m["summary"]["apps"] = len(listed)
             print(f"[META] Ensuring {app_name} (order={order}) in apps_by_order")
             return app_entry
+
 
         def _maybe_record_accessibility_change(now_ts):
             if now_ts - self._last_acc_check_ts < self._acc_check_interval:
@@ -1005,15 +1018,229 @@ class TaskGUI:
                 with open(path, "w", encoding="utf-8") as f:
                     json.dump(logs, f, indent=2)
 
+         # --- input tracking state/config ---
+        MOVE_THROTTLE_SEC = 0.50   # limit mouse_move logging to ~10 Hz
+        DRAG_DISTANCE_PX = 6       # minimum pixels to count as drag
+        pressed_keys = set()       # normalized names, e.g., {'Ctrl', 'Shift', 'a'}
+        pressed_mods = set()       # subset: {'Ctrl','Alt','Shift','Win','Insert','CapsLock'}
+        mouse_buttons_down = set() # e.g., {'Button.left'}
+        drag_start = None          # {'pos':(x,y), 'ts':..., 'button':..., 'context': ev_at_press}
+        dragging = False
+        last_move_ts = 0.0
+        last_move_pos = None
+
+        # --- key normalization / hotkey helpers ---
+        from pynput.keyboard import Key
+
+        MOD_SET = {"Ctrl", "Alt", "Shift", "Win", "Insert", "CapsLock"}
+        MOD_ORDER = {"Ctrl": 1, "Alt": 2, "Win": 3, "Shift": 4, "Insert": 5, "CapsLock": 6}
+
+        def _normalize_key_obj(k):
+            # chars
+            try:
+                ch = getattr(k, "char", None)
+                if ch:
+                    return ch.lower()
+            except Exception:
+                pass
+
+            # named keys
+            s = str(k)  # e.g., 'Key.ctrl_l' -> 'Key.ctrl_l'
+            if s.startswith("Key."):
+                name = s[4:]
+            else:
+                name = s
+
+            mapping = {
+                "ctrl": "Ctrl", "ctrl_l": "Ctrl", "ctrl_r": "Ctrl",
+                "alt": "Alt", "alt_l": "Alt", "alt_r": "Alt",
+                "shift": "Shift", "shift_l": "Shift", "shift_r": "Shift",
+                "cmd": "Win", "cmd_l": "Win", "cmd_r": "Win",
+                "caps_lock": "CapsLock", "insert": "Insert",
+                "tab": "Tab", "esc": "Esc", "space": "Space",
+                "enter": "Enter", "backspace": "Backspace",
+                "delete": "Delete", "home": "Home", "end": "End",
+                "page_up": "PageUp", "page_down": "PageDown",
+                "up": "Up", "down": "Down", "left": "Left", "right": "Right",
+            }
+            if name in mapping:
+                return mapping[name]
+
+            # F-keys: Key.f1 ... Key.f24
+            if name.startswith("f") and name[1:].isdigit():
+                return name.upper()
+
+            # fallback: title-case best effort
+            return name.title()
+
+        def _is_modifier(norm):
+            return norm in MOD_SET
+
+        def _build_combo(mods, main_key):
+            ordered_mods = sorted(mods, key=lambda m: MOD_ORDER.get(m, 99))
+            tail = main_key.upper() if len(main_key) == 1 else main_key
+            return "+".join(ordered_mods + [tail])
+
+        COMMON_INTENTS = {
+            ("Ctrl", "C"): "copy",
+            ("Ctrl", "V"): "paste",
+            ("Ctrl", "X"): "cut",
+            ("Ctrl", "Z"): "undo",
+            ("Ctrl", "Y"): "redo",
+            ("Ctrl", "S"): "save",
+            ("Ctrl", "O"): "open",
+            ("Ctrl", "N"): "new",
+            ("Ctrl", "P"): "print",
+            ("Ctrl", "L"): "focus_location_bar",
+            ("Ctrl", "T"): "new_tab",
+            ("Ctrl", "W"): "close_tab",
+            ("Alt", "Tab"): "task_switch",
+            ("Alt", "F4"): "close_window",
+            ("Win", "D"): "show_desktop",
+            ("Win", "Left"): "snap_left",
+            ("Win", "Right"): "snap_right",
+        }
+
+        def _classify_hotkey(mods, main_key):
+            mods_set = set(mods)
+            reader = None
+            if "Insert" in mods_set:
+                reader = "NVDA/JAWS likely"
+            if "CapsLock" in mods_set:
+                reader = "Narrator likely" if reader is None else f"{reader} or Narrator"
+
+            intent = None
+            key_for_map = main_key.upper() if len(main_key) == 1 else main_key
+            for mod in ("Ctrl", "Alt", "Win"):
+                if mod in mods_set:
+                    intent = COMMON_INTENTS.get((mod, key_for_map))
+                    if intent:
+                        break
+
+            return {"screen_reader_combo": bool(reader), "reader_hint": reader, "intent": intent}
+
+        # --- enhanced event handlers ---
         def on_click(x, y, button, pressed):
-            if not pressed:
+            nonlocal drag_start, dragging
+            btn_str = str(button)
+            if pressed:
+                # keep original behavior: log mouse_click on press
+                ev = get_current_info()
+                if not ev:
+                    return
+                ev["event"] = "mouse_click"
+                ev["button"] = btn_str
+                log_event(ev)
+
+                # prepare for drag detection (do NOT separately log mouse_down)
+                mouse_buttons_down.add(btn_str)
+                drag_start = {
+                    "pos": (x, y),
+                    "ts": time.time(),
+                    "button": btn_str,
+                    "context": ev,  # snapshot "what" + "where from"
+                }
+
+                dragging = False
+            else:
+                # mouse up (always log)
+                try:
+                    mouse_buttons_down.remove(btn_str)
+                except KeyError:
+                    pass
+
+                ev_up = get_current_info()
+                if not ev_up:
+                    return
+                ev_up["button"] = btn_str
+
+                if dragging and drag_start:
+                    # finalize drag & drop
+                    dd = {
+                        "event": "drag_drop",
+                        "timestamp": ev_up["timestamp"],
+                        "button": btn_str,
+                        # write top-level fields for correct per-app routing
+                        "application": ev_up["application"],
+                        "window_title": ev_up["window_title"],
+                        "cursor_position": ev_up["cursor_position"],
+                        "focused_element": ev_up.get("focused_element"),
+                        "element_under_cursor": ev_up.get("element_under_cursor"),
+                        "hwnd": ev_up.get("hwnd"),
+                        "pid": ev_up.get("pid"),
+                        "window_bounds": ev_up.get("window_bounds"),
+                        "window_state": ev_up.get("window_state"),
+                        "from": {
+                            "application": drag_start["context"]["application"],
+                            "window_title": drag_start["context"]["window_title"],
+                            "cursor_position": drag_start["context"]["cursor_position"],
+                            "element_under_cursor": drag_start["context"].get("element_under_cursor"),
+                            "focused_element": drag_start["context"].get("focused_element"),
+                        },
+                        "to": {
+                            "application": ev_up["application"],
+                            "window_title": ev_up["window_title"],
+                            "cursor_position": ev_up["cursor_position"],
+                            "element_under_cursor": ev_up.get("element_under_cursor"),
+                            "focused_element": ev_up.get("focused_element"),
+                        },
+                        "drag_distance": int(math.hypot(
+                            ev_up["cursor_position"][0] - drag_start["context"]["cursor_position"][0],
+                            ev_up["cursor_position"][1] - drag_start["context"]["cursor_position"][1]
+                        )),
+                        "duration_ms": int((ev_up["timestamp"] - drag_start["ts"]) * 1000),
+                    }
+
+                    log_event(dd)
+                else:
+                    ev_up["event"] = "mouse_up"
+                    log_event(ev_up)
+
+                dragging = False
+                drag_start = None
+
+        def on_move(x, y):
+            nonlocal last_move_ts, last_move_pos, dragging
+            now = time.time()
+            if now - last_move_ts < MOVE_THROTTLE_SEC:
                 return
+            last_move_ts = now
+
+            # compute delta
+            if last_move_pos is None:
+                dx = dy = 0
+            else:
+                dx = x - last_move_pos[0]
+                dy = y - last_move_pos[1]
+            last_move_pos = (x, y)
+
+            # detect drag start if a button is down
+            if mouse_buttons_down and drag_start and not dragging:
+                dist = math.hypot(x - drag_start["pos"][0], y - drag_start["pos"][1])
+                if dist >= DRAG_DISTANCE_PX:
+                    dragging = True  # we’ll emit the final drag_drop on mouse up
+
             ev = get_current_info()
             if not ev:
                 return
-            ev["event"] = "mouse_click"
-            ev["button"] = str(button)
+            ev["event"] = "mouse_move"
+            ev["delta"] = [dx, dy]
+            # Ensure we report actual cursor pos used for this callback
+            ev["cursor_position"] = [x, y]
             log_event(ev)
+
+
+
+
+        # def on_click(x, y, button, pressed):
+        #     if not pressed:
+        #         return
+        #     ev = get_current_info()
+        #     if not ev:
+        #         return
+        #     ev["event"] = "mouse_click"
+        #     ev["button"] = str(button)
+        #     log_event(ev)
 
         def on_scroll(x, y, dx, dy):
             ev = get_current_info()
@@ -1023,20 +1250,65 @@ class TaskGUI:
             ev["delta"] = [dx, dy]
             log_event(ev)
 
+        # def on_press(key):
+        #     ev = get_current_info()
+        #     if not ev:
+        #         return
+        #     try:
+        #         key_str = key.char
+        #     except Exception:
+        #         key_str = str(key)
+        #     ev["event"] = "key_press"
+        #     ev["key"] = key_str
+        #     log_event(ev)
+
+        # ml = mouse.Listener(on_click=on_click, on_scroll=on_scroll)
+        # kl = keyboard.Listener(on_press=on_press)
+        # ml.start()
+        # kl.start()
+        # self.interaction_loggers = [ml, kl]
+
+        
+
         def on_press(key):
+            name = _normalize_key_obj(key)
+            pressed_keys.add(name)
+            if _is_modifier(name):
+                pressed_mods.add(name)
+
             ev = get_current_info()
             if not ev:
                 return
-            try:
-                key_str = key.char
-            except Exception:
-                key_str = str(key)
             ev["event"] = "key_press"
-            ev["key"] = key_str
+            ev["key"] = name
+            # add current modifiers to help interpret user intent later
+            if pressed_mods:
+                ev["modifiers"] = sorted(list(pressed_mods))
             log_event(ev)
 
-        ml = mouse.Listener(on_click=on_click, on_scroll=on_scroll)
-        kl = keyboard.Listener(on_press=on_press)
+            # hotkey detection: log only when a non-modifier key is pressed with any modifier,
+            # OR when Insert/CapsLock (screen reader keys) combine with something else
+            if not _is_modifier(name):
+                mods_now = sorted(list(pressed_mods), key=lambda m: MOD_ORDER.get(m, 99))
+                if mods_now:
+                    combo = _build_combo(mods_now, name)
+                    hk = get_current_info()
+                    if not hk:
+                        return
+                    hk["event"] = "hotkey"
+                    hk["combo"] = combo
+                    hk["mods"] = mods_now
+                    hk["key"] = name
+                    hk["classification"] = _classify_hotkey(mods_now, name)
+                    log_event(hk)
+
+        def on_release(key):
+            name = _normalize_key_obj(key)
+            pressed_keys.discard(name)
+            pressed_mods.discard(name)
+
+        ml = mouse.Listener(on_click=on_click, on_scroll=on_scroll, on_move=on_move)
+        kl = keyboard.Listener(on_press=on_press, on_release=on_release)
         ml.start()
         kl.start()
         self.interaction_loggers = [ml, kl]

@@ -8,6 +8,7 @@ import platform
 import threading
 import tkinter as tk
 import tkinter.font as tkFont
+from tkinter import simpledialog
 from tkinter import messagebox, ttk
 
 import math
@@ -334,7 +335,7 @@ class TaskGUI:
 
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("computer use logger")
+        self.root.title("Computer Use Logger")
 
         self.tasks = self._load_tasks()
         self.task_metadata = {}
@@ -350,11 +351,29 @@ class TaskGUI:
         self.surface_last_event_ts = {}
 
         # apps we never log
+        # apps we never log
         self.accessibility_skiplist = {
-            # "explorer.exe", 
             "python.exe", "pythonw.exe", "obs64.exe",
-            "searchhost.exe", "startmenuexperiencehost.exe", "shellexperiencehost.exe"
+            "searchhost.exe", "startmenuexperiencehost.exe", "shellexperiencehost.exe",
+            # Host-side CRD executables we also never want to log if they ever present a UI
+            "remoting_host.exe", "chrome_remote_desktop_host.exe",
+            "chromoting_host.exe", "crdhost.exe", "me2me_host.exe",
         }
+
+        # --- NEW: identifiers for Chrome Remote Desktop viewer windows ---
+        self.crd_proc_names = {
+            # browsers and their PWA proxies that can host the CRD window
+            "chrome.exe", "msedge.exe", "chrome_proxy.exe", "msedge_proxy.exe",
+            # (include host names too for belt-and-suspenders)
+            "remoting_host.exe", "chrome_remote_desktop_host.exe",
+            "chromoting_host.exe", "crdhost.exe", "me2me_host.exe",
+        }
+        self.crd_title_markers = [
+            "chrome remote desktop",                 # localized English
+            "remotedesktop.google.com",              # url marker
+            "remote desktop (chrome app)",           # some older builds
+        ]
+
 
         # locks for safe writes and one-time a11y capture
         self.file_lock = threading.Lock()
@@ -370,35 +389,84 @@ class TaskGUI:
 
     # ----- gui + tasks -----
 
+    def _rand_dropdown(self, event=None):
+        col = self.rand_id_var.get()
+        if not col:
+            return
+
+        def _to_int(v):
+            try:
+                return int(v)
+            except Exception:
+                return None
+
+        # keep only tasks that have a numeric rank in this column, sort ascending
+        ranked = [(t, _to_int(t.get(col))) for t in self.tasks]
+        ordered = [t for t, r in sorted([p for p in ranked if p[1] is not None], key=lambda x: x[1])]
+
+
+        self.current_tasks = ordered
+
+        # dropdown label: T{Task ID} - {Instruction}
+        display = []
+        for t in self.current_tasks:
+            tid = t.get("Task ID") or t.get("TaskID") or t.get("ID")
+            instr = t.get("Instruction") or t.get("Task") or ""
+            display.append(f"T{tid} - {instr}")
+        self.task_number_dropdown["values"] = display
+        self.task_number_var.set("")
+
+
     def _load_tasks(self):
         with open(TASKS_PATH, "r", encoding="utf-8") as f:
             return json.load(f)
 
+    
     def _build_initial_gui(self):
-        self.root.geometry("1000x700")
+        self.root.geometry("900x500")
         self.root.resizable(True, True)
 
-        self.task_set_var = tk.StringVar()
+        # detect available Rand ID columns from the JSON header
+        sample = self.tasks[0] if self.tasks else {}
+        self.rand_columns = [k for k in sample.keys() if re.match(r"(?i)rand\s*id\s*\d+", k)]
+        # also allow a single "Rand ID" (no number) if present
+        if "Rand ID" in sample and "Rand ID" not in self.rand_columns:
+            self.rand_columns.append("Rand ID")
+
+        # sort by the numeric suffix when possible
+        def _rk(k):
+            m = re.search(r"(\d+)", k)
+            return int(m.group(1)) if m else 0
+        self.rand_columns.sort(key=_rk)
+
+        self.rand_id_var = tk.StringVar()
         self.task_number_var = tk.StringVar()
 
         self.form_frame = tk.Frame(self.root, padx=20, pady=20)
         self.form_frame.pack(fill="both", expand=True)
 
-        tk.Label(self.form_frame, text="task set #:", font=self.base_font).grid(row=0, column=0, sticky="e", padx=5, pady=5)
-        self.task_set_dropdown = ttk.Combobox(self.form_frame, textvariable=self.task_set_var, state="readonly", width=47)
-        self.task_set_dropdown.configure(font=self.base_font)
-        self.task_set_dropdown["values"] = [f"Set {i}" for i in range(1, 8)]
-        self.task_set_dropdown.grid(row=0, column=1, padx=5, pady=5)
-        self.task_set_dropdown.bind("<<ComboboxSelected>>", self._task_dropdown)
+        tk.Label(self.form_frame, text="User ID:", font=self.base_font)\
+            .grid(row=0, column=0, sticky="e", padx=5, pady=5)
+        self.rand_dropdown = ttk.Combobox(
+            self.form_frame, textvariable=self.rand_id_var, state="readonly", width=47
+        )
+        self.rand_dropdown.configure(font=self.base_font)
+        self.rand_dropdown["values"] = self.rand_columns
+        self.rand_dropdown.grid(row=0, column=1, padx=5, pady=5)
+        self.rand_dropdown.bind("<<ComboboxSelected>>", self._rand_dropdown)
 
-        tk.Label(self.form_frame, text="task #:", font=self.base_font).grid(row=1, column=0, sticky="e", padx=5, pady=5)
-        self.task_number_dropdown = ttk.Combobox(self.form_frame, textvariable=self.task_number_var, state="readonly", width=47)
+        tk.Label(self.form_frame, text="Task:", font=self.base_font)\
+            .grid(row=1, column=0, sticky="e", padx=5, pady=5)
+        self.task_number_dropdown = ttk.Combobox(
+            self.form_frame, textvariable=self.task_number_var, state="readonly", width=47
+        )
         self.task_number_dropdown.configure(font=self.base_font)
         self.task_number_dropdown.grid(row=1, column=1, padx=5, pady=5)
 
-        self.continue_button = tk.Button(self.form_frame, text="next", command=self._task_details, width=20)
+        self.continue_button = tk.Button(self.form_frame, text="Next", command=self._task_details, width=20)
         self.continue_button.configure(font=self.base_font)
         self.continue_button.grid(row=2, column=0, columnspan=2, pady=20)
+
 
     def _task_dropdown(self, event=None):
         s = self.task_set_var.get()
@@ -418,36 +486,75 @@ class TaskGUI:
         self.task_number_dropdown["values"] = display_values
         self.task_number_var.set("")
 
+
     def _task_details(self):
-        if not self.task_set_var.get() or not self.task_number_var.get():
-            messagebox.showwarning("missing", "please select both a task set and task number.")
+        idx = self.task_number_dropdown.current()
+        if idx is None or idx < 0:
+            # fallback: resolve by the displayed text (just in case)
+            label = self.task_number_var.get()
+            values = list(self.task_number_dropdown["values"])
+            try:
+                idx = values.index(label)
+            except ValueError:
+                messagebox.showwarning("missing", "Please select a task.")
+                return
+
+        if not self.rand_id_var.get():
+            messagebox.showwarning("missing", "Please choose User ID.")
             return
 
-        selected_label = self.task_number_var.get()
+        task = self.current_tasks[idx]
+
+        # core ids / labels
+        tid = task.get("Task ID") or task.get("TaskID") or task.get("ID")
         try:
-            task_index = int(selected_label.split()[1]) - 1
+            tid = int(tid)
         except Exception:
-            messagebox.showerror("error", "failed to parse task number.")
-            return
+            pass
 
-        task = self.current_tasks[task_index]
-        context = task.get("Context", "no context")
-        instruction = task.get("Task", "no task")
+        rand_col = self.rand_id_var.get()
+        rand_order_raw = task.get(rand_col)
+        try:
+            rand_order = int(rand_order_raw)
+        except Exception:
+            rand_order = rand_order_raw  # keep as-is if not numeric
 
+        # human-facing fields from the sheet
+        task_title = task.get("Task") or task.get("Title") or ""
+        instruction = task.get("Instruction") or task.get("Task Instruction") or ""
+        context = task.get("Context", "")
+
+        # OPTIONAL: other useful columns if present
+        task_group = task.get("Task Group", "")
+        interactions = task.get("Interactions", "")
+        applications = task.get("Applications", "")
+
+        # what will get written into meta["task"]
         self.task_metadata = {
-            "task_set": self.task_set_var.get(),
-            "task_number": self.task_number_var.get(),
+            "task_id": tid,
+            "task_title": task_title,
+            "instruction": instruction,
+            "task": instruction,     
             "context": context,
-            "task": instruction
+            "rand_id_column": rand_col,
+            "rand_order": rand_order,
+            "task_group": task_group,
+            "interactions": interactions,
+            "applications": applications,
         }
 
+        # keep the whole source row too (handy for audits)
+        self._selected_task_row = task
+
+
+        # rebuild panel (same as before)
         for w in self.form_frame.winfo_children():
             w.destroy()
 
-        tk.Label(self.form_frame, text="task context", font=self.bold_font).pack(anchor="w", pady=(0, 2))
+        tk.Label(self.form_frame, text="Task Context", font=self.bold_font).pack(anchor="w", pady=(0, 2))
         tk.Label(self.form_frame, text=context, wraplength=800, justify="left", font=self.base_font).pack(anchor="w", pady=(0, 10))
 
-        tk.Label(self.form_frame, text="task instruction", font=self.bold_font).pack(anchor="w", pady=(0, 2))
+        tk.Label(self.form_frame, text="Task Instruction", font=self.bold_font).pack(anchor="w", pady=(0, 2))
         tk.Label(self.form_frame, text=instruction, wraplength=800, justify="left", font=self.base_font).pack(anchor="w", pady=(0, 10))
 
         self.task_familiarity = tk.StringVar()
@@ -456,26 +563,49 @@ class TaskGUI:
         dropdown_frame = tk.Frame(self.form_frame)
         dropdown_frame.pack(pady=10)
 
-        tk.Label(dropdown_frame, text="familiarity", font=self.base_font).grid(row=0, column=0, sticky="w", padx=5, pady=2)
+        tk.Label(dropdown_frame, text="How familiar are you with this task?", font=self.base_font)\
+            .grid(row=0, column=0, sticky="w", padx=5, pady=2)
         ttk.Combobox(dropdown_frame, textvariable=self.task_familiarity,
-                     values=["Low", "Medium", "High"], state="readonly", width=20).grid(row=0, column=1, padx=5, pady=4, sticky="w")
+                    values=["Low", "Medium", "High"], state="readonly", width=20)\
+            .grid(row=0, column=1, padx=5, pady=4, sticky="w")
 
-        tk.Label(dropdown_frame, text="difficulty", font=self.base_font).grid(row=1, column=0, sticky="w", padx=5, pady=2)
+        tk.Label(dropdown_frame, text="What is the expected difficulty of this task?", font=self.base_font)\
+            .grid(row=1, column=0, sticky="w", padx=5, pady=2)
         ttk.Combobox(dropdown_frame, textvariable=self.task_difficulty,
-                     values=["Easy", "Medium", "Hard"], state="readonly", width=20).grid(row=1, column=1, padx=5, pady=4, sticky="w")
+                    values=["Easy", "Medium", "Hard"], state="readonly", width=20)\
+            .grid(row=1, column=1, padx=5, pady=4, sticky="w")
 
         buttons = tk.Frame(self.form_frame)
         buttons.pack(pady=10)
 
-        self.start_button = tk.Button(buttons, text="start logging", command=self.start_task, width=20)
+        self.start_button = tk.Button(buttons, text="Start task", command=self.start_task, width=20)
         self.start_button.configure(font=self.base_font)
         self.start_button.pack(side="left", padx=10)
 
-        self.quit_button = tk.Button(buttons, text="quit", command=self.root.quit, width=20)
+        self.quit_button = tk.Button(buttons, text="Quit", command=self.root.quit, width=20)
         self.quit_button.configure(font=self.base_font)
         self.quit_button.pack(side="left", padx=10)
 
+
     # ----- process control -----
+
+    def _pid_has_title_markers(self, pid, markers):
+        titles = []
+        def cb(hwnd, acc):
+            try:
+                _, p = win32process.GetWindowThreadProcessId(hwnd)
+                if p == pid and win32gui.IsWindowVisible(hwnd):
+                    t = (win32gui.GetWindowText(hwnd) or "").lower()
+                    if t:
+                        acc.append(t)
+            except Exception:
+                pass
+        try:
+            win32gui.EnumWindows(cb, titles)
+        except Exception:
+            return False
+        joined = " | ".join(titles)
+        return any(m in joined for m in (m.lower() for m in markers))
 
     def _has_visible_window(self, pid):
         flags = []
@@ -485,29 +615,98 @@ class TaskGUI:
                 acc.append(True)
         win32gui.EnumWindows(cb, flags)
         return bool(flags)
+    
+    def _pid_has_crd_window(self, pid: int) -> bool:
+        """True only if PID owns a visible window that *looks like* Chrome Remote Desktop."""
+        titles = []
+        def _enum(hwnd, acc):
+            try:
+                _, p = win32process.GetWindowThreadProcessId(hwnd)
+                if p == pid and win32gui.IsWindowVisible(hwnd):
+                    acc.append((win32gui.GetWindowText(hwnd) or "").lower())
+            except Exception:
+                pass
+
+        try:
+            win32gui.EnumWindows(_enum, titles)
+        except Exception:
+            return False
+
+        # Only title-based heuristic (no cmdline fallback)
+        return any(re.search(r"(chrome remote desktop|remotedesktop\.google\.com)", t) for t in titles)
+
 
     def _close_other_apps(self):
         cur_pid = os.getpid()
         whitelist = {
             'code.exe', 'python.exe', 'pythonw.exe', 'magnify.exe', 'narrator.exe',
-            'osk.exe', 'nvda.exe', 'jfw.exe', 'obs64.exe', 'explorer.exe',
-            'startmenuexperiencehost.exe', 'shellexperiencehost.exe', 'searchhost.exe'
+            'osk.exe', 'nvda.exe', 'jfw.exe', 'obs64.exe',
+            # removed 'explorer.exe' so File Explorer can be closed
+            'startmenuexperiencehost.exe', 'shellexperiencehost.exe', 'searchhost.exe',
+            # keep only CRD *hosts* whitelisted
+            'remoting_host.exe', 'chrome_remote_desktop_host.exe',
+            'chromoting_host.exe', 'crdhost.exe', 'me2me_host.exe',
         }
+
+        browsers = {'chrome.exe', 'msedge.exe', 'msedgewebview2.exe',
+                    'brave.exe', 'opera.exe', 'vivaldi.exe'}
+
         for proc in psutil.process_iter(['pid', 'name', 'username']):
             try:
                 pid = proc.info['pid']
                 name = (proc.info['name'] or "").lower()
                 username = (proc.info['username'] or "").lower()
-                if pid == cur_pid or name in whitelist:
+
+                if pid == cur_pid:
+                    continue
+                if name in whitelist:
                     continue
                 if username in ('system', 'local service', 'network service'):
                     continue
                 if not self._has_visible_window(pid):
                     continue
-                print(f"terminating: {proc.info['name']} (pid {pid})")
+
+                if name in browsers and self._pid_has_crd_window(pid):
+                    print(f"skipping Chrome Remote Desktop viewer: {name} (pid {pid})")
+                    continue
+
+                if name == 'explorer.exe':
+                    hwnds = []
+                    def _collect(hwnd, acc):
+                        try:
+                            _, p = win32process.GetWindowThreadProcessId(hwnd)
+                            if p == pid and win32gui.IsWindowVisible(hwnd):
+                                acc.append(hwnd)
+                        except Exception:
+                            pass
+                    win32gui.EnumWindows(_collect, hwnds)
+
+                    closed_any = False
+                    for h in hwnds:
+                        try:
+                            cls = win32gui.GetClassName(h)
+                            # Close File Explorer windows only (not taskbar: Shell_TrayWnd)
+                            if cls in ('CabinetWClass', 'ExploreWClass'):
+                                win32gui.PostMessage(h, win32con.WM_CLOSE, 0, 0)
+                                closed_any = True
+                        except Exception:
+                            pass
+                    if closed_any:
+                        print(f"closed File Explorer windows for pid {pid} (kept shell alive)")
+                    else:
+                        print("kept explorer.exe running (no File Explorer windows to close)")
+
+                    continue
+
+
+
+                print(f"terminating: {name} (pid {pid})")
                 proc.terminate()
+
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 continue
+
+
 
     # ----- obs -----
     def _start_obs(self, out_dir):
@@ -717,32 +916,47 @@ class TaskGUI:
 
     def start_task(self):
         self.task_metadata["familiarity"] = self.task_familiarity.get()
-        self.task_metadata["difficulty"] = self.task_difficulty.get()
+        self.task_metadata["difficulty_before"] = self.task_difficulty.get()
 
         self._close_other_apps()
 
-        set_number = int(self.task_metadata["task_set"].split()[1])
-        task_number = int(self.task_metadata["task_number"].split()[1])
-        final_task_id = task_number if set_number == 1 else 10 + (set_number - 2) * 15 + task_number
+        final_task_id = self.task_metadata["task_id"]
 
-        try:
-            if hasattr(web_logger_server, "reset_state_for_task"):
-                web_logger_server.reset_state_for_task(final_task_id)
-            web_logger_server.CURRENT_TASK = str(final_task_id)
-            web_logger_server.run_web_logger_in_thread()
-        except Exception as e:
-            print(f"[web_logger_server] could not start: {e}")
 
         folder_name = str(final_task_id)
         folder_path = os.path.join("task_logs", folder_name)
         os.makedirs(folder_path, exist_ok=True)
         self.log_folder_path = folder_path
-        self.metadata_path = os.path.join(folder_path, "metadata.json")
+        self.metadata_path = os.path.join(folder_path, f"metadata_{final_task_id}.json")
+
+        # (optional one-time cleanup for old runs of this task)
+        legacy_meta = os.path.join(folder_path, "metadata.json")
+        if os.path.exists(legacy_meta) and legacy_meta != self.metadata_path:
+            try:
+                os.remove(legacy_meta)
+            except Exception:
+                pass
+
+        # start the web logger AFTER paths are set; point it to the same metadata file if supported
+        try:
+            if hasattr(web_logger_server, "reset_state_for_task"):
+                web_logger_server.reset_state_for_task(final_task_id)
+            web_logger_server.CURRENT_TASK = str(final_task_id)
+            if hasattr(web_logger_server, "METADATA_PATH"):
+                web_logger_server.METADATA_PATH = self.metadata_path
+            if hasattr(web_logger_server, "LOG_FOLDER"):
+                web_logger_server.LOG_FOLDER = folder_path
+            web_logger_server.run_web_logger_in_thread()
+        except Exception as e:
+            print(f"[web_logger_server] could not start: {e}")
+
+        
 
         baseline = get_accessibility_state()
 
         meta = {
-            "task": dict(self.task_metadata),
+            "task": dict(self.task_metadata),        # the curated fields
+            "task_row": dict(self._selected_task_row) if hasattr(self, "_selected_task_row") else None,  # raw row snapshot
             "session": {
                 "started_at": time.time(),
                 "last_event_at": None,
@@ -758,10 +972,13 @@ class TaskGUI:
                 "changes": []
             }
         }
+
         with open(self.metadata_path, "w", encoding="utf-8") as f:
             json.dump(meta, f, indent=2)
 
-        messagebox.showinfo("logging started", f"started logging:\n\n{self.task_metadata}")
+        # messagebox.showinfo("logging started", f"started logging:\n\n{self.task_metadata}")
+        self._show_task_brief_dialog()
+
         self.start_button.pack_forget()
 
         self._last_acc_check_ts = 0.0
@@ -789,7 +1006,11 @@ class TaskGUI:
             if (app_name or "").lower() in self.accessibility_skiplist:
                 return None
 
-            window_title = win32gui.GetWindowText(hwnd)
+            window_title = win32gui.GetWindowText(hwnd) or ""
+            # Skip if this is a browser window showing Chrome Remote Desktop
+            if (app_name or "").lower() in {"chrome.exe", "msedge.exe", "brave.exe", "opera.exe", "vivaldi.exe"}:
+                if re.search(r"(chrome remote desktop|remotedesktop\.google\.com)", window_title, re.IGNORECASE):
+                    return None
             x, y = win32api.GetCursorPos()
             element_info = {}
             focused_info = {}
@@ -877,7 +1098,6 @@ class TaskGUI:
             print(f"[META] Ensuring {app_name} (order={order}) in apps_by_order")
             return app_entry
 
-
         def _maybe_record_accessibility_change(now_ts):
             if now_ts - self._last_acc_check_ts < self._acc_check_interval:
                 return
@@ -894,6 +1114,8 @@ class TaskGUI:
                 acc["last"] = curr
                 m["accessibility"] = acc
                 _save_meta(m)
+
+
 
         def _capture_a11y_tree_once(ev):
             key = self._surface_key(ev.get("application"), ev.get("window_title"), ev.get("hwnd"))
@@ -1230,18 +1452,6 @@ class TaskGUI:
             log_event(ev)
 
 
-
-
-        # def on_click(x, y, button, pressed):
-        #     if not pressed:
-        #         return
-        #     ev = get_current_info()
-        #     if not ev:
-        #         return
-        #     ev["event"] = "mouse_click"
-        #     ev["button"] = str(button)
-        #     log_event(ev)
-
         def on_scroll(x, y, dx, dy):
             ev = get_current_info()
             if not ev:
@@ -1250,25 +1460,6 @@ class TaskGUI:
             ev["delta"] = [dx, dy]
             log_event(ev)
 
-        # def on_press(key):
-        #     ev = get_current_info()
-        #     if not ev:
-        #         return
-        #     try:
-        #         key_str = key.char
-        #     except Exception:
-        #         key_str = str(key)
-        #     ev["event"] = "key_press"
-        #     ev["key"] = key_str
-        #     log_event(ev)
-
-        # ml = mouse.Listener(on_click=on_click, on_scroll=on_scroll)
-        # kl = keyboard.Listener(on_press=on_press)
-        # ml.start()
-        # kl.start()
-        # self.interaction_loggers = [ml, kl]
-
-        
 
         def on_press(key):
             name = _normalize_key_obj(key)
@@ -1314,24 +1505,131 @@ class TaskGUI:
         self.interaction_loggers = [ml, kl]
 
         self.quit_button.pack_forget()
-        self.stop_button = tk.Button(self.form_frame, text="stop logging", command=self.stop_task, width=20)
+        self.stop_button = tk.Button(self.form_frame, text="Stop logging", command=self.stop_task, width=20)
         self.stop_button.configure(font=self.base_font)
         self.stop_button.pack(pady=5)
 
+    def _ask_difficulty_after_dialog(self):
+        top = tk.Toplevel(self.root)
+        top.title("Logging stopped")
+        top.transient(self.root)
+        top.grab_set()
+        top.resizable(False, False)
+
+        # ----- size + center -----
+        top.update_idletasks()
+        W, H = 560, 260  # bigger window
+        x = (top.winfo_screenwidth()  - W) // 2
+        y = (top.winfo_screenheight() - H) // 2
+        top.geometry(f"{W}x{H}+{x}+{y}")
+
+        # block closing via 'X' (force Save)
+        top.protocol("WM_DELETE_WINDOW", lambda: None)
+
+        # ----- content -----
+        tk.Label(top, text="Logging stopped", font=self.bold_font)\
+            .pack(padx=24, pady=(20, 8), anchor="w")
+
+        tk.Label(top, text="How difficult was the task to complete?", font=self.base_font)\
+            .pack(padx=24, pady=(0, 10), anchor="w")
+
+        default_after = self.task_metadata.get("difficulty_before") or "Medium"
+        var = tk.StringVar(value=default_after)
+        cb = ttk.Combobox(top, textvariable=var,
+                        values=["Easy", "Medium", "Hard"], state="readonly", width=24)
+        cb.pack(padx=24, pady=(0, 18), anchor="w")
+
+        # single Save button
+        def on_save():
+            self._difficulty_after_value = var.get()
+            top.destroy()
+
+        btns = tk.Frame(top)
+        btns.pack(fill="x", padx=24, pady=(4, 20))
+        tk.Button(btns, text="Save", command=on_save, width=14).pack(side="left")
+
+        self.root.wait_window(top)
+        return getattr(self, "_difficulty_after_value", default_after)
+    
+
+    def _show_task_brief_dialog(self):
+        """Modal pop-up showing the selected task's context and instruction."""
+        top = tk.Toplevel(self.root)
+        top.title("Task Brief")
+        top.transient(self.root)
+        top.grab_set()               # modal (user must close before continuing)
+        top.resizable(True, True)
+        top.attributes("-topmost", True)
+
+        # Size + center
+        top.update_idletasks()
+        W, H = 700, 360
+        x = (top.winfo_screenwidth()  - W) // 2
+        y = (top.winfo_screenheight() - H) // 2
+        top.geometry(f"{W}x{H}+{x}+{y}")
+
+        # Content
+        padx = 20
+        tk.Label(top, text="Task Context", font=self.bold_font).pack(anchor="w", padx=padx, pady=(16, 4))
+        tk.Message(top,
+                text=self.task_metadata.get("context", "no context"),
+                width=W - (padx * 2),
+                font=self.base_font,
+                justify="left").pack(anchor="w", padx=padx)
+
+        tk.Label(top, text="Task Instruction", font=self.bold_font).pack(anchor="w", padx=padx, pady=(12, 4))
+        tk.Message(top,
+                text=self.task_metadata.get("task", "no task"),
+                width=W - (padx * 2),
+                font=self.base_font,
+                justify="left").pack(anchor="w", padx=padx)
+
+        btns = tk.Frame(top)
+        btns.pack(fill="x", padx=padx, pady=(18, 16))
+        tk.Button(btns, text="OK — Start logging", width=20, command=top.destroy).pack(side="left")
+
+        # Block until user acknowledges (keeps current behavior like messagebox)
+        self.root.wait_window(top)
+
+
     def stop_task(self):
-        messagebox.showinfo("stopped", "logging stopped. data saved.")
         for l in self.interaction_loggers:
-            try:
-                l.stop()
-            except Exception:
-                pass
+            try: l.stop()
+            except Exception: pass
         self.interaction_loggers = []
+
+        difficulty_after = self._ask_difficulty_after_dialog()
+
+        try:
+            with open(self.metadata_path, "r", encoding="utf-8") as f:
+                m = json.load(f)
+        except Exception:
+            m = {}
+
+        m.setdefault("task", {})
+        if "difficulty_before" not in m["task"]:
+            prev = self.task_metadata.get("difficulty_before") or self.task_metadata.get("difficulty")
+            if prev is not None:
+                m["task"]["difficulty_before"] = prev
+            m["task"].pop("difficulty", None)
+
+        # required now — dialog can only be closed by Save
+        m["task"]["difficulty_after"] = difficulty_after
+
+        m.setdefault("session", {})
+        m["session"]["ended_at"] = time.time()
+
+        try:
+            with open(self.metadata_path, "w", encoding="utf-8") as f:
+                json.dump(m, f, indent=2)
+        except Exception as e:
+            print(f"[meta] write failed in stop_task: {e}")
 
         rec_src = self._stop_obs()
         final_path = self._bring_obs_file(rec_src)
         self._split_mkv(final_path)
-
         self.root.quit()
+
 
     def run(self):
         self.root.mainloop()

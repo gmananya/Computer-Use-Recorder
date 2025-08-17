@@ -13,7 +13,7 @@ def _task_folder():
     return os.path.join(TASK_LOG_DIR, str(CURRENT_TASK))
 
 def _meta_path():
-    return os.path.join(_task_folder(), "metadata.json")
+    return os.path.join(_task_folder(), f"metadata_{CURRENT_TASK}.json")
 
 def _web_folder():
     p = os.path.join(_task_folder(), "web_logs")

@@ -323,25 +323,8 @@ class TaskGUI:
         self.accessibility_skiplist = {
             "python.exe", "pythonw.exe", "obs64.exe",
             "searchhost.exe", "startmenuexperiencehost.exe", "shellexperiencehost.exe",
-            # Host-side CRD executables we also never want to log if they ever present a UI
-            "remoting_host.exe", "chrome_remote_desktop_host.exe",
-            "chromoting_host.exe", "crdhost.exe", "me2me_host.exe",
+            "teamviewer.exe", "teamviewer_service.exe", "teamviewer_desktop.exe", "teamviewerqs.exe",
         }
-
-        # --- NEW: identifiers for Chrome Remote Desktop viewer windows ---
-        self.crd_proc_names = {
-            # browsers and their PWA proxies that can host the CRD window
-            "chrome.exe", "msedge.exe", "chrome_proxy.exe", "msedge_proxy.exe",
-            # (include host names too for belt-and-suspenders)
-            "remoting_host.exe", "chrome_remote_desktop_host.exe",
-            "chromoting_host.exe", "crdhost.exe", "me2me_host.exe",
-        }
-        self.crd_title_markers = [
-            "chrome remote desktop",                 # localized English
-            "remotedesktop.google.com",              # url marker
-            "remote desktop (chrome app)",           # some older builds
-        ]
-
 
         # locks for safe writes and one-time a11y capture
         self.file_lock = threading.Lock()
@@ -584,24 +567,6 @@ class TaskGUI:
         win32gui.EnumWindows(cb, flags)
         return bool(flags)
     
-    def _pid_has_crd_window(self, pid: int) -> bool:
-        """True only if PID owns a visible window that *looks like* Chrome Remote Desktop."""
-        titles = []
-        def _enum(hwnd, acc):
-            try:
-                _, p = win32process.GetWindowThreadProcessId(hwnd)
-                if p == pid and win32gui.IsWindowVisible(hwnd):
-                    acc.append((win32gui.GetWindowText(hwnd) or "").lower())
-            except Exception:
-                pass
-
-        try:
-            win32gui.EnumWindows(_enum, titles)
-        except Exception:
-            return False
-
-        # Only title-based heuristic (no cmdline fallback)
-        return any(re.search(r"(chrome remote desktop|remotedesktop\.google\.com)", t) for t in titles)
 
 
     def _close_other_apps(self):
@@ -611,13 +576,9 @@ class TaskGUI:
             'osk.exe', 'nvda.exe', 'jfw.exe', 'obs64.exe',
             # removed 'explorer.exe' so File Explorer can be closed
             'startmenuexperiencehost.exe', 'shellexperiencehost.exe', 'searchhost.exe',
-            # keep only CRD *hosts* whitelisted
-            'remoting_host.exe', 'chrome_remote_desktop_host.exe',
-            'chromoting_host.exe', 'crdhost.exe', 'me2me_host.exe',
+            # TeamViewer family — do not close
+            'teamviewer.exe', 'teamviewer_service.exe', 'teamviewer_desktop.exe', 'teamviewerqs.exe',
         }
-
-        browsers = {'chrome.exe', 'msedge.exe', 'msedgewebview2.exe',
-                    'brave.exe', 'opera.exe', 'vivaldi.exe'}
 
         for proc in psutil.process_iter(['pid', 'name', 'username']):
             try:
@@ -634,9 +595,6 @@ class TaskGUI:
                 if not self._has_visible_window(pid):
                     continue
 
-                if name in browsers and self._pid_has_crd_window(pid):
-                    print(f"skipping Chrome Remote Desktop viewer: {name} (pid {pid})")
-                    continue
 
                 if name == 'explorer.exe':
                     hwnds = []

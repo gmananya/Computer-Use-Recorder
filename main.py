@@ -1793,7 +1793,7 @@ class TaskGUI:
 
         # Size + center
         top.update_idletasks()
-        W, H = 700, 360
+        W, H = 850, 500
         x = (top.winfo_screenwidth()  - W) // 2
         y = (top.winfo_screenheight() - H) // 2
         top.geometry(f"{W}x{H}+{x}+{y}")

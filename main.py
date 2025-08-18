@@ -28,13 +28,71 @@ from pynput.keyboard import Key, KeyCode
 import obsws_python as obs
 import glob, logging
 from obsws_python.error import OBSSDKRequestError
+import configparser
+from pathlib import Path
 
 import web_logger_server as web_logger_server  # local http server that receives web logs
+import accessibility_user_settings as a11y
+
 
 TASKS_PATH = "tasks_list.json"
 
 
 # ---------- small utilities ----------
+
+def _get_ancestor(hwnd, flag):
+    try:
+        return win32gui.GetAncestor(hwnd, flag)
+    except Exception:
+        return None
+
+def _normalize_to_frame_hwnd(hwnd):
+    """
+    Always return the top-level frame window for the point-in-time foreground.
+    For UWP this is an 'ApplicationFrameWindow' owned by ApplicationFrameHost.exe.
+    """
+    if not hwnd:
+        return None
+
+    # Try root (parent chain)
+    root = _get_ancestor(hwnd, win32con.GA_ROOT) or hwnd
+    try:
+        cls = win32gui.GetClassName(root) or ""
+    except Exception:
+        cls = ""
+
+    if cls == "ApplicationFrameWindow":
+        return root
+
+    # Try owner chain (covers cases where a child surface is 'foreground')
+    owner = _get_ancestor(hwnd, win32con.GA_ROOTOWNER) or root
+    try:
+        ocls = win32gui.GetClassName(owner) or ""
+    except Exception:
+        ocls = ""
+
+    if ocls == "ApplicationFrameWindow":
+        return owner
+
+    # As a last resort, walk up by parent to find a frame (rare)
+    try:
+        h = hwnd
+        for _ in range(32):
+            p = win32gui.GetParent(h)
+            if not p:
+                break
+            try:
+                pcl = win32gui.GetClassName(p) or ""
+            except Exception:
+                pcl = ""
+            if pcl == "ApplicationFrameWindow":
+                return p
+            h = p
+    except Exception:
+        pass
+
+    return root
+
 
 def _read_reg(root, path, name):
     try:
@@ -109,15 +167,36 @@ class ObsController:
             except Exception:
                 return None
 
+
     def set_record_dir(self, folder):
         self._record_dir = os.path.abspath(folder)
         os.makedirs(self._record_dir, exist_ok=True)
+
+        # Try to set it, but don't die if OBS refuses (e.g., returns 500)
         try:
-            self.req.set_record_directory(self._record_dir)  # newer obsws-python
-        except AttributeError:
-            self.req.send("SetRecordDirectory", {"recordDirectory": self._record_dir})  # raw fallback
-        print(f"obs record folder set: {self._record_dir}")
+            try:
+                self.req.set_record_directory(self._record_dir)  # typed API (OBS 30+)
+            except AttributeError:
+                # raw fallback
+                self.req.send("SetRecordDirectory", {"recordDirectory": self._record_dir})
+        except OBSSDKRequestError as e:
+            # 500 → backend refused (mode, perms, or unsupported); just use existing dir
+            if getattr(e, "code", None) in (500, 501):
+                print(f"SetRecordDirectory refused ({e}); using existing OBS record directory instead.")
+            else:
+                # unexpected error – rethrow
+                raise
+        except Exception as e:
+            # any other unexpected failure; continue with current OBS setting
+            print(f"SetRecordDirectory failed ({e}); using existing OBS record directory.")
+
+        # Determine the effective directory OBS will actually use
+        current = self._safe_get_record_directory()
+        if current:
+            self._record_dir = os.path.abspath(current)
+        print(f"obs record folder (effective): {self._record_dir}")
         return self._record_dir
+
 
     def _snapshot_existing(self, rec_dir):
         try:
@@ -212,121 +291,6 @@ class ObsController:
         return self._pick_new_file()
 
 
-# ---------- high contrast via spi (safe fallback if it fails) ----------
-
-class HIGHCONTRASTW(ctypes.Structure):
-    _fields_ = [("cbSize", ctypes.c_uint),
-                ("dwFlags", ctypes.c_uint),
-                ("lpszDefaultScheme", ctypes.c_wchar_p)]
-
-
-def _get_high_contrast_enabled():
-    # spi_gethighcontrast = 0x0042, hcf_highcontraston = 0x0001
-    SPI_GETHIGHCONTRAST = 0x0042
-    HCF_HIGHCONTRASTON = 0x0001
-    try:
-        hc = HIGHCONTRASTW()
-        hc.cbSize = ctypes.sizeof(HIGHCONTRASTW)
-        res = ctypes.windll.user32.SystemParametersInfoW(SPI_GETHIGHCONTRAST, hc.cbSize, ctypes.byref(hc), 0)
-        if res:
-            return bool(hc.dwFlags & HCF_HIGHCONTRASTON)
-    except Exception:
-        pass
-    return None
-
-
-# ---------- accessibility snapshot & diff ----------
-
-def get_accessibility_state():
-    narrator_running = _proc_running("narrator.exe")
-    narrator_startup = bool(_read_reg(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Narrator\NoRoam", "WinEnterLaunchEnabled"))
-
-    mag_zoom = _read_reg(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\ScreenMagnifier", "Magnification")
-    magnifier_running = _proc_running("magnify.exe")
-
-    cf_active = _read_reg(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\ColorFiltering", "Active")
-    cf_type_raw = _read_reg(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\ColorFiltering", "FilterType")
-    FILTER_TYPES = {0: "none", 1: "inverted", 2: "grayscale", 3: "red-green", 4: "green-red", 5: "blue-yellow"}
-    try:
-        cf_type = FILTER_TYPES.get(int(cf_type_raw), "unknown")
-    except Exception:
-        cf_type = "unknown"
-    cf_enabled = bool(int(cf_active)) if str(cf_active).isdigit() else False
-
-    hc_enabled = _get_high_contrast_enabled()
-    hc_flags = _read_reg(winreg.HKEY_CURRENT_USER, r"Control Panel\Accessibility\HighContrast", "Flags")
-
-    sk_flags = _read_reg(winreg.HKEY_CURRENT_USER, r"Control Panel\Accessibility\StickyKeys", "Flags")
-    tk_flags = _read_reg(winreg.HKEY_CURRENT_USER, r"Control Panel\Accessibility\ToggleKeys", "Flags")
-    fk_flags = _read_reg(winreg.HKEY_CURRENT_USER, r"Control Panel\Accessibility\Keyboard Response", "Flags")
-
-    scaling = _read_reg(winreg.HKEY_CURRENT_USER, r"Control Panel\Desktop", "LogPixels")
-    font_smoothing = _read_reg(winreg.HKEY_CURRENT_USER, r"Control Panel\Desktop", "FontSmoothing")
-    arrow = _read_reg(winreg.HKEY_CURRENT_USER, r"Control Panel\Cursors", "Arrow")
-    if isinstance(arrow, str) and "aero" in arrow.lower():
-        cursor_scheme = "windows aero"
-    elif isinstance(arrow, str) and "windows black" in arrow.lower():
-        cursor_scheme = "windows black"
-    else:
-        cursor_scheme = os.path.basename(arrow) if isinstance(arrow, str) else "unavailable"
-
-    def _nz(x):
-        try:
-            return int(x) != 0
-        except Exception:
-            return False
-
-    return {
-        "os": platform.system(),
-        "os_version": platform.version(),
-        "python_version": platform.python_version(),
-        "narrator": {"enabled": narrator_running, "startup_enabled": narrator_startup},
-        "magnifier": {"enabled": magnifier_running, "zoom": int(mag_zoom) if str(mag_zoom).isdigit() else mag_zoom},
-        "color_filter": {"enabled": cf_enabled, "type": cf_type},
-        "high_contrast": {"enabled": hc_enabled, "flags": str(hc_flags) if hc_flags is not None else "unavailable"},
-        "sticky_keys": {"flags": str(sk_flags) if sk_flags is not None else "unavailable", "maybe_enabled": _nz(sk_flags)},
-        "toggle_keys": {"flags": str(tk_flags) if tk_flags is not None else "unavailable", "maybe_enabled": _nz(tk_flags)},
-        "filter_keys": {"flags": str(fk_flags) if fk_flags is not None else "unavailable", "maybe_enabled": _nz(fk_flags)},
-        "font_smoothing": font_smoothing,
-        "display_scaling": scaling,
-        "mouse_cursor_scheme": cursor_scheme,
-    }
-
-
-def diff_accessibility(prev, curr):
-    if not isinstance(prev, dict) or not isinstance(curr, dict):
-        return None
-
-    def pick(d, path, default=None):
-        try:
-            for k in path:
-                d = d[k]
-            return d
-        except Exception:
-            return default
-
-    checks = [
-        (("narrator", "enabled"),),
-        (("narrator", "startup_enabled"),),
-        (("magnifier", "enabled"),),
-        (("magnifier", "zoom"),),
-        (("color_filter", "enabled"),),
-        (("color_filter", "type"),),
-        (("high_contrast", "enabled"),),
-        (("sticky_keys", "maybe_enabled"),),
-        (("toggle_keys", "maybe_enabled"),),
-        (("filter_keys", "maybe_enabled"),),
-    ]
-
-    changes = {}
-    for (p,) in checks:
-        old = pick(prev, p)
-        new = pick(curr, p)
-        if old != new:
-            changes["/".join(p)] = {"old": old, "new": new}
-
-    return changes or None
-
 
 # ---------- gui app ----------
 
@@ -350,7 +314,11 @@ class TaskGUI:
         # track last event timestamp per surface to detect idle-gap rollover
         self.surface_last_event_ts = {}
 
-        # apps we never log
+        self._surface_sig = {}
+        self._A11Y_RECAP_COOLDOWN = 15.0 
+        self._a11y_mode = "focus_only"         # "focus_only" or "smart"
+        self._focused_surface = None
+
         # apps we never log
         self.accessibility_skiplist = {
             "python.exe", "pythonw.exe", "obs64.exe",
@@ -899,18 +867,52 @@ class TaskGUI:
 
     # ----- surface key (prevents duplicate trees) -----
 
+    def _bucket_for_app(self, app_name, window_title, hwnd):
+        app = (app_name or "").lower()
+        title = (window_title or "").strip().lower()
+
+        if app != "applicationframehost.exe":
+            # key used for files/meta, label shown in UI
+            return app_name, app_name
+
+        # Split AFH by hosted app using title heuristics (fallback to hwnd)
+        if "calculator" in title:
+            suffix, label = "Calculator", "Calculator"
+        elif "photos" in title:
+            suffix, label = "Photos", "Photos"
+        elif "media player" in title or "windows media player" in title:
+            suffix, label = "MediaPlayer", "Media Player"
+        elif "settings" in title:
+            suffix, label = "Settings", "Settings"
+        else:
+            suffix, label = f"HWND_{hwnd}", f"AFH_{hwnd}"
+
+        key = f"ApplicationFrameHost.exe::{suffix}"  # NOTE: will sanitize when used in filenames
+        ui_label = f"ApplicationFrameHost ({label})"
+        return key, ui_label
+
+
     def _surface_key(self, app_name, window_title, hwnd):
         app = (app_name or "").lower()
-        title = (window_title or "").lower()
+        title = (window_title or "").strip().lower()
+
         if app == "applicationframehost.exe":
-            if "settings" in title:
-                tag = "settings"
-            elif "calculator" in title:
+            # Distinguish hosted UWP apps by title (fallback to hwnd if title is empty)
+            if "calculator" in title:
                 tag = "calculator"
+            elif "photos" in title:
+                tag = "photos"
+            elif "media player" in title or "windows media player" in title:
+                tag = "mediaplayer"
+            elif "settings" in title:
+                tag = "settings"
             else:
-                tag = f"hwnd:{hwnd}"
+                tag = title or f"hwnd:{hwnd}"
             return f"{app}|{tag}"
+
+        # Non-AFH windows still keyed by hwnd
         return f"{app}|hwnd:{hwnd}"
+
 
     # ----- logging session -----
 
@@ -952,11 +954,12 @@ class TaskGUI:
 
         
 
-        baseline = get_accessibility_state()
+        baseline = a11y.get_accessibility_state()
+        # sr = a11y.collect_screen_reader_settings()
 
         meta = {
             "task": dict(self.task_metadata),        # the curated fields
-            "task_row": dict(self._selected_task_row) if hasattr(self, "_selected_task_row") else None,  # raw row snapshot
+            # "task_row": dict(self._selected_task_row) if hasattr(self, "_selected_task_row") else None,  # raw row snapshot
             "session": {
                 "started_at": time.time(),
                 "last_event_at": None,
@@ -971,6 +974,14 @@ class TaskGUI:
                 "last": baseline,
                 "changes": []
             }
+        }
+
+
+        meta["accessibility"] = {
+            "baseline": baseline,
+            # "last": baseline,
+            "changes": [],
+            # "screen_reader_settings": sr,
         }
 
         with open(self.metadata_path, "w", encoding="utf-8") as f:
@@ -990,27 +1001,131 @@ class TaskGUI:
 
         self._start_obs(folder_path)
 
+        def _safe_process_name(pid, hwnd):
+            # Always classify by the *frame* hwnd for consistency
+            try:
+                frame = _normalize_to_frame_hwnd(hwnd) or hwnd
+                cls = win32gui.GetClassName(frame) or ""
+            except Exception:
+                frame, cls = hwnd, ""
+
+            # Map any ApplicationFrameWindow to ApplicationFrameHost.exe
+            if cls == "ApplicationFrameWindow":
+                return "ApplicationFrameHost.exe"
+
+            # 1) psutil (fast path)
+            try:
+                return psutil.Process(pid).name()
+            except Exception:
+                pass
+
+            # 2) QueryFullProcessImageNameW
+            try:
+                h = win32api.OpenProcess(win32con.PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
+                try:
+                    import ctypes, ctypes.wintypes
+                    buf = ctypes.create_unicode_buffer(260)
+                    sz = ctypes.wintypes.DWORD(len(buf))
+                    if ctypes.windll.kernel32.QueryFullProcessImageNameW(int(h), 0, buf, ctypes.byref(sz)):
+                        return os.path.basename(buf.value)
+                finally:
+                    win32api.CloseHandle(h)
+            except Exception:
+                pass
+
+            # 3) Last resort: stable bucket
+            return f"pid_{pid}"
+
+        def _nearest_meaningful(el):
+            """
+            Walk up until we find a control with a useful Name or a known actionable type.
+            """
+            ACTION_TYPES = {
+                "ButtonControl", "HyperlinkControl", "MenuItemControl", "TabItemControl",
+                "ToggleButtonControl", "ListItemControl", "SliderControl", "SpinnerControl",
+                "ThumbControl", "SplitButtonControl", "ComboBoxControl"
+            }
+            MAX_HOPS = 12
+            node = el
+            hops = 0
+            while node and hops < MAX_HOPS:
+                try:
+                    ct = node.ControlTypeName or ""
+                    nm = (node.Name or "").strip()
+                    if nm or ct in ACTION_TYPES:
+                        # include AutomationId when available
+                        aid = ""
+                        try:
+                            aid = node.AutomationId or ""
+                        except Exception:
+                            pass
+                        return {
+                            "name": nm,
+                            "control_type": ct,
+                            "automation_id": aid
+                        }
+                    node = node.GetParentControl()
+                    hops += 1
+                except Exception:
+                    break
+            return None
+
+
+        def _annotate_semantic_target(ev):
+            """Fill ev['target'] with nearest actionable element at cursor, if any."""
+            if not ev or not isinstance(ev, dict):
+                return
+            x, y = (ev.get("cursor_position") or (None, None))
+            if x is None or y is None:
+                return
+            try:
+                with auto.UIAutomationInitializerInThread():
+                    el = auto.ControlFromPoint(x, y)
+                    if not el:
+                        return
+                    target = _nearest_meaningful(el)
+                    if target:
+                        ev["target"] = target  # {'name','control_type','automation_id'}
+            except Exception:
+                pass
+
 
         def get_current_info():
-            hwnd = win32gui.GetForegroundWindow()
-            if not hwnd:
+            # Get the actual frame hwnd first
+            raw_hwnd = win32gui.GetForegroundWindow()
+            if not raw_hwnd:
                 return None
-            tid, pid = win32process.GetWindowThreadProcessId(hwnd)
-            if not pid or pid < 0:
+            hwnd = _normalize_to_frame_hwnd(raw_hwnd)
+            if not hwnd or not win32gui.IsWindow(hwnd):
                 return None
+
             try:
-                proc = psutil.Process(pid)
-                app_name = proc.name()
+                cls = win32gui.GetClassName(hwnd) or ""
+            except Exception:
+                cls = ""
+
+            try:
+                _, pid = win32process.GetWindowThreadProcessId(hwnd)
+                if not pid or pid < 0:
+                    return None
             except Exception:
                 return None
+
+            # Normalize app name (ApplicationFrameWindow → ApplicationFrameHost.exe)
+            app_name = _safe_process_name(pid, hwnd)
+
+            # Respect skiplist *after* normalization
             if (app_name or "").lower() in self.accessibility_skiplist:
                 return None
 
             window_title = win32gui.GetWindowText(hwnd) or ""
-            # Skip if this is a browser window showing Chrome Remote Desktop
+
+            # Skip browser-based CRD viewers, but only if this frame *is* a browser tab showing CRD
             if (app_name or "").lower() in {"chrome.exe", "msedge.exe", "brave.exe", "opera.exe", "vivaldi.exe"}:
                 if re.search(r"(chrome remote desktop|remotedesktop\.google\.com)", window_title, re.IGNORECASE):
                     return None
+
+            # Cursor + UIA context (optional, never gates logging)
             x, y = win32api.GetCursorPos()
             element_info = {}
             focused_info = {}
@@ -1019,15 +1134,15 @@ class TaskGUI:
 
             with auto.UIAutomationInitializerInThread():
                 try:
-                    element = auto.ControlFromPoint(x, y)
+                    elem = auto.ControlFromPoint(x, y)
                     element_info = {
-                        "name": element.Name,
-                        "control_type": element.ControlTypeName,
+                        "name": elem.Name,
+                        "control_type": elem.ControlTypeName,
                         "bounding_rect": {
-                            "left": element.BoundingRectangle.left,
-                            "top": element.BoundingRectangle.top,
-                            "right": element.BoundingRectangle.right,
-                            "bottom": element.BoundingRectangle.bottom
+                            "left": elem.BoundingRectangle.left,
+                            "top": elem.BoundingRectangle.top,
+                            "right": elem.BoundingRectangle.right,
+                            "bottom": elem.BoundingRectangle.bottom
                         }
                     }
                 except Exception as e:
@@ -1040,16 +1155,17 @@ class TaskGUI:
 
             return {
                 "timestamp": time.time(),
-                "application": app_name,
+                "application": app_name,         # e.g., 'ApplicationFrameHost.exe' for Photos/Media Player
                 "window_title": window_title,
                 "cursor_position": [x, y],
                 "focused_element": focused_info,
                 "element_under_cursor": element_info,
-                "hwnd": hwnd,
-                "pid": pid,
+                "hwnd": hwnd,                    # frame hwnd (stable for bucketing & a11y capture)
+                "pid": pid,                      # frame pid
                 "window_bounds": bounds,
                 "window_state": state
             }
+
 
         def _load_meta():
             with self.meta_lock:
@@ -1078,7 +1194,7 @@ class TaskGUI:
             apps = m.setdefault("apps", {})
             app_entry = apps.setdefault(app_name, {
                 "order": order,
-                "log_file": f"{order}_{app_name}.json",
+                "log_file": f"{order}_{_sanitize_filename(app_name)}.json",  # <— sanitize
                 "a11y_tree_files": [],
                 "events": 0,
                 "by_type": {
@@ -1106,8 +1222,8 @@ class TaskGUI:
             m = _load_meta() or {}
             acc = m.get("accessibility") or {}
             last = acc.get("last")
-            curr = get_accessibility_state()
-            ch = diff_accessibility(last, curr) if last else None
+            curr = a11y.get_accessibility_state()
+            ch = a11y.diff_accessibility(last, curr) if last else None
             if ch:
                 acc_changes = acc.setdefault("changes", [])
                 acc_changes.append({"ts": now_ts, "diff": ch})
@@ -1115,78 +1231,159 @@ class TaskGUI:
                 m["accessibility"] = acc
                 _save_meta(m)
 
+        
+        def _focused_surface_key(ev):
+            return self._surface_key(ev.get("application"), ev.get("window_title"), ev.get("hwnd"))
+
+        def _note_focus_transition_if_any(ev):
+            key = _focused_surface_key(ev)
+            if not key:
+                return False
+            if self._focused_surface != key:
+                self._focused_surface = key
+                return True
+            return False
 
 
-        def _capture_a11y_tree_once(ev):
-            key = self._surface_key(ev.get("application"), ev.get("window_title"), ev.get("hwnd"))
-            with self.a11y_capture_lock:
-                if key in self.captured_surfaces:
-                    return
-                def _pid_of(name):
-                    for p in psutil.process_iter(["pid", "name"]):
-                        if (p.info["name"] or "").lower() == (name or "").lower():
-                            return p.info["pid"]
-                    return None
-                try:
-                    pid = ev.get("pid") or _pid_of(ev.get("application"))
-                    if pid is None:
-                        return
-                    with auto.UIAutomationInitializerInThread():
-                        root = auto.GetRootControl()
-                        for ch in root.GetChildren():
-                            if ch.ProcessId == pid:
-                                tree = self._serialize_a11y_tree(ch)
-                                if tree:
-                                    order = self.app_name_to_order[ev.get("application")]
-                                    ts_ms = int(round(float(ev.get("timestamp", time.time())) * 1000))
-                                    fname = f"{order}_{_sanitize_filename(ev.get('application'))}_{ts_ms}_a11y_tree.json"
-                                    with open(os.path.join(self.log_folder_path, fname), "w", encoding="utf-8") as tf:
-                                        json.dump(tree, tf, indent=2)
-                                    m = _load_meta() or {}
-                                    app_entry = _ensure_app_in_meta(m, ev.get("application"), order)
-                                    app_entry.setdefault("a11y_tree_files", []).append(fname)
-                                    _save_meta(m)
-                                break
-                    self.captured_surfaces.add(key)
-                except Exception as e:
-                    print(f"[a11y] capture failed for {ev.get('application')}: {e}")
 
-        def log_event(ev):
-            app_name = ev.get("application") or "unknown"
-            app_lower = app_name.lower()
-            if app_lower in self.accessibility_skiplist:
+
+        def _maybe_capture_a11y_tree(ev, order=None, on_focus=False):
+            # Only capture when the surface *gains* focus if focus-only mode is enabled
+            if self._a11y_mode == "focus_only" and not on_focus:
                 return
 
-            # SESSION-BOUNDARY / ROLLOVER LOGIC
+            key = self._surface_key(ev.get("application"), ev.get("window_title"), ev.get("hwnd"))
+            hwnd = ev.get("hwnd")
+            if not hwnd:
+                return
+
+            # cooldown gate
+            now = time.time()
+            last = self._surface_sig.get(key, {})
+            if last and (now - last.get("ts", 0.0) < self._A11Y_RECAP_COOLDOWN):
+                return
+
+            try:
+                if not win32gui.IsWindow(hwnd) or not win32gui.IsWindowVisible(hwnd):
+                    return
+            except Exception:
+                return
+
+            try:
+                with auto.UIAutomationInitializerInThread():
+                    # anchor by handle
+                    root = None
+                    try:
+                        root = auto.ControlFromHandle(hwnd)
+                    except Exception:
+                        root = None
+                    if not root:
+                        return
+
+                    # walk up to top-level Window node (smaller, stable subtree)
+                    node = root
+                    hops = 0
+                    try:
+                        while node and node.ControlTypeName != "Window" and hops < 64:
+                            node = node.GetParentControl()
+                            hops += 1
+                    except Exception:
+                        pass
+                    if not node:
+                        node = root
+
+                    # build a quick signature of *immediate* children (type+name)
+                    sig_parts = []
+                    try:
+                        for ch in node.GetChildren():
+                            nm = (ch.Name or "").strip()
+                            ct = ch.ControlTypeName or ""
+                            if nm or ct:
+                                sig_parts.append((ct, nm[:64]))
+                                if len(sig_parts) >= 24:  # cap for speed
+                                    break
+                    except Exception:
+                        pass
+                    sig = hash(tuple(sig_parts))
+
+                    # If signature didn't change, skip; otherwise record & dump
+                    if last and last.get("sig") == sig:
+                        self._surface_sig[key]["ts"] = now  # refresh timestamp
+                        return
+
+                    # Serialize a bounded tree (depth 4 is enough)
+                    tree = self._serialize_a11y_tree(node, depth=0, max_depth=4)
+                    if not tree:
+                        return
+
+                    if order is None:
+                        order = self.app_name_to_order.get(ev.get("application"), self.app_order_counter)
+
+                    ts_ms = int(round(float(ev.get("timestamp", time.time())) * 1000))
+                    fname = f"{order}_{_sanitize_filename(ev.get('application'))}_{ts_ms}_a11y_tree.json"
+
+                    with open(os.path.join(self.log_folder_path, fname), "w", encoding="utf-8") as tf:
+                        json.dump(tree, tf, indent=2)
+
+                    m = _load_meta() or {}
+                    app_entry = _ensure_app_in_meta(m, ev.get("application"), order)
+                    app_entry.setdefault("a11y_tree_files", []).append(fname)
+                    _save_meta(m)
+
+                    # remember signature & time
+                    self._surface_sig[key] = {"sig": sig, "ts": now}
+
+            except Exception as e:
+                print(f"[a11y] capture failed for {ev.get('application')}: {e}")
+
+        
+        def log_event(ev):
+            raw_app = ev.get("application") or "unknown"
+            if (raw_app or "").lower() in self.accessibility_skiplist:
+                return
+
+            # Determine the per-app bucket (splits ApplicationFrameHost.exe by hosted app)
+            bf = getattr(self, "_bucket_for_app", None)
+            if callable(bf):
+                bucket_key, bucket_label = bf(raw_app, ev.get("window_title"), ev.get("hwnd"))
+            else:
+                bucket_key, bucket_label = raw_app, raw_app
+
+            # --- SESSION-BOUNDARY / ROLLOVER LOGIC ---
             surface_key = self._surface_key(ev.get("application"), ev.get("window_title"), ev.get("hwnd"))
             last_ts = self.surface_last_event_ts.get(surface_key)
             now_ts = ev.get("timestamp", time.time())
 
-            # Determine if we need a new order (rollover) due to idle gap
             if last_ts is not None and (now_ts - last_ts) > self.ROLL_THRESHOLD:
                 # bump order so a new file is used
-                self.app_name_to_order[app_name] = self.app_order_counter
+                self.app_name_to_order[bucket_key] = self.app_order_counter
                 order = self.app_order_counter
                 self.app_order_counter += 1
-                print(f"[ROLLOVER] Idle gap {now_ts - last_ts:.1f}s for {app_name} on {surface_key}, new order {order}")
+                try:
+                    gap = now_ts - last_ts
+                except Exception:
+                    gap = 0
+                print(f"[ROLLOVER] Idle gap {gap:.1f}s for {bucket_key} on {surface_key}, new order {order}")
             else:
-                if app_name not in self.app_name_to_order:
-                    self.app_name_to_order[app_name] = self.app_order_counter
+                if bucket_key not in self.app_name_to_order:
+                    self.app_name_to_order[bucket_key] = self.app_order_counter
                     self.app_order_counter += 1
-                order = self.app_name_to_order[app_name]
+                order = self.app_name_to_order[bucket_key]
 
             # update last event time for this surface
             self.surface_last_event_ts[surface_key] = now_ts
 
-            # capture a11y tree once per surface
-            _capture_a11y_tree_once(ev)
+            # focus-only a11y recap; capture only when the surface gains focus
+            on_focus = _note_focus_transition_if_any(ev)
+            _maybe_capture_a11y_tree(ev, order=order, on_focus=on_focus)
 
-            # check accessibility changes
-            _maybe_record_accessibility_change(ev["timestamp"])
+            # periodic accessibility settings snapshot/diff
+            _maybe_record_accessibility_change(ev.get("timestamp", now_ts))
 
-            # update metadata
+            # --- METADATA UPDATE (bucketed by bucket_key) ---
             m = _load_meta() or {}
-            app_entry = _ensure_app_in_meta(m, app_name, order)
+            app_entry = _ensure_app_in_meta(m, bucket_key, order)
+            app_entry["display_name"] = bucket_label  # nice label for any UI you build later
 
             cur_window = {
                 "title": ev.get("window_title"),
@@ -1205,20 +1402,21 @@ class TaskGUI:
 
             ev_type = ev.get("event", "unknown")
             app_entry["events"] = int(app_entry.get("events", 0)) + 1
-            by_type = app_entry.setdefault("by_type", {"mouse_click": 0, "key_press": 0, "scroll": 0})
+            by_type = app_entry.setdefault("by_type", {
+                "mouse_click": 0, "mouse_up": 0, "mouse_move": 0, "drag_drop": 0,
+                "key_press": 0, "hotkey": 0, "scroll": 0
+            })
             by_type[ev_type] = int(by_type.get(ev_type, 0)) + 1
 
             m.setdefault("summary", {"apps": 0, "events": 0, "by_type": {}, "by_app": {}})
             m["summary"]["events"] = int(m["summary"].get("events", 0)) + 1
-            m["summary"]["by_app"] = m["summary"].get("by_app", {})
-            m["summary"]["by_app"][app_name] = int(m["summary"]["by_app"].get(app_name, 0)) + 1
-            m["summary"]["by_type"] = m["summary"].get("by_type", {})
+            m["summary"]["by_app"][bucket_key] = int(m["summary"]["by_app"].get(bucket_key, 0)) + 1
             m["summary"]["by_type"][ev_type] = int(m["summary"]["by_type"].get(ev_type, 0)) + 1
-            m["session"]["last_event_at"] = ev["timestamp"]
+            m["session"]["last_event_at"] = ev.get("timestamp", now_ts)
             _save_meta(m)
 
-            # append to per-app file
-            filename = f"{order}_{app_name}.json"
+            # --- APPEND TO PER-APP FILE (sanitize bucket_key for filenames) ---
+            filename = f"{order}_{_sanitize_filename(bucket_key)}.json"
             path = os.path.join(self.log_folder_path, filename)
             with self.file_lock:
                 if not os.path.exists(path):
@@ -1240,8 +1438,11 @@ class TaskGUI:
                 with open(path, "w", encoding="utf-8") as f:
                     json.dump(logs, f, indent=2)
 
+
+
+
          # --- input tracking state/config ---
-        MOVE_THROTTLE_SEC = 0.50   # limit mouse_move logging to ~10 Hz
+        MOVE_THROTTLE_SEC = 0.10   # limit mouse_move logging to ~10 Hz
         DRAG_DISTANCE_PX = 6       # minimum pixels to count as drag
         pressed_keys = set()       # normalized names, e.g., {'Ctrl', 'Shift', 'a'}
         pressed_mods = set()       # subset: {'Ctrl','Alt','Shift','Win','Insert','CapsLock'}
@@ -1341,85 +1542,197 @@ class TaskGUI:
 
             return {"screen_reader_combo": bool(reader), "reader_hint": reader, "intent": intent}
 
-        # --- enhanced event handlers ---
+        # --- Slider helpers ---
+
+        def _find_slider_at_point(x, y):
+            """Return the UIA element for the nearest SliderControl at screen point (x,y)."""
+            try:
+                with auto.UIAutomationInitializerInThread():
+                    el = auto.ControlFromPoint(x, y)
+                    node = el
+                    for _ in range(12):
+                        if not node:
+                            break
+                        try:
+                            if (node.ControlTypeName or "") == "SliderControl":
+                                return node
+                            node = node.GetParentControl()
+                        except Exception:
+                            break
+            except Exception:
+                pass
+            return None
+
+        def _read_range_value(slider_el):
+            """Read RangeValue/Value from a slider. Returns dict or None."""
+            if not slider_el:
+                return None
+            # Try RangeValuePattern first
+            try:
+                p = slider_el.GetRangeValuePattern()
+                return {
+                    "value": float(p.Value),
+                    "min": float(p.Minimum),
+                    "max": float(p.Maximum),
+                    "small_change": float(getattr(p, "SmallChange", 0) or 0),
+                    "large_change": float(getattr(p, "LargeChange", 0) or 0),
+                    "is_read_only": bool(getattr(p, "IsReadOnly", False)),
+                }
+            except Exception:
+                pass
+            # Fallback to ValuePattern if exposed as text
+            try:
+                vp = slider_el.GetValuePattern()
+                v = vp.Value
+                try:
+                    v = float(v)
+                except Exception:
+                    pass
+                return {"value": v, "min": None, "max": None}
+            except Exception:
+                return None
+
+        def _slider_identity(slider_el):
+            try:
+                return {
+                    "name": slider_el.Name,
+                    "control_type": slider_el.ControlTypeName,
+                    "automation_id": getattr(slider_el, "AutomationId", "") or "",
+                }
+            except Exception:
+                return {"control_type": "SliderControl"}
+
+
         def on_click(x, y, button, pressed):
             nonlocal drag_start, dragging
             btn_str = str(button)
+
             if pressed:
-                # keep original behavior: log mouse_click on press
                 ev = get_current_info()
                 if not ev:
                     return
-                ev["event"] = "mouse_click"
-                ev["button"] = btn_str
+                _annotate_semantic_target(ev)
+
+                # If press starts on a slider, record its value ("before")
+                slider_el = _find_slider_at_point(x, y)
+                slider_before = _read_range_value(slider_el) if slider_el else None
+                slider_meta = _slider_identity(slider_el) if slider_el else None
+                if slider_before:
+                    ev.setdefault("slider", dict(slider_meta or {}))
+                    ev["slider"]["before"] = slider_before
+
+                ev["event"] = "mouse_click"   # <<< add this so clicks aren’t counted as 'unknown'
                 log_event(ev)
 
-                # prepare for drag detection (do NOT separately log mouse_down)
                 mouse_buttons_down.add(btn_str)
                 drag_start = {
                     "pos": (x, y),
                     "ts": time.time(),
                     "button": btn_str,
-                    "context": ev,  # snapshot "what" + "where from"
+                    "context": ev,
+                    "slider_meta": slider_meta,
+                    "slider_before": slider_before,
                 }
-
                 dragging = False
-            else:
-                # mouse up (always log)
-                try:
-                    mouse_buttons_down.remove(btn_str)
-                except KeyError:
-                    pass
+                return
 
-                ev_up = get_current_info()
-                if not ev_up:
-                    return
-                ev_up["button"] = btn_str
+            # released
+            try:
+                mouse_buttons_down.remove(btn_str)
+            except KeyError:
+                pass
 
-                if dragging and drag_start:
-                    # finalize drag & drop
-                    dd = {
-                        "event": "drag_drop",
-                        "timestamp": ev_up["timestamp"],
-                        "button": btn_str,
-                        # write top-level fields for correct per-app routing
-                        "application": ev_up["application"],
-                        "window_title": ev_up["window_title"],
-                        "cursor_position": ev_up["cursor_position"],
-                        "focused_element": ev_up.get("focused_element"),
-                        "element_under_cursor": ev_up.get("element_under_cursor"),
-                        "hwnd": ev_up.get("hwnd"),
-                        "pid": ev_up.get("pid"),
-                        "window_bounds": ev_up.get("window_bounds"),
-                        "window_state": ev_up.get("window_state"),
-                        "from": {
-                            "application": drag_start["context"]["application"],
-                            "window_title": drag_start["context"]["window_title"],
-                            "cursor_position": drag_start["context"]["cursor_position"],
-                            "element_under_cursor": drag_start["context"].get("element_under_cursor"),
-                            "focused_element": drag_start["context"].get("focused_element"),
-                        },
-                        "to": {
-                            "application": ev_up["application"],
-                            "window_title": ev_up["window_title"],
-                            "cursor_position": ev_up["cursor_position"],
-                            "element_under_cursor": ev_up.get("element_under_cursor"),
-                            "focused_element": ev_up.get("focused_element"),
-                        },
-                        "drag_distance": int(math.hypot(
-                            ev_up["cursor_position"][0] - drag_start["context"]["cursor_position"][0],
-                            ev_up["cursor_position"][1] - drag_start["context"]["cursor_position"][1]
-                        )),
-                        "duration_ms": int((ev_up["timestamp"] - drag_start["ts"]) * 1000),
-                    }
-
-                    log_event(dd)
-                else:
-                    ev_up["event"] = "mouse_up"
-                    log_event(ev_up)
-
+            ev_up = get_current_info()
+            if not ev_up:
+                # foreground might be filtered/closed; just reset drag state and bail
                 dragging = False
                 drag_start = None
+                return
+
+            _annotate_semantic_target(ev_up)
+
+            # Use event cursor if present; otherwise fall back to callback coords
+            x_up, y_up = ev_up.get("cursor_position", (x, y))
+            slider_el_up = _find_slider_at_point(x_up, y_up)
+            slider_after = _read_range_value(slider_el_up) if slider_el_up else None
+            slider_meta_up = _slider_identity(slider_el_up) if slider_el_up else None
+
+            started_on_slider = bool(drag_start and drag_start.get("slider_meta"))
+            ended_on_slider   = bool(slider_after)
+            was_slider = started_on_slider or ended_on_slider
+
+            ev_up["button"] = btn_str
+
+            if dragging and drag_start:
+                dd = {
+                    "event": "drag_drop",
+                    "timestamp": ev_up["timestamp"],
+                    "button": btn_str,
+                    "application": ev_up["application"],
+                    "window_title": ev_up["window_title"],
+                    "cursor_position": ev_up.get("cursor_position", [x, y]),
+                    "focused_element": ev_up.get("focused_element"),
+                    "element_under_cursor": ev_up.get("element_under_cursor"),
+                    "hwnd": ev_up.get("hwnd"),
+                    "pid": ev_up.get("pid"),
+                    "window_bounds": ev_up.get("window_bounds"),
+                    "window_state": ev_up.get("window_state"),
+                    "from": {
+                        "application": drag_start["context"]["application"],
+                        "window_title": drag_start["context"]["window_title"],
+                        "cursor_position": drag_start["context"]["cursor_position"],
+                        "element_under_cursor": drag_start["context"].get("element_under_cursor"),
+                        "focused_element": drag_start["context"].get("focused_element"),
+                    },
+                    "to": {
+                        "application": ev_up["application"],
+                        "window_title": ev_up["window_title"],
+                        "cursor_position": ev_up.get("cursor_position", [x, y]),
+                        "element_under_cursor": ev_up.get("element_under_cursor"),
+                        "focused_element": ev_up.get("focused_element"),
+                    },
+                    "drag_distance": int(math.hypot(
+                        x_up - drag_start["context"]["cursor_position"][0],
+                        y_up - drag_start["context"]["cursor_position"][1]
+                    )),
+                    "duration_ms": int((ev_up["timestamp"] - drag_start["ts"]) * 1000),
+                }
+                if was_slider:
+                    dd["slider"] = (drag_start.get("slider_meta") or slider_meta_up or {})
+                    dd["slider"]["before"] = drag_start.get("slider_before")
+                    dd["slider"]["after"] = slider_after
+                log_event(dd)
+
+            elif was_slider and drag_start:
+                dur_ms = int((ev_up["timestamp"] - drag_start["ts"]) * 1000)
+                dd = {**ev_up}
+                dd["event"] = "drag_drop"
+                dd["from"] = {
+                    "application": drag_start["context"]["application"],
+                    "window_title": drag_start["context"]["window_title"],
+                    "cursor_position": drag_start["context"]["cursor_position"],
+                    "element_under_cursor": drag_start["context"].get("element_under_cursor"),
+                    "focused_element": drag_start["context"].get("focused_element"),
+                }
+                dd["drag_distance"] = int(math.hypot(
+                    x_up - drag_start["context"]["cursor_position"][0],
+                    y_up - drag_start["context"]["cursor_position"][1]
+                ))
+                dd["duration_ms"] = dur_ms
+                dd["slider"] = (drag_start.get("slider_meta") or slider_meta_up or {})
+                dd["slider"]["before"] = drag_start.get("slider_before")
+                dd["slider"]["after"] = slider_after
+                log_event(dd)
+
+            else:
+                ev_up["event"] = "mouse_up"
+                log_event(ev_up)
+
+            dragging = False
+            drag_start = None
+
+
+
 
         def on_move(x, y):
             nonlocal last_move_ts, last_move_pos, dragging

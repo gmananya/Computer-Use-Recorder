@@ -1780,48 +1780,7 @@ class TaskGUI:
         self.stop_button.configure(font=self.base_font)
         self.stop_button.pack(pady=5)
 
-    def _ask_difficulty_after_dialog(self):
-        top = tk.Toplevel(self.root)
-        top.title("Logging stopped")
-        top.transient(self.root)
-        top.grab_set()
-        top.resizable(False, False)
 
-        # ----- size + center -----
-        top.update_idletasks()
-        W, H = 560, 260  # bigger window
-        x = (top.winfo_screenwidth()  - W) // 2
-        y = (top.winfo_screenheight() - H) // 2
-        top.geometry(f"{W}x{H}+{x}+{y}")
-
-        # block closing via 'X' (force Save)
-        top.protocol("WM_DELETE_WINDOW", lambda: None)
-
-        # ----- content -----
-        tk.Label(top, text="Logging stopped", font=self.bold_font)\
-            .pack(padx=24, pady=(20, 8), anchor="w")
-
-        tk.Label(top, text="How difficult was the task to complete?", font=self.base_font)\
-            .pack(padx=24, pady=(0, 10), anchor="w")
-
-        default_after = self.task_metadata.get("difficulty_before") or "Medium"
-        var = tk.StringVar(value=default_after)
-        cb = ttk.Combobox(top, textvariable=var,
-                        values=["Easy", "Medium", "Hard"], state="readonly", width=24)
-        cb.pack(padx=24, pady=(0, 18), anchor="w")
-
-        # single Save button
-        def on_save():
-            self._difficulty_after_value = var.get()
-            top.destroy()
-
-        btns = tk.Frame(top)
-        btns.pack(fill="x", padx=24, pady=(4, 20))
-        tk.Button(btns, text="Save", command=on_save, width=14).pack(side="left")
-
-        self.root.wait_window(top)
-        return getattr(self, "_difficulty_after_value", default_after)
-    
 
     def _show_task_brief_dialog(self):
         """Modal pop-up showing the selected task's context and instruction."""
@@ -1862,6 +1821,136 @@ class TaskGUI:
         # Block until user acknowledges (keeps current behavior like messagebox)
         self.root.wait_window(top)
 
+    def _ask_post_task_outcome_dialog(self):
+        """
+        Modal dialog shown after logging stops.
+        Collects:
+        - difficulty_after   (Easy/Medium/Hard)
+        - success            (True/False)
+        - failure_reason     (if success == False; one selected from dropdown)
+        - failure_notes      (optional free text)
+        Returns a dict with these keys.
+        """
+        top = tk.Toplevel(self.root)
+        top.title("Task outcome")
+        top.transient(self.root)
+        top.grab_set()
+        top.resizable(False, False)
+
+        # ----- size + center -----
+        top.update_idletasks()
+        W, H = 800, 500
+        x = (top.winfo_screenwidth()  - W) // 2
+        y = (top.winfo_screenheight() - H) // 2
+        top.geometry(f"{W}x{H}+{x}+{y}")
+
+        # block closing via 'X' (force Save)
+        top.protocol("WM_DELETE_WINDOW", lambda: None)
+
+        pad_x = 24
+
+        tk.Label(top, text="Logging stopped", font=self.bold_font)\
+            .pack(padx=pad_x, pady=(18, 8), anchor="w")
+
+        # --- Difficulty after ---
+        tk.Label(top, text="How difficult was the task to complete?", font=self.base_font)\
+            .pack(padx=pad_x, pady=(2, 6), anchor="w")
+
+        default_after = self.task_metadata.get("difficulty_before") or "Medium"
+        diff_var = tk.StringVar(value=default_after)
+        diff_cb = ttk.Combobox(top, textvariable=diff_var,
+                            values=["Easy", "Medium", "Hard"],
+                            state="readonly", width=24)
+        diff_cb.pack(padx=pad_x, pady=(0, 10), anchor="w")
+
+        # --- Success / failure ---
+        tk.Label(top, text="Was the task completed successfully?", font=self.base_font)\
+            .pack(padx=pad_x, pady=(10, 4), anchor="w")
+
+        success_var = tk.StringVar(value="yes")  # "yes" or "no"
+        r_frame = tk.Frame(top)
+        r_frame.pack(padx=pad_x, pady=(0, 8), anchor="w")
+        tk.Radiobutton(r_frame, text="Yes", variable=success_var, value="yes", font=self.base_font)\
+            .pack(side="left", padx=(0, 12))
+        tk.Radiobutton(r_frame, text="No", variable=success_var, value="no", font=self.base_font)\
+            .pack(side="left")
+
+        # --- Failure details (conditional) ---
+        fail_frame = tk.LabelFrame(top, text="If not successful, why?", padx=10, pady=8)
+        fail_frame.pack(fill="x", padx=pad_x, pady=(6, 10))
+
+        tk.Label(fail_frame, text="Reason (choose one):", font=self.base_font)\
+            .grid(row=0, column=0, sticky="w")
+
+        # DROPDOWN list of reasons
+        reasons = [
+            "Ran out of time",
+            "Couldn't find the required info",
+            "App/website inaccessible",
+            "App crashed/froze",
+            "Instructions unclear",
+            "Permission/account issues",
+            "Other (specify)"
+        ]
+        reason_var = tk.StringVar(value="")
+        reason_cb = ttk.Combobox(
+            fail_frame, textvariable=reason_var, values=reasons, state="disabled", width=40
+        )
+        reason_cb.grid(row=0, column=1, padx=(8, 0), pady=(0, 6), sticky="w")
+
+        tk.Label(fail_frame, text="Notes (optional):", font=self.base_font)\
+            .grid(row=1, column=0, sticky="nw", pady=(2, 0))
+        notes_txt = tk.Text(fail_frame, width=56, height=4, state="disabled")
+        notes_txt.grid(row=1, column=1, padx=(8, 0), pady=(2, 0), sticky="w")
+
+        def _toggle_failure_fields(*_):
+            is_fail = (success_var.get() == "no")
+            reason_cb.configure(state="readonly" if is_fail else "disabled")
+            notes_txt.configure(state="normal" if is_fail else "disabled")
+            if not is_fail:
+                reason_var.set("")
+                notes_txt.delete("1.0", "end")
+
+        success_var.trace_add("write", _toggle_failure_fields)
+        _toggle_failure_fields()
+
+        # --- Buttons ---
+        result = {
+            "difficulty_after": default_after,
+            "success": True,
+            "failure_reason": None,
+            "failure_notes": None
+        }
+
+        def on_save():
+            # collect difficulty
+            result["difficulty_after"] = diff_var.get() or default_after
+            # collect success + failures
+            ok = True
+            if success_var.get() == "yes":
+                result["success"] = True
+                result["failure_reason"] = None
+                result["failure_notes"] = None
+            else:
+                result["success"] = False
+                reason = reason_var.get().strip()
+                if not reason:
+                    messagebox.showwarning("Missing reason", "Please select a reason for failure.")
+                    ok = False
+                result["failure_reason"] = reason or None
+                if notes_txt["state"] == "normal":
+                    notes = notes_txt.get("1.0", "end").strip()
+                    result["failure_notes"] = notes or None
+            if ok:
+                top.destroy()
+
+        btns = tk.Frame(top)
+        btns.pack(fill="x", padx=pad_x, pady=(8, 16))
+        tk.Button(btns, text="Save", command=on_save, width=14).pack(side="left")
+
+        self.root.wait_window(top)
+        return result
+
 
     def stop_task(self):
         for l in self.interaction_loggers:
@@ -1869,7 +1958,12 @@ class TaskGUI:
             except Exception: pass
         self.interaction_loggers = []
 
-        difficulty_after = self._ask_difficulty_after_dialog()
+        # NEW combined dialog
+        outcome = self._ask_post_task_outcome_dialog()
+        difficulty_after = outcome["difficulty_after"]
+        success = outcome["success"]
+        failure_reason = outcome.get("failure_reason")
+        failure_notes = outcome.get("failure_notes")
 
         try:
             with open(self.metadata_path, "r", encoding="utf-8") as f:
@@ -1884,8 +1978,19 @@ class TaskGUI:
                 m["task"]["difficulty_before"] = prev
             m["task"].pop("difficulty", None)
 
-        # required now — dialog can only be closed by Save
         m["task"]["difficulty_after"] = difficulty_after
+
+        # --- NEW: success / failure fields ---
+        m["task"]["success"] = bool(success)
+        if not success:
+            m["task"]["failure_reason"] = failure_reason or ""
+            if failure_notes:
+                m["task"]["failure_notes"] = failure_notes
+            else:
+                m["task"].pop("failure_notes", None)
+        else:
+            m["task"].pop("failure_reason", None)
+            m["task"].pop("failure_notes", None)
 
         m.setdefault("session", {})
         m["session"]["ended_at"] = time.time()

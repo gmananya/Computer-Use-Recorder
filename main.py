@@ -36,6 +36,8 @@ import accessibility_user_settings as a11y
 
 
 TASKS_PATH = "tasks_list.json"
+COMPLETED_TASKS_FILE = "completed_tasks.txt"
+
 
 
 # ---------- small utilities ----------
@@ -92,27 +94,6 @@ def _normalize_to_frame_hwnd(hwnd):
         pass
 
     return root
-
-
-def _read_reg(root, path, name):
-    try:
-        with winreg.OpenKey(root, path) as key:
-            val, _ = winreg.QueryValueEx(key, name)
-            return val
-    except Exception:
-        return None
-
-
-def _proc_running(fragment):
-    frag = (fragment or "").lower()
-    for p in psutil.process_iter(["name"]):
-        try:
-            nm = (p.info["name"] or "").lower()
-            if frag and frag in nm:
-                return True
-        except Exception:
-            pass
-    return False
 
 
 def _get_window_bounds(hwnd):
@@ -437,6 +418,39 @@ class TaskGUI:
         self.task_number_dropdown["values"] = display_values
         self.task_number_var.set("")
 
+    # inside class TaskGUI (put near other small helpers)
+    def _should_skip_app(self, app_name: str) -> bool:
+        nm = (app_name or "").lower()
+        # exact-name skiplist still honored
+        if nm in self.accessibility_skiplist:
+            return True
+        # NEW: skip any python*.exe variant (python.exe, pythonw.exe, python3.13.exe, etc.)
+        if nm.endswith(".exe") and nm.startswith("python"):
+            return True
+        return False
+    
+
+    # inside class TaskGUI, add this small helper (anywhere is fine)
+    def _append_completed_task_record(self):
+        """
+        Writes a single line 'rand id : task number' to completed_tasks.txt.
+        Uses the per-task value for the selected Rand ID column (self.task_metadata['rand_order']).
+        Falls back to the column name if the value is missing.
+        """
+        try:
+            rand_val = self.task_metadata.get("rand_order")
+            if rand_val is None or rand_val == "":
+                # Fallback: write the selected column label (e.g., 'Rand ID 2')
+                rand_val = self.rand_id_var.get() or "unknown_rand"
+            task_id = self.task_metadata.get("task_id")
+            with self.file_lock:
+                with open(COMPLETED_TASKS_FILE, "a", encoding="utf-8") as f:
+                    f.write(f"Participant {rand_val} : Task {task_id}\n")
+        except Exception as e:
+            print(f"[completed_tasks] append failed: {e}")
+
+
+
 
     def _task_details(self):
         idx = self.task_number_dropdown.current()
@@ -588,7 +602,7 @@ class TaskGUI:
 
                 if pid == cur_pid:
                     continue
-                if name in whitelist:
+                if name in whitelist or (name.endswith('.exe') and name.startswith('python')):
                     continue
                 if username in ('system', 'local service', 'network service'):
                     continue
@@ -882,6 +896,7 @@ class TaskGUI:
 
         final_task_id = self.task_metadata["task_id"]
 
+        self._append_completed_task_record()
 
         folder_name = str(final_task_id)
         folder_path = os.path.join("task_logs", folder_name)
@@ -1073,7 +1088,7 @@ class TaskGUI:
             app_name = _safe_process_name(pid, hwnd)
 
             # Respect skiplist *after* normalization
-            if (app_name or "").lower() in self.accessibility_skiplist:
+            if self._should_skip_app(app_name):
                 return None
 
             window_title = win32gui.GetWindowText(hwnd) or ""
@@ -1297,7 +1312,7 @@ class TaskGUI:
         
         def log_event(ev):
             raw_app = ev.get("application") or "unknown"
-            if (raw_app or "").lower() in self.accessibility_skiplist:
+            if self._should_skip_app(raw_app):
                 return
 
             # Determine the per-app bucket (splits ApplicationFrameHost.exe by hosted app)

@@ -110,7 +110,7 @@ class WebLogHandler(BaseHTTPRequestHandler):
                 dom_name = _tab_dom_name(order, created)
                 with open(os.path.join(web_dir, dom_name), "wb") as hf:
                     hf.write(b64decode(dom_b64))
-                tab["dom_file"] = os.path.join("task_logs", CURRENT_TASK, "web_logs", dom_name).replace("\\", "/")
+                tab["dom_file"]  = os.path.join(TASK_LOG_DIR, CURRENT_TASK, "web_logs", dom_name).replace("\\", "/")
                 tab["dom_url"] = "/" + tab["dom_file"]
 
             if "accessibility_tree" in data:
@@ -118,7 +118,7 @@ class WebLogHandler(BaseHTTPRequestHandler):
                 a11y_name = _tab_a11y_name(order, created)
                 with open(os.path.join(web_dir, a11y_name), "w", encoding="utf-8") as jf:
                     json.dump(tree, jf, indent=2)
-                tab["a11y_file"] = os.path.join("task_logs", CURRENT_TASK, "web_logs", a11y_name).replace("\\", "/")
+                tab["a11y_file"] = os.path.join(TASK_LOG_DIR, CURRENT_TASK, "web_logs", a11y_name).replace("\\", "/")
                 tab["a11y_url"] = "/" + tab["a11y_file"]
 
 

@@ -278,9 +278,16 @@ class ObsController:
 class TaskGUI:
     ROLL_THRESHOLD = 300  # seconds of idle after which a new session file is started for the same surface
 
-    def __init__(self):
+    def __init__(self, user_id):
         self.root = tk.Tk()
         self.root.title("Computer Use Logger")
+        
+        self.user_id = user_id
+
+        self.user_logs_root = os.path.join("task_logs", f"User {self.user_id}")
+        os.makedirs(self.user_logs_root, exist_ok=True)
+        self.completed_tasks_file = os.path.join(self.user_logs_root, "completed_tasks.txt")
+
 
         self.tasks = self._load_tasks()
         self.task_metadata = {}
@@ -321,6 +328,36 @@ class TaskGUI:
 
     # ----- gui + tasks -----
 
+    def _existing_task_ids_for_user(self) -> set:
+        """
+        Return a set of task IDs (ints) that already have a folder under
+        task_logs/User {user_id}/.
+        """
+        try:
+            base = getattr(self, "user_logs_root", None)
+            if not base or not os.path.isdir(base):
+                return set()
+            ids = set()
+            for name in os.listdir(base):
+                p = os.path.join(base, name)
+                if not os.path.isdir(p):
+                    continue
+                m = re.fullmatch(r"\s*(\d+)\s*", name)
+                if m:
+                    ids.add(int(m.group(1)))
+            return ids
+        except Exception:
+            return set()
+
+    def _task_id_from_row(self, task) -> int | None:
+        """Extract Task ID as int from a task row."""
+        tid = task.get("Task ID") or task.get("TaskID") or task.get("ID")
+        try:
+            return int(tid)
+        except Exception:
+            return None
+
+
     def _rand_dropdown(self, event=None):
         col = self.rand_id_var.get()
         if not col:
@@ -336,8 +373,16 @@ class TaskGUI:
         ranked = [(t, _to_int(t.get(col))) for t in self.tasks]
         ordered = [t for t, r in sorted([p for p in ranked if p[1] is not None], key=lambda x: x[1])]
 
+        # --- NEW: filter out tasks that already have a folder for this user ---
+        already_done = self._existing_task_ids_for_user()
+        filtered = []
+        for t in ordered:
+            tid = self._task_id_from_row(t)
+            # include tasks with missing/invalid ID (defensive), exclude ones that exist
+            if tid is None or tid not in already_done:
+                filtered.append(t)
 
-        self.current_tasks = ordered
+        self.current_tasks = filtered
 
         # dropdown label: T{Task ID} - {Instruction}
         display = []
@@ -345,8 +390,15 @@ class TaskGUI:
             tid = t.get("Task ID") or t.get("TaskID") or t.get("ID")
             instr = t.get("Instruction") or t.get("Task") or ""
             display.append(f"T{tid} - {instr}")
+
         self.task_number_dropdown["values"] = display
         self.task_number_var.set("")
+
+        # Disable "Next" if no remaining tasks
+        try:
+            self.continue_button.configure(state=("normal" if display else "disabled"))
+        except Exception:
+            pass
 
 
     def _load_tasks(self):
@@ -355,10 +407,11 @@ class TaskGUI:
 
     
     def _build_initial_gui(self):
+        """Build initial GUI and preselect the Rand ID column based on --user_id."""
         self.root.geometry("900x500")
         self.root.resizable(True, True)
 
-        # detect available Rand ID columns from the JSON header
+        # Detect available Rand ID columns from the JSON header
         sample = self.tasks[0] if self.tasks else {}
         self.rand_columns = [k for k in sample.keys() if re.match(r"(?i)rand\s*id\s*\d+", k)]
         # also allow a single "Rand ID" (no number) if present
@@ -371,9 +424,32 @@ class TaskGUI:
             return int(m.group(1)) if m else 0
         self.rand_columns.sort(key=_rk)
 
+        # Helper: find best index for the provided --user_id
+        def _find_rand_col_index(columns, user_id):
+            if not columns:
+                return -1
+            # 1) Exact flexible match: "Rand ID {n}" (ignore case/whitespace)
+            pat_exact = re.compile(rf"^rand\s*id\s*{re.escape(str(user_id))}\s*$", re.I)
+            for i, c in enumerate(columns):
+                if pat_exact.match(c.strip()):
+                    return i
+            # 2) Any column whose trailing digits equal user_id (e.g., "Rand_ID(2)")
+            for i, c in enumerate(columns):
+                m = re.search(r"(\d+)\s*$", c)
+                if m and int(m.group(1)) == int(user_id):
+                    return i
+            # 3) Fallback: plain "Rand ID"
+            for i, c in enumerate(columns):
+                if re.match(r"^rand\s*id\s*$", c, re.I):
+                    return i
+            # 4) Last resort: first column
+            return 0
+
+        # Tk variables
         self.rand_id_var = tk.StringVar()
         self.task_number_var = tk.StringVar()
 
+        # Layout
         self.form_frame = tk.Frame(self.root, padx=20, pady=20)
         self.form_frame.pack(fill="both", expand=True)
 
@@ -398,6 +474,17 @@ class TaskGUI:
         self.continue_button = tk.Button(self.form_frame, text="Next", command=self._task_details, width=20)
         self.continue_button.configure(font=self.base_font)
         self.continue_button.grid(row=2, column=0, columnspan=2, pady=20)
+
+        # Preselect the correct Rand ID column by index (avoids Tk picking a different item)
+        if self.rand_columns:
+            idx = _find_rand_col_index(self.rand_columns, self.user_id) if self.user_id else 0
+            # Clamp just in case
+            idx = max(0, min(idx, len(self.rand_columns) - 1))
+            self.rand_dropdown.current(idx)
+            self.rand_id_var.set(self.rand_columns[idx])  # keep var in sync
+
+            # Populate the task list for this user immediately
+            self._rand_dropdown()
 
 
     def _task_dropdown(self, event=None):
@@ -430,25 +517,21 @@ class TaskGUI:
         return False
     
 
-    # inside class TaskGUI, add this small helper (anywhere is fine)
     def _append_completed_task_record(self):
         """
-        Writes a single line 'rand id : task number' to completed_tasks.txt.
-        Uses the per-task value for the selected Rand ID column (self.task_metadata['rand_order']).
-        Falls back to the column name if the value is missing.
+        Writes: 'Participant <user_id> : Task <task_id>' into
+        task_logs/User <user_id>/completed_tasks.txt
         """
         try:
-            rand_val = self.task_metadata.get("rand_order")
-            if rand_val is None or rand_val == "":
-                # Fallback: write the selected column label (e.g., 'Rand ID 2')
-                rand_val = self.rand_id_var.get() or "unknown_rand"
+            participant_id = self.user_id
             task_id = self.task_metadata.get("task_id")
+            # Ensure the per-user folder exists (defensive)
+            os.makedirs(self.user_logs_root, exist_ok=True)
             with self.file_lock:
-                with open(COMPLETED_TASKS_FILE, "a", encoding="utf-8") as f:
-                    f.write(f"Participant {rand_val} : Task {task_id}\n")
+                with open(self.completed_tasks_file, "a", encoding="utf-8") as f:
+                    f.write(f"Participant {participant_id} : Task {task_id}\n")
         except Exception as e:
             print(f"[completed_tasks] append failed: {e}")
-
 
 
 
@@ -524,6 +607,9 @@ class TaskGUI:
 
         self.task_familiarity = tk.StringVar()
         self.task_difficulty = tk.StringVar()
+
+        self.task_familiarity.set("High")
+        self.task_difficulty.set("Low")
 
         dropdown_frame = tk.Frame(self.form_frame)
         dropdown_frame.pack(pady=10)
@@ -898,11 +984,14 @@ class TaskGUI:
 
         self._append_completed_task_record()
 
-        folder_name = str(final_task_id)
-        folder_path = os.path.join("task_logs", folder_name)
+    
+        folder_path = os.path.join(self.user_logs_root, str(final_task_id))
+
         os.makedirs(folder_path, exist_ok=True)
+
         self.log_folder_path = folder_path
         self.metadata_path = os.path.join(folder_path, f"metadata_{final_task_id}.json")
+
 
         # (optional one-time cleanup for old runs of this task)
         legacy_meta = os.path.join(folder_path, "metadata.json")
@@ -914,13 +1003,8 @@ class TaskGUI:
 
         # start the web logger AFTER paths are set; point it to the same metadata file if supported
         try:
-            if hasattr(web_logger_server, "reset_state_for_task"):
-                web_logger_server.reset_state_for_task(final_task_id)
-            web_logger_server.CURRENT_TASK = str(final_task_id)
-            if hasattr(web_logger_server, "METADATA_PATH"):
-                web_logger_server.METADATA_PATH = self.metadata_path
-            if hasattr(web_logger_server, "LOG_FOLDER"):
-                web_logger_server.LOG_FOLDER = folder_path
+            web_logger_server.TASK_LOG_DIR = self.user_logs_root
+            web_logger_server.reset_state_for_task(final_task_id)
             web_logger_server.run_web_logger_in_thread()
         except Exception as e:
             print(f"[web_logger_server] could not start: {e}")
@@ -2024,7 +2108,10 @@ class TaskGUI:
 
     def run(self):
         self.root.mainloop()
-
+import argparse
 if __name__ == "__main__":
-    app = TaskGUI()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--user_id", type=int, default = 0)
+    args = parser.parse_args()
+    app = TaskGUI(args.user_id)
     app.run()

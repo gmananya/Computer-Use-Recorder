@@ -1499,7 +1499,7 @@ class TaskGUI:
 
 
          # --- input tracking state/config ---
-        MOVE_THROTTLE_SEC = 0.10   # limit mouse_move logging to ~10 Hz
+        MOVE_THROTTLE_SEC = 0.25   # limit mouse_move logging to ~10 Hz
         DRAG_DISTANCE_PX = 6       # minimum pixels to count as drag
         pressed_keys = set()       # normalized names, e.g., {'Ctrl', 'Shift', 'a'}
         pressed_mods = set()       # subset: {'Ctrl','Alt','Shift','Win','Insert','CapsLock'}

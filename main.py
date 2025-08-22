@@ -316,7 +316,7 @@ class TaskGUI:
 
         # locks for safe writes and one-time a11y capture
         self.file_lock = threading.Lock()
-        self.meta_lock = threading.Lock()
+        self.meta_lock = web_logger_server.META_LOCK 
         self.a11y_capture_lock = threading.Lock()
         self.captured_surfaces = set()
 
@@ -1229,16 +1229,27 @@ class TaskGUI:
                 try:
                     with open(self.metadata_path, "r", encoding="utf-8") as f:
                         return json.load(f)
+                except json.JSONDecodeError:
+                    # small retry to ride over a concurrent write
+                    time.sleep(0.01)
+                    try:
+                        with open(self.metadata_path, "r", encoding="utf-8") as f:
+                            return json.load(f)
+                    except Exception:
+                        return None
                 except Exception:
                     return None
 
         def _save_meta(m):
             with self.meta_lock:
+                # atomic write via server helper so both sides use the same method
                 try:
+                    web_logger_server._atomic_write_json(self.metadata_path, m)
+                except AttributeError:
+                    # fallback (shouldn't happen if you've added the helper)
                     with open(self.metadata_path, "w", encoding="utf-8") as f:
                         json.dump(m, f, indent=2)
-                except Exception as e:
-                    print(f"[meta] write failed: {e}")
+
 
         def _ensure_app_in_meta(m, app_name, order):
             m.setdefault("summary", {"apps": 0, "events": 0, "by_type": {}, "by_app": {}})

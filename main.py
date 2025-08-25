@@ -41,7 +41,6 @@ COMPLETED_TASKS_FILE = "completed_tasks.txt"
 
 
 # ---------- small utilities ----------
-
 def _get_ancestor(hwnd, flag):
     try:
         return win32gui.GetAncestor(hwnd, flag)
@@ -312,6 +311,8 @@ class TaskGUI:
             "python.exe", "pythonw.exe", "obs64.exe",
             "searchhost.exe", "startmenuexperiencehost.exe", "shellexperiencehost.exe",
             "teamviewer.exe", "teamviewer_service.exe", "teamviewer_desktop.exe", "teamviewerqs.exe",
+            "zoomtext.exe", "zt.exe", "ztuac.exe", "zoomtextmbahost.exe",
+            "aisquared.loader.elevated.exe", "ztkbmon.exe",
         }
 
         # locks for safe writes and one-time a11y capture
@@ -678,7 +679,17 @@ class TaskGUI:
             'startmenuexperiencehost.exe', 'shellexperiencehost.exe', 'searchhost.exe',
             # TeamViewer family — do not close
             'teamviewer.exe', 'teamviewer_service.exe', 'teamviewer_desktop.exe', 'teamviewerqs.exe',
+            'zoomtext.exe', 'zt.exe', 'ztuac.exe', 'zoomtextmbahost.exe',
+            'aisquared.loader.elevated.exe', 'ztkbmon.exe'
         }
+
+        def _is_zoomtext_proc(nm: str) -> bool:
+            nm = (nm or "").lower()
+            return (
+                "zoomtext" in nm or
+                nm in {'zt.exe', 'ztuac.exe', 'zoomtextmbahost.exe',
+                    'aisquared.loader.elevated.exe', 'ztkbmon.exe'}
+            )
 
         for proc in psutil.process_iter(['pid', 'name', 'username']):
             try:
@@ -688,7 +699,7 @@ class TaskGUI:
 
                 if pid == cur_pid:
                     continue
-                if name in whitelist or (name.endswith('.exe') and name.startswith('python')):
+                if name in whitelist or _is_zoomtext_proc(name) or (name.endswith('.exe') and name.startswith('python')):
                     continue
                 if username in ('system', 'local service', 'network service'):
                     continue
@@ -1034,13 +1045,6 @@ class TaskGUI:
         }
 
 
-        meta["accessibility"] = {
-            "baseline": baseline,
-            # "last": baseline,
-            "changes": [],
-            # "screen_reader_settings": sr,
-        }
-
         with open(self.metadata_path, "w", encoding="utf-8") as f:
             json.dump(meta, f, indent=2)
 
@@ -1189,6 +1193,7 @@ class TaskGUI:
             bounds = _get_window_bounds(hwnd)
             state = _get_window_state(hwnd)
 
+
             with auto.UIAutomationInitializerInThread():
                 try:
                     elem = auto.ControlFromPoint(x, y)
@@ -1214,13 +1219,12 @@ class TaskGUI:
                 "timestamp": time.time(),
                 "application": app_name,         # e.g., 'ApplicationFrameHost.exe' for Photos/Media Player
                 "window_title": window_title,
-                "cursor_position": [x, y],
                 "focused_element": focused_info,
+                 
                 "element_under_cursor": element_info,
                 "hwnd": hwnd,                    # frame hwnd (stable for bucketing & a11y capture)
                 "pid": pid,                      # frame pid
                 "window_bounds": bounds,
-                "window_state": state
             }
 
 

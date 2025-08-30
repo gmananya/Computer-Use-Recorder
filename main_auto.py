@@ -274,14 +274,20 @@ class ObsController:
 
 # ---------- gui app ----------
 
+# CHANGE THIS SIGNATURE
 class TaskGUI:
-    ROLL_THRESHOLD = 300  # seconds of idle after which a new session file is started for the same surface
+    ROLL_THRESHOLD = 300
 
-    def __init__(self, user_id):
+    def __init__(self, user_id, auto: bool = False):   # <— add auto
         self.root = tk.Tk()
         self.root.title("Computer Use Logger")
-        
+
+        self.auto = bool(auto)                          # <— remember auto mode
+        if self.auto:
+            self.root.withdraw()                        # <— hide GUI windows
+
         self.user_id = user_id
+
 
         self.user_logs_root = os.path.join("task_logs", f"User {self.user_id}")
         os.makedirs(self.user_logs_root, exist_ok=True)
@@ -487,6 +493,13 @@ class TaskGUI:
             # Populate the task list for this user immediately
             self._rand_dropdown()
 
+            # Auto mode: start headless immediately
+            if self.auto:
+                # small delay so Tk has initialized
+                self.root.after(100, self._auto_start_flow)
+
+        
+
 
     def _task_dropdown(self, event=None):
         s = self.task_set_var.get()
@@ -591,6 +604,17 @@ class TaskGUI:
             "interactions": interactions,
             "applications": applications,
         }
+
+        # --- BEGIN handoff for orchestrator ---
+        handoff_path = os.path.join(self.user_logs_root, "selected_task.json")
+        try:
+            with open(handoff_path, "w", encoding="utf-8") as f:
+                json.dump(self.task_metadata, f, indent=2, ensure_ascii=False)
+            print(f"[handoff] Wrote selected task to {handoff_path}")
+        except Exception as e:
+            print(f"[handoff] Failed writing selected_task.json: {e}")
+        # --- END handoff for orchestrator ---
+
 
 
         # keep the whole source row too (handy for audits)
@@ -983,6 +1007,30 @@ class TaskGUI:
         # Non-AFH windows still keyed by hwnd
         return f"{app}|hwnd:{hwnd}"
 
+    def _auto_start_flow(self):
+        """Pick the first remaining task for this user and start immediately."""
+        # Ensure task list is populated for the preselected Rand ID column
+        self._rand_dropdown()
+
+        if not self.current_tasks:
+            print("[auto] No remaining tasks for this user. Exiting.")
+            self.root.quit()
+            return
+
+        # Select first task and enter details page
+        try:
+            self.task_number_dropdown.current(0)
+        except Exception:
+            pass
+        self._task_details()
+
+        # Defaults already set in _task_details(); start logging immediately
+        try:
+            self.start_task()
+        except Exception as e:
+            print(f"[auto] failed to start task: {e}")
+            self.root.quit()
+
 
     # ----- logging session -----
 
@@ -1050,7 +1098,9 @@ class TaskGUI:
             json.dump(meta, f, indent=2)
 
         # messagebox.showinfo("logging started", f"started logging:\n\n{self.task_metadata}")
-        self._show_task_brief_dialog()
+        # self._show_task_brief_dialog()
+        if not self.auto:
+            self._show_task_brief_dialog()
 
         self.start_button.pack_forget()
 
@@ -1062,6 +1112,9 @@ class TaskGUI:
         self.surface_last_event_ts = {}
 
         self._start_obs(folder_path)
+        # In either mode, watch for stop.signal; in auto, this is how the orchestrator ends the run.
+        threading.Thread(target=self._watch_for_stop_signal, args=(folder_path,), daemon=True).start()
+
 
         def _safe_process_name(pid, hwnd):
             # Always classify by the *frame* hwnd for consistency
@@ -1899,6 +1952,8 @@ class TaskGUI:
 
     def _show_task_brief_dialog(self):
         """Modal pop-up showing the selected task's context and instruction."""
+        if self.auto:
+            return
         top = tk.Toplevel(self.root)
         top.title("Task Brief")
         top.transient(self.root)
@@ -2067,18 +2122,85 @@ class TaskGUI:
         return result
 
 
+    def _stop_task_no_dialog(self):
+        """Stop logging immediately without any GUI prompts (used in auto mode)."""
+        for l in self.interaction_loggers:
+            try: l.stop()
+            except Exception: pass
+        self.interaction_loggers = []
+
+        # Load / prepare metadata
+        try:
+            with open(self.metadata_path, "r", encoding="utf-8") as f:
+                m = json.load(f)
+        except Exception:
+            m = {}
+
+        m.setdefault("task", {})
+        if "difficulty_before" not in m["task"]:
+            prev = self.task_metadata.get("difficulty_before") or self.task_metadata.get("difficulty")
+            if prev is not None:
+                m["task"]["difficulty_before"] = prev
+            m["task"].pop("difficulty", None)
+
+        # Defaults for auto stop
+        m["task"]["difficulty_after"] = m["task"].get("difficulty_after") or "Medium"
+        m["task"]["success"] = True
+        m["task"].pop("failure_reason", None)
+        m["task"].pop("failure_notes", None)
+
+        m.setdefault("session", {})
+        m["session"]["ended_at"] = time.time()
+
+        try:
+            with open(self.metadata_path, "w", encoding="utf-8") as f:
+                json.dump(m, f, indent=2)
+        except Exception as e:
+            print(f"[meta] write failed in _stop_task_no_dialog: {e}")
+
+        rec_src = self._stop_obs()
+        final_path = self._bring_obs_file(rec_src)
+        self._split_mkv(final_path)
+        self.root.quit()
+
+
+    def _watch_for_stop_signal(self, folder_path: str):
+        """Background watcher for stop.signal; schedules a clean stop on the UI thread."""
+        flag = os.path.join(folder_path, "stop.signal")
+        try:
+            while True:
+                if os.path.exists(flag):
+                    # optional: remove flag so repeated runs don’t re-trigger
+                    try:
+                        os.remove(flag)
+                    except Exception:
+                        pass
+                    # Schedule stop on the main Tk thread
+                    self.root.after(0, self._stop_task_no_dialog if self.auto else self.stop_task)
+                    break
+                time.sleep(0.25)
+        except Exception as e:
+            print(f"[watcher] stop.signal watcher error: {e}")
+
+
     def stop_task(self):
         for l in self.interaction_loggers:
             try: l.stop()
             except Exception: pass
         self.interaction_loggers = []
 
-        # NEW combined dialog
-        outcome = self._ask_post_task_outcome_dialog()
-        difficulty_after = outcome["difficulty_after"]
-        success = outcome["success"]
-        failure_reason = outcome.get("failure_reason")
-        failure_notes = outcome.get("failure_notes")
+        if self.auto:
+            # No dialogs; write defaults and stop cleanly
+            difficulty_after = self.task_metadata.get("difficulty_before") or "Medium"
+            success = True
+            failure_reason = None
+            failure_notes = None
+        else:
+            outcome = self._ask_post_task_outcome_dialog()
+            difficulty_after = outcome["difficulty_after"]
+            success = outcome["success"]
+            failure_reason = outcome.get("failure_reason")
+            failure_notes = outcome.get("failure_notes")
 
         try:
             with open(self.metadata_path, "r", encoding="utf-8") as f:
@@ -2127,7 +2249,10 @@ class TaskGUI:
 import argparse
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--user_id", type=int, default = 0)
+    parser.add_argument("--user_id", type=int, default=0)
+    parser.add_argument("--auto", action="store_true", help="Headless mode for orchestrator")  # <—
     args = parser.parse_args()
-    app = TaskGUI(args.user_id)
+    app = TaskGUI(args.user_id, auto=args.auto)  # <— pass auto
     app.run()
+
+

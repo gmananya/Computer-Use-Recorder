@@ -1,6 +1,7 @@
 # web_logger_server.py
-# web_logger_server.py
-import threading, json, os, time  # add time
+# Local HTTP server (port 8765) that receives interaction events from the Chrome extension
+# and writes them into per-tab JSON files inside the active task's log folder.
+import threading, json, os, time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from datetime import datetime
 from base64 import b64decode
@@ -17,7 +18,7 @@ order_counter = 1
 META_LOCK = threading.RLock()
 
 def _atomic_write_json(path, obj):
-    """Write JSON atomically to avoid torn reads."""
+    """Serialize obj to JSON and rename-replace path atomically so concurrent readers never see a partial file."""
     tmp = f"{path}.tmp"
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(obj, f, indent=2)
@@ -27,6 +28,7 @@ def _atomic_write_json(path, obj):
 
 
 def _robust_load_json(path: str, retries: int = 10, delay: float = 0.01):
+    """Load JSON from path, retrying on decode errors (handles race with concurrent atomic writes)."""
     for _ in range(retries):
         try:
             with open(path, "r", encoding="utf-8") as f:
@@ -41,16 +43,22 @@ def _robust_load_json(path: str, retries: int = 10, delay: float = 0.01):
 
 
 def _task_folder():
+    """Return the root log directory for the current task."""
     return os.path.join(TASK_LOG_DIR, str(CURRENT_TASK))
 
 def _web_folder():
+    """Return (and create if needed) the web_logs subfolder for the current task."""
     p = os.path.join(_task_folder(), "web_logs")
     os.makedirs(p, exist_ok=True); return p
 
 def _meta_path():
+    """Return the path to the task's metadata JSON file."""
     return os.path.join(_task_folder(), f"metadata_{CURRENT_TASK}.json")
 
+_BROWSER_APPS = {"chrome.exe", "msedge.exe", "firefox.exe", "brave.exe", "opera.exe", "vivaldi.exe"}
+
 def reset_state_for_task(task_id):
+    """Switch the server to a new task: clear per-tab buffers and ensure the log directories exist."""
     global CURRENT_TASK, interactions_by_tab, order_counter
     CURRENT_TASK = str(task_id)
     interactions_by_tab = {}
@@ -62,14 +70,14 @@ def reset_state_for_task(task_id):
         if not os.path.exists(_meta_path()):
             _atomic_write_json(_meta_path(), {
                 "task": {},
-                "session": {"started_at": None, "last_event_at": None,
-                            "folder": _task_folder().replace("/", "\\"), "apps_by_order": []},
-                "apps": {},
-                "web": {"tabs_by_order": [], "events": 0, "by_tab": {}},
-                "summary": {"apps": 0, "events": 0, "by_type": {}, "by_app": {}}
+                "session": {"started_at": None,
+                            "folder": _task_folder().replace("/", "\\"),
+                            "applications": []},
+                "accessibility": {"baseline": None, "changes": []}
             })
 
 def _load_meta():
+    """Load the task metadata JSON under META_LOCK, retrying once on decode error."""
     with META_LOCK:
         try:
             with open(_meta_path(), "r", encoding="utf-8") as f:
@@ -86,11 +94,13 @@ def _load_meta():
             return None
 
 def _save_meta(m):
+    """Atomically write the metadata dict under META_LOCK."""
     with META_LOCK:
         _atomic_write_json(_meta_path(), m)
 
 
 def _tab_key(d):
+    """Build a stable string key for a browser tab from its session ID and URL."""
     sid = d.get("tab_session_id", "")
     url = d.get("url", "")
     return f"{sid}::{url}"
@@ -100,7 +110,10 @@ def _tab_dom_name(order, created_ms):  return f"web_tab{order}_{created_ms}.html
 def _tab_a11y_name(order, created_ms): return f"web_tab{order}_{created_ms}_a11y_tree.json"
 
 class WebLogHandler(BaseHTTPRequestHandler):
+    """HTTP request handler that accepts POST /log_web payloads from the Chrome extension."""
+
     def _set_headers(self, code=200):
+        """Send HTTP status code and CORS headers."""
         self.send_response(code)
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
@@ -184,38 +197,47 @@ class WebLogHandler(BaseHTTPRequestHandler):
             # --- SHORT metadata critical section ---
             with META_LOCK:
                 meta = _load_meta() or {}
-                web_meta = meta.setdefault("web", {"tabs_by_order": [], "events": 0, "by_tab": {}})
-                tabs = web_meta["tabs_by_order"]
-                ident = {"order": order, "first_ts": created}
                 rel_tab_json = os.path.join("task_logs", CURRENT_TASK, "web_logs", tab_json).replace("\\", "/")
 
-                found = None
-                for t in tabs:
-                    if t.get("order") == ident["order"] and t.get("first_ts") == ident["first_ts"]:
-                        found = t; break
+                web_events_count = len(tab["interactions"])
+                tab_record = {
+                    "order": order,
+                    "first_ts": created,
+                    "url": tab["url"],
+                    "title": tab["title"],
+                    "file": "/" + rel_tab_json,
+                    "dom_url": tab["dom_url"],
+                    "a11y_url": tab["a11y_url"],
+                    "web_events": web_events_count
+                }
 
-                if not found:
-                    tabs.append({
-                        **ident,
-                        "url": tab["url"], "title": tab["title"],
-                        "file": "/" + rel_tab_json,
-                        "dom_url": tab["dom_url"], "a11y_url": tab["a11y_url"]
-                    })
+                apps_list = meta.setdefault("session", {}).setdefault("applications", [])
+                browser_app = next(
+                    (a for a in apps_list if (a.get("app") or "").lower() in _BROWSER_APPS),
+                    None
+                )
+
+                if browser_app is not None:
+                    tabs_list = browser_app.setdefault("tabs", [])
+                    existing = next(
+                        (t for t in tabs_list if t.get("order") == order and t.get("first_ts") == created),
+                        None
+                    )
+                    if existing is None:
+                        tabs_list.append(tab_record)
+                    else:
+                        existing.update(tab_record)
                 else:
-                    found.update({
-                        "url": tab["url"], "title": tab["title"],
-                        "file": "/" + rel_tab_json,
-                        "dom_url": tab["dom_url"], "a11y_url": tab["a11y_url"]
-                    })
-
-                added = len(inters)  # count everything
-                web_meta["events"] = int(web_meta.get("events", 0)) + added
-                key2 = f"{order}::{created}"
-                web_meta["by_tab"][key2] = int(web_meta["by_tab"].get(key2, 0)) + added
-
-                meta.setdefault("summary", {}).setdefault("events", 0)
-                meta["summary"]["events"] = int(meta["summary"]["events"]) + added
-                meta.setdefault("session", {})["last_event_at"] = data.get("timestamp") or meta["session"].get("last_event_at")
+                    # Browser not yet registered; stage for finalization in stop_task
+                    pending = meta.setdefault("_pending_web_tabs", [])
+                    existing = next(
+                        (t for t in pending if t.get("order") == order and t.get("first_ts") == created),
+                        None
+                    )
+                    if existing is None:
+                        pending.append(tab_record)
+                    else:
+                        existing.update(tab_record)
 
                 _save_meta(meta)
 
@@ -227,9 +249,11 @@ class WebLogHandler(BaseHTTPRequestHandler):
 
 
 def run_web_logger():
+    """Start the blocking HTTP server on localhost:8765 (call from a daemon thread)."""
     server = HTTPServer(("localhost", 8765), WebLogHandler)
     print(f"Web logger listening on http://localhost:8765/log_web (task {CURRENT_TASK})")
     server.serve_forever()
 
 def run_web_logger_in_thread():
+    """Launch the web logger server in a background daemon thread so it doesn't block the GUI."""
     threading.Thread(target=run_web_logger, daemon=True).start()

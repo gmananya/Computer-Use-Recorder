@@ -1,0 +1,578 @@
+[
+  {
+    "Task ID": 1,
+    "Task Category": "Web & Browsing",
+    "Task": "Back to the previous webpage",
+    "Context": "I am searching for an article on Chrome about \"How to do Literature Review\". I choose the first article on the search results, but I realize that this article is not helpful, so I return to the search results.",
+    "Instruction": "Search for an article on \"How to do literature review\" on Chrome \nClick on the first search result\nReturn to the search results page",
+    "Applications": "Chrome",
+    "Task End State": "The page is showing the original Google search result."
+  },
+  {
+    "Task ID": 2,
+    "Task Category": "Web & Browsing",
+    "Task": "Bookmark a webpage",
+    "Context": "I use Facebook regularly so I want easy access.",
+    "Instruction": "Bookmark the Facebook homepage on Chrome",
+    "Applications": "Chrome",
+    "Task End State": "Facebook appears in the address bar with its \"home\" screen displayed. The site now appears in \"Bookmarks"
+  },
+  {
+    "Task ID": 3,
+    "Task Category": "Web & Browsing",
+    "Task": "Find information on a webpage",
+    "Context": "I'm interested in buying a new laptop and want to learn more about its feature in detail.",
+    "Instruction": "Visit apple.com. Go to Macbook Air page on Chrome and find information about the tools Apple Intelligence is built into.",
+    "Applications": "Chrome",
+    "Task End State": "The page showing information about \"Apple Intelligence\" is open"
+  },
+  {
+    "Task ID": 4,
+    "Task Category": "Web & Browsing",
+    "Task": "Search for a product on an online store",
+    "Context": "I've been getting into cooking recently, so I've decided to upgrade my frying pan.",
+    "Instruction": "Visit walmart.com on Chrome. Search for a frying pan, then click on the first product with a pan size of exactly 10 inches and add it to cart.",
+    "Applications": "Chrome",
+    "Task End State": "The page is showing product page of the pan with 10 inches"
+  },
+  {
+    "Task ID": 5,
+    "Task Category": "Web & Browsing",
+    "Task": "Log in to an account and modify profile",
+    "Context": "I want to do some shopping on Target and I want to tie my purchase with my account.",
+    "Instruction": "Login to target.com on Chrome with username \"studyparticipants5@gmail.com\" and password \"CUAstudy1!\" and set the store in 95050 as default.",
+    "Applications": "Chrome",
+    "Task End State": "The Target website shows a screen where an account is logged into, and deafult store set to the one in 95050"
+  },
+  {
+    "Task ID": 6,
+    "Task Category": "Web & Browsing",
+    "Task": "Create and close tabs",
+    "Context": "I am interested in buying cars and I am exploring car models from different brands, like Subaru, Toyota, and Honda. After looking for some options, I like the design of Subaru Forester and would like to explore this car.",
+    "Instruction": "Search for Toyota Camry, Subaru Forester, and Honda Civic in separate tabs and open their respective websites on Chrome. Then, close the tabs containing Toyota and Honda cars.",
+    "Applications": "Chrome",
+    "Task End State": "One tab remains, which is Subaru Forester page."
+  },
+  {
+    "Task ID": 7,
+    "Task Category": "Web & Browsing",
+    "Task": "Filling a Google Form",
+    "Context": "I am filling out an anonymous feedback form through Google Form.",
+    "Instruction": "Go to https://tinyurl.com/facility-survey and fill up the Google Form and submit.",
+    "Applications": "Chrome",
+    "Task End State": "The form reponse is submitted."
+  },
+  {
+    "Task ID": 8,
+    "Task Category": "Web & Browsing",
+    "Task": "Search video on Youtube and skip to the next video",
+    "Context": "I'm currently watching a lecture on YouTube on \"Machine Learning and Generative AI\". I want to watch a different video as this one doesn't cover the concept I'm looking to learn.",
+    "Instruction": "Visit youtube.com on Chrome and search for \"Machine Learning and Generative AI\"\nWatch the first suggested video for a few seconds. \nSkip to the next video",
+    "Applications": "Chrome",
+    "Task End State": "A new lecture video is playing."
+  },
+  {
+    "Task ID": 9,
+    "Task Category": "Web & Browsing",
+    "Task": "Save webage as PDF",
+    "Context": "I want to print the lyrics to \"Baby Shark\" song.",
+    "Instruction": "Find the lyrics to \"Baby Shark\" song on Chrome. Once you find the lyrics, save the webpage as a PDF so I can print it.",
+    "Applications": "Chrome",
+    "Task End State": "The PDF file that consist of the lyric exists in the local machine."
+  },
+  {
+    "Task ID": 10,
+    "Task Category": "Web & Browsing",
+    "Task": "Translating the language of a webpage",
+    "Context": "I want to get up-to-date about some news from France but the reliable news websites are mostly in French. I want to read the English Translation of this.",
+    "Instruction": "Visit www.france24.com/fr. Translate the news page in French on this webpage to English using Google Translate.",
+    "Applications": "Chrome",
+    "Task End State": "The French news appears in English."
+  },
+  {
+    "Task ID": 11,
+    "Task Category": "Web & Browsing",
+    "Task": "Searching for a service by setting constraints",
+    "Context": "I am planning to fly to New York for the Labor Day weekend to see my family",
+    "Instruction": "Visit expedia.com on Chrome. Click on the cheapest round-trip flight from Austin to New York for Sept 2-4",
+    "Applications": "Chrome",
+    "Task End State": "The chepest flight is displayed on screen"
+  },
+  {
+    "Task ID": 12,
+    "Task Category": "Web & Browsing",
+    "Task": "Change default search engine",
+    "Context": "I prefer a privacy-focused search engine and want to use DuckDuckGo by default.",
+    "Instruction": "Set DuckDuckGo as the default search engine on Chrome",
+    "Applications": "Chrome",
+    "Task End State": "The DuckDuckGo is become the default search engine"
+  },
+  {
+    "Task ID": "",
+    "Task Category": "",
+    "Task": "",
+    "Context": "",
+    "Instruction": "",
+    "Applications": "",
+    "Task End State": ""
+  },
+  {
+    "Task ID": 13,
+    "Task Category": "System Operations",
+    "Task": "Set an alarm on Clock",
+    "Context": "I need an alarm to remind me to badge in to work.",
+    "Instruction": "Set an alarm for 8.30 AM that repeats every Monday",
+    "Applications": "Clock",
+    "Task End State": "The alarm clock is set to 8.30 AM; Monday (in Repeats) is checked."
+  },
+  {
+    "Task ID": 14,
+    "Task Category": "System Operations",
+    "Task": "Move a document from one folder to another folder",
+    "Context": "I'm trying to organize my computer. I want to move my images to Desktop.",
+    "Instruction": "Move image \"MyTravelPhoto.jpg\" from Documents > Task 14 folder to Desktop",
+    "Applications": "File Explorer",
+    "Task End State": "Image \"MyTravelPhoto.jpg\" is in Desktop."
+  },
+  {
+    "Task ID": 15,
+    "Task Category": "System Operations",
+    "Task": "Turn on Bluetooth",
+    "Context": "I want to connect my bluetooth mouse to my computer. Currently the bluetooth is off.",
+    "Instruction": "Turn the bluetooth on.",
+    "Applications": "Settings",
+    "Task End State": "The bluetooth is on."
+  },
+  {
+    "Task ID": 16,
+    "Task Category": "System Operations",
+    "Task": "Turn the brightness down",
+    "Context": "The brightness on my computer is too high.",
+    "Instruction": "Reduce the brightness of my computer to 50%",
+    "Applications": "Settings",
+    "Task End State": "The brightness is set to 50%"
+  },
+  {
+    "Task ID": 17,
+    "Task Category": "System Operations",
+    "Task": "Change the wallpaper",
+    "Context": "The wallpaper on my screen is set to the default one and I want to change it to something colorful.",
+    "Instruction": "Change the wallpaper to any Solid Color in Settings.",
+    "Applications": "Settings",
+    "Task End State": "The wallpaper on the computer is now set to a solid color."
+  },
+  {
+    "Task ID": 18,
+    "Task Category": "System Operations",
+    "Task": "Force quit an application",
+    "Context": "I'm browsing on Chrome but it is frozen.",
+    "Instruction": "Open Chrome and close the application from Task Manager",
+    "Applications": "Task Manager, Chrome",
+    "Task End State": "The Google chrome is closed (with force exit)"
+  },
+  {
+    "Task ID": 19,
+    "Task Category": "System Operations",
+    "Task": "Checking weather conditions of a city",
+    "Context": "I'm flying to Austin next week. I want to check how the weather is and pack accordingly.",
+    "Instruction": "Using the Weather app, check the weather in Austin for the following week in Celcius scale",
+    "Applications": "Weather",
+    "Task End State": "The application is open with Austin temperature on screen and then unit is set to Celcius."
+  },
+  {
+    "Task ID": 20,
+    "Task Category": "System Operations",
+    "Task": "Create and delete a new folder",
+    "Context": "I want to stay organized will all my assignment documents and resources.",
+    "Instruction": "I want to delete a folder \"Old Assignment\" in Documents > Task 31 folder. Then, create a folder in Documents > Task 31 folder called \"Assignments",
+    "Applications": "File Explorer",
+    "Task End State": "A new folder named \"Assignments\" is created"
+  },
+  {
+    "Task ID": 21,
+    "Task Category": "System Operations",
+    "Task": "Recover a photo from Trash",
+    "Context": "I accidentally deleted a file with the name Task ID 21.jpg.",
+    "Instruction": "Recover the file Task ID 21.jpg from Recycle Bin and verify whether it is restored to its previous location in Documents > Task 79 folder.",
+    "Applications": "Recycle Bin",
+    "Task End State": "The photo is back to the original folder."
+  },
+  {
+    "Task ID": 22,
+    "Task Category": "System Operations",
+    "Task": "Use calculator application to perform multiplication",
+    "Context": "I want to do a calculation using the calculator application.",
+    "Instruction": "Compute the product of 20 and 483 on Calculator",
+    "Applications": "Calculator",
+    "Task End State": "The calculator app is showing the result of the multiplication of 20 times 483"
+  },
+  {
+    "Task ID": 23,
+    "Task Category": "System Operations",
+    "Task": "Installing an application",
+    "Context": "I joined a new company and my team communicates on Slack.",
+    "Instruction": "Install Slack application on my laptop. The installer is in Documents > Task 23 folder.",
+    "Applications": "Chrome, Slack",
+    "Task End State": "The slack is installed."
+  },
+  {
+    "Task ID": 24,
+    "Task Category": "System Operations",
+    "Task": "Compress a folder to ZIP file",
+    "Context": "I want to share a large folder as an email attachment.",
+    "Instruction": "Compress the folder \"Final Report\" in Documents > Task 24 folder to ZIP format.",
+    "Applications": "File Explorer",
+    "Task End State": "The compressed version (in ZIP) of the \"Final Report\" folder is created."
+  },
+  {
+    "Task ID": "",
+    "Task Category": "",
+    "Task": "",
+    "Context": "",
+    "Instruction": "",
+    "Applications": "",
+    "Task End State": ""
+  },
+  {
+    "Task ID": 25,
+    "Task Category": "Document Editing",
+    "Task": "Create a new Word document, add heading, change its color, and alignment",
+    "Context": "I'm reading an interesting article on solar system in Word. I want to take some notes in a separate document.",
+    "Instruction": "Create a new document, add the text \"Solar System\" in any shade of green. Then, make it a heading and align it to the center side of the document.",
+    "Applications": "Word",
+    "Task End State": "A blank file in Word is created with a text \"Solar System\", written in any shade of green, heading, and center aligned."
+  },
+  {
+    "Task ID": 26,
+    "Task Category": "Document Editing",
+    "Task": "Add information in Excel",
+    "Context": "I am tracking all the books I've read in an excel sheet. I have columns for \"Book Title\", \"# Days to Finish\", and \"Rating (1-10)\".",
+    "Instruction": "Make an entry for the book I just completed reading Task ID 26.xlsx in Documents > Task 26 folder. The Book Title is \"Atomic Habit\" and it took me 10 days to finish reading the book. I really loved the book, I would rate it 9 out of 10.",
+    "Applications": "Excel, File Explorer",
+    "Task End State": "A new row entry has been added to the spreadsheet."
+  },
+  {
+    "Task ID": 27,
+    "Task Category": "Document Editing",
+    "Task": "Create a new PowerPoint, add slide, add text",
+    "Context": "I have to make a presentation slide to introduce myself to my classmates.",
+    "Instruction": "Create a new PowerPoint presentation. In the first slide, add the title \"3 Fun Facts About Me\". Create a second slide, and add details of my age, favorite color, and favorite animal. I'm 20, I like red, and sea otters are my favorite animals.",
+    "Applications": "PowerPoint,  File Explorer",
+    "Task End State": "The slide deck has a title slide with the text \"About Me\" and another slide with title, \"3 Fun Facts\" and 3 bullet points about favorite color, age, and animal."
+  },
+  {
+    "Task ID": 28,
+    "Task Category": "Document Editing",
+    "Task": "Change the theme in Power Point Slide",
+    "Context": "I want to change my presentation's theme to a colorful one.",
+    "Instruction": "Open Powerpoint Slide Task ID 28.pptx in Documents > Task ID 28 folder, and change the presentation theme to \"Gallery\".",
+    "Applications": "PowerPoint,  File Explorer",
+    "Task End State": "The theme of slide is now changed to \"Gallery\"."
+  },
+  {
+    "Task ID": 29,
+    "Task Category": "Document Editing",
+    "Task": "Add a new column in Excel",
+    "Context": "I am tracking all the books I've read in an excel sheet. I have columns for \"Book Title\", \"# Days to Finish\", and \"Rating (1-10)\". I want to add a new column, called \"Author\" to the right of \"Book Title\".",
+    "Instruction": "Edit Task ID 29.xlsx in Documents > Task 29 folder. Add a new column next to \"Book Title\" column and name it \"Author.",
+    "Applications": "Excel,  File Explorer",
+    "Task End State": "A new column is added to the right of \"Book Title\" named \"Author"
+  },
+  {
+    "Task ID": 30,
+    "Task Category": "Document Editing",
+    "Task": "Create a chart in Excel",
+    "Context": "I am tracking all the books I've read in an excel sheet. I have columns for \"Book Title\", \"# Days to Finish\", and \"Rating (1-10)\". I want to make a bar chart for how many days I took to read all the books.",
+    "Instruction": "Open Task ID 30.xlsx in Documents > Task 30 folder, create a bar chart where the x-axis is \"Book Title\" and the y-axis is the \"Days to Finish\". The title of the chart is \"Summer Reading",
+    "Applications": "Excel,  File Explorer",
+    "Task End State": "A \"Bar Chart\" is added with the x-axis titled \"Book Title\", y-axis titled \"Days to Finish\", and chart titled \"Days to finish"
+  },
+  {
+    "Task ID": 31,
+    "Task Category": "Document Editing",
+    "Task": "Add a formula in Excel",
+    "Context": "I am tracking all the books I've read in an excel sheet. I have columns for \"Book Title\", \"# Days to Finish\", and \"Rating (1-10)\". I want to know how many days I took to read a book on average.",
+    "Instruction": "Open Task ID 31.xlsx in Documents > Task 31 folder, calculate the average of \"# Days to finish\" using mathematical functions available in Excel.",
+    "Applications": "Excel,  File Explorer",
+    "Task End State": "The average of the ratings for \"Rating (1-10)\" is reported at the bottom of the column, using the \"Average\" function"
+  },
+  {
+    "Task ID": 32,
+    "Task Category": "Document Editing",
+    "Task": "Add a strike-through and highlight to text in Word",
+    "Context": "I'm reading a word document. I want to suggest changes to the article's title by striking out and highlight the title from the document so that the author is aware that he/she should change the title.",
+    "Instruction": "Open Task ID 32.docx in Documents > Task 32 folder, make a strikethrough to the title of the article and highlight them.",
+    "Applications": "Word,  File Explorer",
+    "Task End State": "A strike-thorugh is placed through the title of document. The title is also highlighted."
+  },
+  {
+    "Task ID": 33,
+    "Task Category": "Document Editing",
+    "Task": "Change slide orientation in Powerpoint.",
+    "Context": "I'm working on an introduction PowerPoint for my new job. I pasted a photo of myself in one of the slides but because the photo is vertically oriented, it doesn't fit the landscape orientation of the slide. I want to make the slide vertically oriented so that the photo can fit.",
+    "Instruction": "Open Task ID 33.pptx in Documents > Task 33 folder. Orient the slide to vertical so that my photo can fit well.",
+    "Applications": "PowerPoint,  File Explorer",
+    "Task End State": "The slide is in potrait orientation"
+  },
+  {
+    "Task ID": 34,
+    "Task Category": "Document Editing",
+    "Task": "Add a comment to replace a string of words in Word documents",
+    "Context": "I am editing my essay report on Word. There is a sentence that I want to revise in one of the sections.",
+    "Instruction": "Open Task ID 34.docx in Documents > Task 34 folder. Go to \"Knowledge of the Solar System\" section. Add a comment to modify the sentence \"The solar system has been a topic of study from the beginning of history\" to \"The solar system is one of the most unique entities in history\".",
+    "Applications": "Word,  File Explorer",
+    "Task End State": "The sentence \"The solar system has been a topic of study from the begining of history.\" is changed with \"The solar system is one of the most unique entities in history."
+  },
+  {
+    "Task ID": 35,
+    "Task Category": "Document Editing",
+    "Task": "Capitalize the starting letter of every word in Word and add page number",
+    "Context": "I am writing an article on Word and I want to modify the title format based on the guidelines. Also, I want to add the page number in the document.",
+    "Instruction": "Open Task ID 35.docx in Document > Task 35 folder, capitalize the first letter of every word in the title and add the page number",
+    "Applications": "Word,  File Explorer",
+    "Task End State": "The first letter of each word in the title is in uppercase. Title page is also added."
+  },
+  {
+    "Task ID": 36,
+    "Task Category": "Document Editing",
+    "Task": "Export all .docx files to PDF files",
+    "Context": "I have to submit my work for an upcoming conference in PDF format, but all the documents are in .docx format currently.",
+    "Instruction": "Export the .docx documents in Documents > Task 36 folder to PDF",
+    "Applications": "Word,  File Explorer",
+    "Task End State": "The desired documents in PDF."
+  },
+  {
+    "Task ID": "",
+    "Task Category": "",
+    "Task": "",
+    "Context": "",
+    "Instruction": "",
+    "Applications": "",
+    "Task End State": ""
+  },
+  {
+    "Task ID": 37,
+    "Task Category": "Workflow",
+    "Task": "Copy text from Word to the Notes section in Powerpoint",
+    "Context": "I’m giving a presentation tomorrow and I want to move my talking points from a word document to the Notes section of my presentation.",
+    "Instruction": "Copy presentation notes from word document located in Task ID 37.docx to my presentation slide Task ID 37.pptx, both in Documents > Task 37 folder.",
+    "Applications": "PowerPoint, Word,  File Explorer",
+    "Task End State": "The notes from the \"Task ID 55.docx\" document on the desktop is pasted into the \"Notes\" section on the powerpoint presentation"
+  },
+  {
+    "Task ID": 38,
+    "Task Category": "Workflow",
+    "Task": "Install a downloaded font and use it in Word",
+    "Context": "I want to format my document to match the new font I have installed.",
+    "Instruction": "Install the font Organo font.zip, and change the font of the text in Task ID 38.docx to the new font, both in Documents > Task 58 folder.",
+    "Applications": "Word, Font Manager,  File Explorer",
+    "Task End State": "A .docx saved showing text rendered in the new font (font name visible in the ribbon)"
+  },
+  {
+    "Task ID": 39,
+    "Task Category": "Workflow",
+    "Task": "Convert a file (Excel) into a CSV file",
+    "Context": "I need to convert and export the excel spreadsheet I have to CSV format. I have to have them in Desktop.",
+    "Instruction": "Export the Task ID 39.xlsx in Documents > Task 39 folder to .csv and move it to Desktop.",
+    "Applications": "Excel, File Explorer",
+    "Task End State": "A new .csv file from the excel sheet is created and located in desktop"
+  },
+  {
+    "Task ID": 40,
+    "Task Category": "Workflow",
+    "Task": "Access data from a website and place into a Excel",
+    "Context": "I'm making a list of popular books from different online sources into an Excel sheet",
+    "Instruction": "Visit wikipedia.com and search for the most popular book. Paste in the first two books under the \"Between 50 million and 100 million copies\" into the Excel Task ID 40.xlsx in Documents > Task 40 folder.",
+    "Applications": "Chrome, Excel,  File Explorer",
+    "Task End State": "She: A History of Adventure\" and \"The Divinci Code\" is added into the excel sheet."
+  },
+  {
+    "Task ID": 41,
+    "Task Category": "Workflow",
+    "Task": "Screen record a computation on Calculator and insert the video in PowerPoint",
+    "Context": "I want to make a recorded demonstration of a simple calculation using BODMAS rule for my school presentation.",
+    "Instruction": "Turn on screen recording using the Snipping Tool.\nOpen calculator app and perform the calculation 26-12/2.\nNow clear the calculator results and calculate (26-12)/2.\nStop the recording on Snipping Tool \nInsert this video in Task ID 41.pptx in Documents > Task 41 folder.",
+    "Applications": "Snipping Tool, Calculator, PowerPoint,  File Explorer",
+    "Task End State": "The calculation recording is added to the presentation slide."
+  },
+  {
+    "Task ID": 42,
+    "Task Category": "Workflow",
+    "Task": "Adding an image to a PowerPoint Presentation Slide",
+    "Context": "I want to add a picture of myself to the presentation",
+    "Instruction": "Add the photo Task ID 42.jpg to Task ID 42.pptx, both in Document > Task 42 folder.",
+    "Applications": "PowerPoint,  File Explorer",
+    "Task End State": "The presentation has an image (Task ID 62.jpg)."
+  },
+  {
+    "Task ID": 43,
+    "Task Category": "Workflow",
+    "Task": "Save a chart from Excel as an image and insert into PowerPoint",
+    "Context": "I want my data visualized in a presentation.",
+    "Instruction": "Insert the bar chart visualization from Task ID 43.xlsx into PowerPoint Task ID 43.pptx, both in Documents > Task 43 Folder.",
+    "Applications": "Excel, PowerPoint,  File Explorer",
+    "Task End State": "The visualization from the excel sheet is copied to Powerpoint slide deck."
+  },
+  {
+    "Task ID": 44,
+    "Task Category": "Workflow",
+    "Task": "Locate an author on a paper (Word Document) and search for their website",
+    "Context": "I am enjoying reading an article in a word document. I want to know more about the author.",
+    "Instruction": "Open Task ID 44.docx in Documents > Task 44 folder, locate its author in this article. \nSearch them on Chrome. Go to their personal website.",
+    "Applications": "Word, Chrome,  File Explorer",
+    "Task End State": "Google Chrome is open with the author's website."
+  },
+  {
+    "Task ID": 45,
+    "Task Category": "Workflow",
+    "Task": "Get traveling distance from Maps and save to Notepad",
+    "Context": "I want to know the distance and time needed to cover different sections of the route from The Domain to Austin Airport if I were to take public transport all the way.",
+    "Instruction": "Visit maps.google.com. Check for how long it takes to start from The Domain and reach Austin Airport using public transport. \nAdd the different buses/trains to be taken and time each of them takes they cover in the route to Notepad.",
+    "Applications": "Chrome, Notepad",
+    "Task End State": "A notepad file created with the details of different routes."
+  },
+  {
+    "Task ID": 46,
+    "Task Category": "Workflow",
+    "Task": "Extract text from an image using Snipping Tool and save to Notepad",
+    "Context": "I need to copy all the editable text from the desktop screenshot",
+    "Instruction": "Take a screenshot of the desktop window using Snipping Tool and extract all of the text in the image. Paste all the editable text copied to a notepad.",
+    "Applications": "Snipping Tool, Notepad",
+    "Task End State": "The notepad has the text copied from Desktop."
+  },
+  {
+    "Task ID": 47,
+    "Task Category": "Workflow",
+    "Task": "Create a desktop shortcut to a folder and log its path in Excel",
+    "Context": "I want quick access to media folders from Desktop and record its path in Excel",
+    "Instruction": "Create new shortcuts to Pictures, Music, and Videos from Desktop and add each of their paths in Task ID 47.xlsx in Documents > Task 47.",
+    "Applications": "File Explorer, Excel",
+    "Task End State": "Shortcuts created on desktop; the excel sheet has information on the folder paths."
+  },
+  {
+    "Task ID": 48,
+    "Task Category": "Workflow",
+    "Task": "Create a sticky note with text and change its color",
+    "Context": "I'm working on creating a personal website. I want to make a list of all the steps for it on my sticky notes so it is easier to access.",
+    "Instruction": "Copy all the steps from Task ID 48.docx in Documents > Task 48 folder to a new sticky note and change its color to green.",
+    "Applications": "Chrome, Sticky Notes,  File Explorer",
+    "Task End State": "The list of steps are in Sticky Notes and the sticky notes color is green."
+  },
+  {
+    "Task ID": "",
+    "Task Category": "",
+    "Task": "",
+    "Context": "",
+    "Instruction": "",
+    "Applications": "",
+    "Task End State": ""
+  },
+  {
+    "Task ID": 49,
+    "Task Category": "Media",
+    "Task": "Fast forward a video by 10 seconds",
+    "Context": "I’m skimming through a video to get an idea about the different concepts it covers.",
+    "Instruction": "Open video Task ID 49.mp4 in Documents > Task 49 folder on Media Player. Watch it by skimming through the video and keep fast forwarding the video by 10 seconds until the end of the video.",
+    "Applications": "Media Player,  File Explorer",
+    "Task End State": "The video is stop at the end of the end of the video."
+  },
+  {
+    "Task ID": 50,
+    "Task Category": "Media",
+    "Task": "Change the video speed",
+    "Context": "I'm watching a video on Media Player, but I'm on a time crunch so I want to speed through it.",
+    "Instruction": "Open video Task ID 50.mp4 in Documents > Task 50 folder on Media Player. Play the video in 1.5x speed.",
+    "Applications": "Media Player,  File Explorer",
+    "Task End State": "The video is playing at the speed 1.5x"
+  },
+  {
+    "Task ID": 51,
+    "Task Category": "Media",
+    "Task": "Add a song to a playlist",
+    "Context": "I want to make a new playlist to organize my music better. I want to add \"Baby Shark\" song in my playlist.",
+    "Instruction": "Create the playlist \"Fun with Kids\" on Media Player and add Task ID 51.mp3 in Documents > Task 51 folder to the playlist.",
+    "Applications": "Music,  File Explorer",
+    "Task End State": "A new playlist is created. Baby Shark song is added to the newly created playlist."
+  },
+  {
+    "Task ID": 52,
+    "Task Category": "Media",
+    "Task": "Adjust brightness on photo",
+    "Context": "The default brightness setting of The Eiffel Tower photo is too high",
+    "Instruction": "Open Task ID 52.jpg in Documents > Task 52 folder on Photos app. Turn down the brightness to -1.",
+    "Applications": "Photos,  File Explorer",
+    "Task End State": "The brightness on the photo of The Eiffel Tower reads -0.1"
+  },
+  {
+    "Task ID": 53,
+    "Task Category": "Media",
+    "Task": "Take snapshot from a video",
+    "Context": "I want to share a snapshot of the food from the video I took yesterday in a restaurant I visited",
+    "Instruction": "Open the video Task ID 53.mp4 in Documents > Task 53 folder and take a screenshot of the frame from the video with food in it.",
+    "Applications": "Media Player,  File Explorer",
+    "Task End State": "The snapshot of the food is created."
+  },
+  {
+    "Task ID": 54,
+    "Task Category": "Media",
+    "Task": "Flip an image horizontally",
+    "Context": "I want a mirror version of a picture for layout balance.",
+    "Instruction": "Transform the image Task ID 54.jpg in Documents > Task 54 folder on Photos app to make it horizontally flipped.",
+    "Applications": "Photos,  File Explorer",
+    "Task End State": "The image is flipped horizontally."
+  },
+  {
+    "Task ID": 55,
+    "Task Category": "Media",
+    "Task": "Edit an image to add text",
+    "Context": "I'm editing an image to make it the cover photo of a travel album I'm working on.",
+    "Instruction": "Open Task ID 55.jpg in Documents > Task 55 folder on Photos app. Edit image to add the text caption \"Midnight in Paris\".",
+    "Applications": "Photos,  File Explorer",
+    "Task End State": "The image has additional text caption \"Midnight in Paris"
+  },
+  {
+    "Task ID": 56,
+    "Task Category": "Media",
+    "Task": "Mute a video",
+    "Context": "I want to watch the visuals of a video without any sound.",
+    "Instruction": "Open the video Task ID 56.mp4 in Documents > Task 56 folder on Media Player app. Mute the audio in the video.",
+    "Applications": "Media Player,  File Explorer",
+    "Task End State": "The video audio is on mute"
+  },
+  {
+    "Task ID": 57,
+    "Task Category": "Media",
+    "Task": "Change the audio track language of the video on Youtube",
+    "Context": "I'm watching a YouTube video, but this video is in English and I want to improve my Spanish ability.",
+    "Instruction": "Find \"Click This Video To Feed 1 Person\" by Mr Beast on YouTube. Change the audio track to Spanish instead.",
+    "Applications": "Chrome",
+    "Task End State": "The video is playing in Spanish."
+  },
+  {
+    "Task ID": 58,
+    "Task Category": "Media",
+    "Task": "Change video quality on Youtube",
+    "Context": "I am watching a YouTube video but my network is slow and has an unstable stream",
+    "Instruction": "Find \"Click This Video To Feed 1 Person\" by Mr Beast on YouTube. Change the video quality to 720p.",
+    "Applications": "Chrome",
+    "Task End State": "The video is playing in 720p."
+  },
+  {
+    "Task ID": 59,
+    "Task Category": "Media",
+    "Task": "Enable Picture-in-Picture playback on Youtube",
+    "Context": "I want a video I am watching on YouTube to float in a small window while I look for other videos.",
+    "Instruction": "Find \"Click This Video To Feed 1 Person\" by Mr Beast on YouTube. Enable picture-in-picture playback on Youtube.",
+    "Applications": "Chrome",
+    "Task End State": "The video is playing picture-in-picture."
+  },
+  {
+    "Task ID": 60,
+    "Task Category": "Media",
+    "Task": "Compress a JPG to a smaller size",
+    "Context": "I have a picture but is too large to share as an email attachment. I need a smaller JPEG.",
+    "Instruction": "Open Task ID 60.jpg in Documents > Task 60 folder on Photos app. Reduce the image size to 40%",
+    "Applications": "Photos,  File Explorer",
+    "Task End State": "The picture's quality size is reduced to 40%"
+  }
+]

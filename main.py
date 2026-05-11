@@ -26,32 +26,32 @@ from pynput import mouse, keyboard
 from pynput.keyboard import Key, KeyCode
 
 import obsws_python as obs
-import glob, logging
+import glob
 from obsws_python.error import OBSSDKRequestError
 import configparser
 from pathlib import Path
 
 import web_logger_server as web_logger_server  # local http server that receives web logs
-import accessibility_user_settings as a11y
+import accessibility_settings as a11y
 
 
-TASKS_PATH = "tasks_list.json"
-COMPLETED_TASKS_FILE = "completed_tasks.txt"
+TASKS_PATH = "tasks-list.json"
 
 
 
 # ---------- small utilities ----------
+
 def _get_ancestor(hwnd, flag):
+    """Safely retrieve an ancestor window handle using the given GA_* relationship flag."""
     try:
         return win32gui.GetAncestor(hwnd, flag)
     except Exception:
         return None
 
 def _normalize_to_frame_hwnd(hwnd):
-    """
-    Always return the top-level frame window for the point-in-time foreground.
-    For UWP this is an 'ApplicationFrameWindow' owned by ApplicationFrameHost.exe.
-    """
+    """Return the top-level frame hwnd for the foreground window.
+    UWP apps run inside ApplicationFrameWindow; this resolves that so we always
+    classify by the visible frame rather than the inner content process."""
     if not hwnd:
         return None
 
@@ -96,6 +96,7 @@ def _normalize_to_frame_hwnd(hwnd):
 
 
 def _get_window_bounds(hwnd):
+    """Return {left, top, right, bottom} pixel bounds for a window, or None on error."""
     try:
         l, t, r, b = win32gui.GetWindowRect(hwnd)
         return {"left": l, "top": t, "right": r, "bottom": b}
@@ -104,7 +105,7 @@ def _get_window_bounds(hwnd):
 
 
 def _get_window_state(hwnd):
-    # 1 = normal, 2 = minimized, 3 = maximized
+    """Return 'maximized', 'minimized', or 'normal' for a window handle."""
     try:
         _, show_cmd, _, _, _ = win32gui.GetWindowPlacement(hwnd)
         if show_cmd == 3:
@@ -117,15 +118,18 @@ def _get_window_state(hwnd):
 
 
 def _sanitize_filename(s):
+    """Replace characters that are unsafe in filenames with underscores."""
     return re.sub(r"[^A-Za-z0-9._-]+", "_", s or "")
 
 
 
-# obs controller
-
+# ---------- OBS controller ----------
 
 class ObsController:
+    """Thin wrapper around the OBS WebSocket v5 API for starting and stopping recordings."""
+
     def __init__(self, host="127.0.0.1", port=4455, password="OqOC5wKTGnahpL8L"):
+        """Store connection parameters; actual connection is deferred to start()."""
         self.host, self.port, self.password = host, port, password
         self.req = None
         self._record_dir = None
@@ -133,11 +137,11 @@ class ObsController:
         self._started_ts = None
 
     def connect(self):
-        # v5 request client (no event client needed)
+        """Open the OBS WebSocket v5 request client."""
         self.req = obs.ReqClient(host=self.host, port=self.port, password=self.password, timeout=5)
 
     def _safe_get_record_directory(self):
-        # v5 typed call (if present), else raw
+        """Fetch OBS's current output directory, handling typed and raw API variants."""
         try:
             return self.req.get_record_directory().record_directory
         except Exception:
@@ -149,6 +153,7 @@ class ObsController:
 
 
     def set_record_dir(self, folder):
+        """Tell OBS to record into folder; returns the directory OBS will actually use."""
         self._record_dir = os.path.abspath(folder)
         os.makedirs(self._record_dir, exist_ok=True)
 
@@ -179,6 +184,7 @@ class ObsController:
 
 
     def _snapshot_existing(self, rec_dir):
+        """Record which video files exist before recording starts so new ones can be identified."""
         try:
             files = []
             for ext in ("mkv", "mp4", "mov", "flv"):
@@ -188,6 +194,7 @@ class ObsController:
             self._existing_before = set()
 
     def start(self, out_dir):
+        """Start OBS recording into out_dir and block until the output is confirmed active."""
         if self.req is None:
             self.connect()
 
@@ -216,7 +223,7 @@ class ObsController:
         print("obs recording started (v5).")
 
     def _pick_new_file(self):
-        # Prefer new files since start; otherwise newest in dir
+        """Return the path of the recording file created since start() was called."""
         rec_dir = self._record_dir or self._safe_get_record_directory()
         if not rec_dir:
             return None
@@ -237,7 +244,7 @@ class ObsController:
         return newest
 
     def stop(self):
-        # Mirror v4: query status, stop if active, then poll until inactive
+        """Stop OBS recording and return the path of the saved file (or None)."""
         try:
             st = self.req.get_record_status()
             active = getattr(st, "output_active", False)
@@ -272,20 +279,28 @@ class ObsController:
 
 
 
-# ---------- gui app ----------
+# ---------- main GUI / recording app ----------
 
 class TaskGUI:
-    ROLL_THRESHOLD = 300  # seconds of idle after which a new session file is started for the same surface
+    """Tkinter GUI that drives task selection, input recording, and OBS screen capture.
+    Pass auto=True to skip all dialogs and start the first available task immediately."""
 
-    def __init__(self, user_id):
+    ROLL_THRESHOLD = 300  # seconds of idle that triggers a new log file for the same app
+
+    def __init__(self, user_id=None, auto: bool = False):
+        """Set up the Tkinter window, load the task list, and initialise per-session state."""
         self.root = tk.Tk()
         self.root.title("Computer Use Logger")
-        
-        self.user_id = user_id
 
-        self.user_logs_root = os.path.join("task_logs", f"User {self.user_id}")
-        os.makedirs(self.user_logs_root, exist_ok=True)
-        self.completed_tasks_file = os.path.join(self.user_logs_root, "completed_tasks.txt")
+        self.auto = bool(auto)
+        if self.auto:
+            self.root.withdraw()
+
+        self.user_id = user_id  # may be None until the user types it in the GUI
+
+        # These are set properly once user_id is confirmed in _apply_user_id()
+        self.user_logs_root = None
+        self.completed_tasks_file = None
 
 
         self.tasks = self._load_tasks()
@@ -329,11 +344,15 @@ class TaskGUI:
 
     # ----- gui + tasks -----
 
+    def _apply_user_id(self, uid: int):
+        """Set self.user_id and create the per-user log directory; called whenever the ID is confirmed."""
+        self.user_id = uid
+        self.user_logs_root = os.path.join("task_logs", f"User {uid}")
+        os.makedirs(self.user_logs_root, exist_ok=True)
+        self.completed_tasks_file = os.path.join(self.user_logs_root, "completed_tasks.txt")
+
     def _existing_task_ids_for_user(self) -> set:
-        """
-        Return a set of task IDs (ints) that already have a folder under
-        task_logs/User {user_id}/.
-        """
+        """Return the set of task IDs that already have a recorded folder for this user."""
         try:
             base = getattr(self, "user_logs_root", None)
             if not base or not os.path.isdir(base):
@@ -351,7 +370,7 @@ class TaskGUI:
             return set()
 
     def _task_id_from_row(self, task) -> int | None:
-        """Extract Task ID as int from a task row."""
+        """Extract the numeric Task ID from a task row dict, or None if missing/invalid."""
         tid = task.get("Task ID") or task.get("TaskID") or task.get("ID")
         try:
             return int(tid)
@@ -359,110 +378,63 @@ class TaskGUI:
             return None
 
 
-    def _rand_dropdown(self, event=None):
-        col = self.rand_id_var.get()
-        if not col:
+    def _refresh_task_list(self, event=None):
+        """Read the User ID entry, update self.user_id, and repopulate the task dropdown."""
+        raw = self.user_id_var.get().strip()
+        try:
+            uid = int(raw)
+        except ValueError:
+            self.task_number_dropdown["values"] = []
+            self.task_number_var.set("")
+            self.continue_button.configure(state="disabled")
             return
 
-        def _to_int(v):
-            try:
-                return int(v)
-            except Exception:
-                return None
+        self._apply_user_id(uid)
 
-        # keep only tasks that have a numeric rank in this column, sort ascending
-        ranked = [(t, _to_int(t.get(col))) for t in self.tasks]
-        ordered = [t for t, r in sorted([p for p in ranked if p[1] is not None], key=lambda x: x[1])]
-
-        # --- NEW: filter out tasks that already have a folder for this user ---
         already_done = self._existing_task_ids_for_user()
-        filtered = []
-        for t in ordered:
-            tid = self._task_id_from_row(t)
-            # include tasks with missing/invalid ID (defensive), exclude ones that exist
-            if tid is None or tid not in already_done:
-                filtered.append(t)
+        self.current_tasks = [
+            t for t in sorted(self.tasks, key=lambda t: self._task_id_from_row(t) or 0)
+            if self._task_id_from_row(t) not in already_done
+        ]
 
-        self.current_tasks = filtered
-
-        # dropdown label: T{Task ID} - {Instruction}
-        display = []
-        for t in self.current_tasks:
-            tid = t.get("Task ID") or t.get("TaskID") or t.get("ID")
-            instr = t.get("Instruction") or t.get("Task") or ""
-            display.append(f"T{tid} - {instr}")
+        display = [
+            f"T{t.get('Task ID') or t.get('TaskID') or t.get('ID')} - "
+            f"{t.get('Instruction') or t.get('Task') or ''}"
+            for t in self.current_tasks
+        ]
 
         self.task_number_dropdown["values"] = display
         self.task_number_var.set("")
-
-        # Disable "Next" if no remaining tasks
-        try:
-            self.continue_button.configure(state=("normal" if display else "disabled"))
-        except Exception:
-            pass
+        self.continue_button.configure(state=("normal" if display else "disabled"))
 
 
     def _load_tasks(self):
+        """Load and return the task list from tasks_list.json."""
         with open(TASKS_PATH, "r", encoding="utf-8") as f:
             return json.load(f)
 
     
     def _build_initial_gui(self):
-        """Build initial GUI and preselect the Rand ID column based on --user_id."""
-        self.root.geometry("900x500")
+        """Build the User ID entry + Task selector screen."""
+        self.root.geometry("900x600")
         self.root.resizable(True, True)
 
-        # Detect available Rand ID columns from the JSON header
-        sample = self.tasks[0] if self.tasks else {}
-        self.rand_columns = [k for k in sample.keys() if re.match(r"(?i)rand\s*id\s*\d+", k)]
-        # also allow a single "Rand ID" (no number) if present
-        if "Rand ID" in sample and "Rand ID" not in self.rand_columns:
-            self.rand_columns.append("Rand ID")
-
-        # sort by the numeric suffix when possible
-        def _rk(k):
-            m = re.search(r"(\d+)", k)
-            return int(m.group(1)) if m else 0
-        self.rand_columns.sort(key=_rk)
-
-        # Helper: find best index for the provided --user_id
-        def _find_rand_col_index(columns, user_id):
-            if not columns:
-                return -1
-            # 1) Exact flexible match: "Rand ID {n}" (ignore case/whitespace)
-            pat_exact = re.compile(rf"^rand\s*id\s*{re.escape(str(user_id))}\s*$", re.I)
-            for i, c in enumerate(columns):
-                if pat_exact.match(c.strip()):
-                    return i
-            # 2) Any column whose trailing digits equal user_id (e.g., "Rand_ID(2)")
-            for i, c in enumerate(columns):
-                m = re.search(r"(\d+)\s*$", c)
-                if m and int(m.group(1)) == int(user_id):
-                    return i
-            # 3) Fallback: plain "Rand ID"
-            for i, c in enumerate(columns):
-                if re.match(r"^rand\s*id\s*$", c, re.I):
-                    return i
-            # 4) Last resort: first column
-            return 0
-
-        # Tk variables
-        self.rand_id_var = tk.StringVar()
         self.task_number_var = tk.StringVar()
 
-        # Layout
         self.form_frame = tk.Frame(self.root, padx=20, pady=20)
         self.form_frame.pack(fill="both", expand=True)
 
         tk.Label(self.form_frame, text="User ID:", font=self.base_font)\
             .grid(row=0, column=0, sticky="e", padx=5, pady=5)
-        self.rand_dropdown = ttk.Combobox(
-            self.form_frame, textvariable=self.rand_id_var, state="readonly", width=47
+        self.user_id_var = tk.StringVar(
+            value=str(self.user_id) if self.user_id is not None else ""
         )
-        self.rand_dropdown.configure(font=self.base_font)
-        self.rand_dropdown["values"] = self.rand_columns
-        self.rand_dropdown.grid(row=0, column=1, padx=5, pady=5)
-        self.rand_dropdown.bind("<<ComboboxSelected>>", self._rand_dropdown)
+        self.user_id_entry = tk.Entry(
+            self.form_frame, textvariable=self.user_id_var, width=49, font=self.base_font
+        )
+        self.user_id_entry.grid(row=0, column=1, padx=5, pady=5)
+        self.user_id_entry.bind("<Return>",    self._refresh_task_list)
+        self.user_id_entry.bind("<FocusOut>",  self._refresh_task_list)
 
         tk.Label(self.form_frame, text="Task:", font=self.base_font)\
             .grid(row=1, column=0, sticky="e", padx=5, pady=5)
@@ -472,20 +444,19 @@ class TaskGUI:
         self.task_number_dropdown.configure(font=self.base_font)
         self.task_number_dropdown.grid(row=1, column=1, padx=5, pady=5)
 
-        self.continue_button = tk.Button(self.form_frame, text="Next", command=self._task_details, width=20)
+        self.continue_button = tk.Button(
+            self.form_frame, text="Next", command=self._task_details,
+            width=20, state="disabled"
+        )
         self.continue_button.configure(font=self.base_font)
         self.continue_button.grid(row=2, column=0, columnspan=2, pady=20)
 
-        # Preselect the correct Rand ID column by index (avoids Tk picking a different item)
-        if self.rand_columns:
-            idx = _find_rand_col_index(self.rand_columns, self.user_id) if self.user_id else 0
-            # Clamp just in case
-            idx = max(0, min(idx, len(self.rand_columns) - 1))
-            self.rand_dropdown.current(idx)
-            self.rand_id_var.set(self.rand_columns[idx])  # keep var in sync
+        # If user_id was supplied on the CLI, populate tasks immediately
+        if self.user_id is not None:
+            self._refresh_task_list()
 
-            # Populate the task list for this user immediately
-            self._rand_dropdown()
+        if self.auto:
+            self.root.after(100, self._auto_start_flow)
 
 
     def _task_dropdown(self, event=None):
@@ -506,8 +477,30 @@ class TaskGUI:
         self.task_number_dropdown["values"] = display_values
         self.task_number_var.set("")
 
-    # inside class TaskGUI (put near other small helpers)
+    def _auto_start_flow(self):
+        """Headless entry: select the first remaining task and start recording with no dialogs."""
+        if self.user_id is None:
+            print("[auto] --user_id is required in auto mode. Exiting.")
+            self.root.quit()
+            return
+        self._refresh_task_list()
+        if not self.current_tasks:
+            print("[auto] No remaining tasks for this user. Exiting.")
+            self.root.quit()
+            return
+        try:
+            self.task_number_dropdown.current(0)
+        except Exception:
+            pass
+        self._task_details()
+        try:
+            self.start_task()
+        except Exception as e:
+            print(f"[auto] failed to start task: {e}")
+            self.root.quit()
+
     def _should_skip_app(self, app_name: str) -> bool:
+        """Return True if this app should never be logged (accessibility tools, OBS, Python itself)."""
         nm = (app_name or "").lower()
         # exact-name skiplist still honored
         if nm in self.accessibility_skiplist:
@@ -519,10 +512,7 @@ class TaskGUI:
     
 
     def _append_completed_task_record(self):
-        """
-        Writes: 'Participant <user_id> : Task <task_id>' into
-        task_logs/User <user_id>/completed_tasks.txt
-        """
+        """Append a 'Participant N : Task M' line to the per-user completed_tasks.txt."""
         try:
             participant_id = self.user_id
             task_id = self.task_metadata.get("task_id")
@@ -537,6 +527,7 @@ class TaskGUI:
 
 
     def _task_details(self):
+        """Transition the GUI to the task detail view and populate self.task_metadata from the selected row."""
         idx = self.task_number_dropdown.current()
         if idx is None or idx < 0:
             # fallback: resolve by the displayed text (just in case)
@@ -548,48 +539,29 @@ class TaskGUI:
                 messagebox.showwarning("missing", "Please select a task.")
                 return
 
-        if not self.rand_id_var.get():
-            messagebox.showwarning("missing", "Please choose User ID.")
+        if self.user_id is None:
+            messagebox.showwarning("missing", "Please enter a User ID.")
             return
 
         task = self.current_tasks[idx]
 
-        # core ids / labels
         tid = task.get("Task ID") or task.get("TaskID") or task.get("ID")
         try:
             tid = int(tid)
         except Exception:
             pass
 
-        rand_col = self.rand_id_var.get()
-        rand_order_raw = task.get(rand_col)
-        try:
-            rand_order = int(rand_order_raw)
-        except Exception:
-            rand_order = rand_order_raw  # keep as-is if not numeric
-
-        # human-facing fields from the sheet
         task_title = task.get("Task") or task.get("Title") or ""
         instruction = task.get("Instruction") or task.get("Task Instruction") or ""
         context = task.get("Context", "")
-
-        # OPTIONAL: other useful columns if present
         task_group = task.get("Task Group", "")
-        interactions = task.get("Interactions", "")
-        applications = task.get("Applications", "")
 
-        # what will get written into meta["task"]
         self.task_metadata = {
             "task_id": tid,
             "task_title": task_title,
             "instruction": instruction,
-            "task": instruction,     
             "context": context,
-            "rand_id_column": rand_col,
-            "rand_order": rand_order,
             "task_group": task_group,
-            "interactions": interactions,
-            "applications": applications,
         }
 
 
@@ -643,6 +615,7 @@ class TaskGUI:
     # ----- process control -----
 
     def _pid_has_title_markers(self, pid, markers):
+        """Return True if any visible window of pid contains one of the given title substrings."""
         titles = []
         def cb(hwnd, acc):
             try:
@@ -661,6 +634,7 @@ class TaskGUI:
         return any(m in joined for m in (m.lower() for m in markers))
 
     def _has_visible_window(self, pid):
+        """Return True if the process has at least one visible window."""
         flags = []
         def cb(hwnd, acc):
             _, p = win32process.GetWindowThreadProcessId(hwnd)
@@ -672,6 +646,7 @@ class TaskGUI:
 
 
     def _close_other_apps(self):
+        """Terminate all foreground user apps that aren't on the whitelist before recording starts."""
         cur_pid = os.getpid()
         whitelist = {
             'code.exe', 'python.exe', 'pythonw.exe', 'magnify.exe', 'narrator.exe',
@@ -746,8 +721,8 @@ class TaskGUI:
 
 
 
-    # ----- obs -----
     def _start_obs(self, out_dir):
+        """Create an ObsController, connect, and start recording into out_dir."""
         try:
             self._obs = ObsController(host="localhost", port=4455, password="OqOC5wKTGnahpL8L")
             self._obs.start(out_dir)
@@ -756,6 +731,7 @@ class TaskGUI:
             print(f"failed to start obs (v5): {e}")
 
     def _stop_obs(self):
+        """Stop the OBS recording and return the saved file path, or None."""
         try:
             if not hasattr(self, "_obs"): 
                 return None
@@ -786,6 +762,7 @@ class TaskGUI:
 
 
     def _split_mkv(self, rec_path=None):
+        """Split the OBS recording into screen.mp4 and system_audio.wav using ffmpeg."""
         if not rec_path:
             rec_path = os.path.join(self.log_folder_path, "recording.mkv")
 
@@ -867,6 +844,7 @@ class TaskGUI:
             print("ffmpeg error:", e.stderr.decode() if e.stderr else str(e))
 
     def _bring_obs_file(self, src_path):
+        """Copy (or move as fallback) the OBS recording into the task log folder."""
         if not src_path:
             print("no recording file provided.")
             return None
@@ -912,6 +890,7 @@ class TaskGUI:
     # ----- a11y tree -----
 
     def _serialize_a11y_tree(self, element, depth=0, max_depth=4):
+        """Recursively serialize a UIA element tree to a JSON-compatible dict (max depth 4)."""
         if element is None or depth > max_depth:
             return None
         try:
@@ -938,6 +917,8 @@ class TaskGUI:
     # ----- surface key (prevents duplicate trees) -----
 
     def _bucket_for_app(self, app_name, window_title, hwnd):
+        """Return (log_key, display_label) for an app.
+        For ApplicationFrameHost.exe (UWP container), splits by the hosted app title."""
         app = (app_name or "").lower()
         title = (window_title or "").strip().lower()
 
@@ -963,6 +944,7 @@ class TaskGUI:
 
 
     def _surface_key(self, app_name, window_title, hwnd):
+        """Return a stable string key identifying a window surface, used to deduplicate a11y trees."""
         app = (app_name or "").lower()
         title = (window_title or "").strip().lower()
 
@@ -987,6 +969,7 @@ class TaskGUI:
     # ----- logging session -----
 
     def start_task(self):
+        """Begin a recording session: close background apps, write initial metadata, start OBS and input listeners."""
         self.task_metadata["familiarity"] = self.task_familiarity.get()
         self.task_metadata["difficulty_before"] = self.task_difficulty.get()
 
@@ -1024,23 +1007,16 @@ class TaskGUI:
         
 
         baseline = a11y.get_accessibility_state()
-        # sr = a11y.collect_screen_reader_settings()
 
         meta = {
-            "task": dict(self.task_metadata),        # the curated fields
-            # "task_row": dict(self._selected_task_row) if hasattr(self, "_selected_task_row") else None,  # raw row snapshot
+            "task": dict(self.task_metadata),
             "session": {
                 "started_at": time.time(),
-                "last_event_at": None,
                 "folder": folder_path.replace("/", "\\"),
-                "apps_by_order": []
+                "applications": []
             },
-            "apps": {},
-            "web": {"tabs_by_order": [], "events": 0, "by_tab": {}},
-            "summary": {"apps": 0, "events": 0, "by_type": {}, "by_app": {}},
             "accessibility": {
                 "baseline": baseline,
-                "last": baseline,
                 "changes": []
             }
         }
@@ -1049,8 +1025,8 @@ class TaskGUI:
         with open(self.metadata_path, "w", encoding="utf-8") as f:
             json.dump(meta, f, indent=2)
 
-        # messagebox.showinfo("logging started", f"started logging:\n\n{self.task_metadata}")
-        self._show_task_brief_dialog()
+        if not self.auto:
+            self._show_task_brief_dialog()
 
         self.start_button.pack_forget()
 
@@ -1062,9 +1038,10 @@ class TaskGUI:
         self.surface_last_event_ts = {}
 
         self._start_obs(folder_path)
+        threading.Thread(target=self._watch_for_stop_signal, args=(folder_path,), daemon=True).start()
 
         def _safe_process_name(pid, hwnd):
-            # Always classify by the *frame* hwnd for consistency
+            """Resolve a PID to its .exe name; maps ApplicationFrameWindow to ApplicationFrameHost.exe."""
             try:
                 frame = _normalize_to_frame_hwnd(hwnd) or hwnd
                 cls = win32gui.GetClassName(frame) or ""
@@ -1153,6 +1130,7 @@ class TaskGUI:
 
 
         def get_current_info():
+            """Return a snapshot of the foreground window and cursor context, or None if the app is filtered."""
             # Get the actual frame hwnd first
             raw_hwnd = win32gui.GetForegroundWindow()
             if not raw_hwnd:
@@ -1218,18 +1196,20 @@ class TaskGUI:
 
             return {
                 "timestamp": time.time(),
-                "application": app_name,         # e.g., 'ApplicationFrameHost.exe' for Photos/Media Player
+                "application": app_name,
                 "window_title": window_title,
+                "window_bounds": bounds,
+                "window_state": state,
                 "focused_element": focused_info,
                 "cursor_position": [x, y],
                 "element_under_cursor": element_info,
-                "hwnd": hwnd,                    # frame hwnd (stable for bucketing & a11y capture)
-                "pid": pid,                      # frame pid
-                "window_bounds": bounds,
+                "hwnd": hwnd,
+                "pid": pid,
             }
 
 
         def _load_meta():
+            """Read the task metadata JSON; retries once on decode error to handle concurrent writes."""
             with self.meta_lock:
                 try:
                     with open(self.metadata_path, "r", encoding="utf-8") as f:
@@ -1246,6 +1226,7 @@ class TaskGUI:
                     return None
 
         def _save_meta(m):
+            """Atomically persist the metadata dict to disk (delegates to web_logger_server helper)."""
             with self.meta_lock:
                 # atomic write via server helper so both sides use the same method
                 try:
@@ -1257,58 +1238,49 @@ class TaskGUI:
 
 
         def _ensure_app_in_meta(m, app_name, order):
-            m.setdefault("summary", {"apps": 0, "events": 0, "by_type": {}, "by_app": {}})
-            m.setdefault("session", {
-                "started_at": time.time(),
-                "last_event_at": None,
-                "folder": self.log_folder_path.replace("/", "\\"),
-                "apps_by_order": []
-            })
-            apps = m.setdefault("apps", {})
-            app_entry = apps.setdefault(app_name, {
-                "order": order,
-                "log_file": f"{order}_{_sanitize_filename(app_name)}.json",  # <— sanitize
-                "a11y_tree_files": [],
-                "events": 0,
-                "by_type": {
-                    "mouse_click": 0,
-                    "mouse_up": 0,
-                    "mouse_move": 0,
-                    "drag_drop": 0,
-                    "key_press": 0,
-                    "hotkey": 0,
-                    "scroll": 0
+            """Insert an application entry into session.applications if it doesn't exist yet, then return it."""
+            apps_list = m.setdefault("session", {}).setdefault("applications", [])
+            app_entry = next(
+                (a for a in apps_list if a.get("app") == app_name and a.get("order") == order),
+                None
+            )
+            if app_entry is None:
+                app_entry = {
+                    "order": order,
+                    "app": app_name,
+                    "log_file": f"{order}_{_sanitize_filename(app_name)}.json",
+                    "a11y_tree_files": [],
+                    "events": 0
                 }
-            })
-            listed = m["session"].setdefault("apps_by_order", [])
-            if not any(a.get("app") == app_name and a.get("order") == order for a in listed):
-                listed.append({"order": order, "app": app_name, "log_file": app_entry["log_file"]})
-                m["summary"]["apps"] = len(listed)
-            print(f"[META] Ensuring {app_name} (order={order}) in apps_by_order")
+                apps_list.append(app_entry)
+                apps_list.sort(key=lambda x: x.get("order", 0))
+            print(f"[META] Ensuring {app_name} (order={order}) in session.applications")
             return app_entry
 
         def _maybe_record_accessibility_change(now_ts):
+            """Poll accessibility settings at most once per second; diff and record any changes."""
             if now_ts - self._last_acc_check_ts < self._acc_check_interval:
                 return
             self._last_acc_check_ts = now_ts
 
             m = _load_meta() or {}
             acc = m.get("accessibility") or {}
-            last = acc.get("last")
+            last = acc.get("baseline")
             curr = a11y.get_accessibility_state()
             ch = a11y.diff_accessibility(last, curr) if last else None
             if ch:
                 acc_changes = acc.setdefault("changes", [])
                 acc_changes.append({"ts": now_ts, "diff": ch})
-                acc["last"] = curr
                 m["accessibility"] = acc
                 _save_meta(m)
 
         
         def _focused_surface_key(ev):
+            """Return the surface key for the window described by an event dict."""
             return self._surface_key(ev.get("application"), ev.get("window_title"), ev.get("hwnd"))
 
         def _note_focus_transition_if_any(ev):
+            """Return True (and update self._focused_surface) if ev represents a focus switch to a new surface."""
             key = _focused_surface_key(ev)
             if not key:
                 return False
@@ -1321,6 +1293,7 @@ class TaskGUI:
 
 
         def _maybe_capture_a11y_tree(ev, order=None, on_focus=False):
+            """Capture and save the UIA tree for the window in ev, subject to cooldown and signature dedup."""
             # Only capture when the surface *gains* focus if focus-only mode is enabled
             if self._a11y_mode == "focus_only" and not on_focus:
                 return
@@ -1410,7 +1383,68 @@ class TaskGUI:
                 print(f"[a11y] capture failed for {ev.get('application')}: {e}")
 
         
+        def _format_event_for_log(ev):
+            """Reshape a flat internal event dict into the nested log format written to disk."""
+            ev_type = ev.get("event", "unknown")
+            window = {
+                "application": ev.get("application"),
+                "title": ev.get("window_title"),
+                "bounds": ev.get("window_bounds"),
+                "state": ev.get("window_state"),
+            }
+            if ev_type == "mouse_click":
+                event_field = "mouse_click"
+            elif ev_type == "mouse_move":
+                event_field = {"type": "mouse_move", "delta": ev.get("delta", [0, 0])}
+            elif ev_type == "mouse_up":
+                event_field = {"type": "mouse_up", "button": ev.get("button")}
+            elif ev_type == "scroll":
+                event_field = {"type": "scroll", "delta": ev.get("delta", [0, 0])}
+            elif ev_type == "key_press":
+                event_field = {"type": "key_press", "key": ev.get("key")}
+            elif ev_type == "hotkey":
+                event_field = {
+                    "type": "hotkey",
+                    "combo": ev.get("combo"),
+                    "modifiers": ev.get("mods", []),
+                    "key": ev.get("key"),
+                }
+            elif ev_type == "drag_drop":
+                from_info = ev.get("from", {})
+                to_info = ev.get("to", {})
+                event_field = {
+                    "type": "drag_drop",
+                    "from": {
+                        "application": from_info.get("application"),
+                        "cursor_position": from_info.get("cursor_position"),
+                        "element_under_cursor": from_info.get("element_under_cursor"),
+                        "window": {"title": from_info.get("window_title")},
+                        "element_under_keyboard_focus": from_info.get("focused_element"),
+                    },
+                    "to": {
+                        "application": to_info.get("application"),
+                        "cursor_position": to_info.get("cursor_position"),
+                        "element_under_cursor": to_info.get("element_under_cursor"),
+                        "window": {"title": to_info.get("window_title")},
+                        "element_under_keyboard_focus": to_info.get("focused_element"),
+                    },
+                    "button": ev.get("button"),
+                    "drag_distance": ev.get("drag_distance"),
+                    "duration_ms": ev.get("duration_ms"),
+                }
+            else:
+                event_field = ev_type
+            return {
+                "timestamp": ev.get("timestamp"),
+                "event": event_field,
+                "window": window,
+                "element_under_keyboard_focus": ev.get("focused_element"),
+                "element_under_cursor": ev.get("element_under_cursor"),
+                "cursor_position": ev.get("cursor_position"),
+            }
+
         def log_event(ev):
+            """Route ev to the right per-app JSON file, update metadata, and trigger a11y snapshots."""
             raw_app = ev.get("application") or "unknown"
             if self._should_skip_app(raw_app):
                 return
@@ -1456,36 +1490,7 @@ class TaskGUI:
             # --- METADATA UPDATE (bucketed by bucket_key) ---
             m = _load_meta() or {}
             app_entry = _ensure_app_in_meta(m, bucket_key, order)
-            app_entry["display_name"] = bucket_label  # nice label for any UI you build later
-
-            cur_window = {
-                "title": ev.get("window_title"),
-                "bounds": ev.get("window_bounds"),
-                "state": ev.get("window_state"),
-                "hwnd": ev.get("hwnd"),
-                "pid": ev.get("pid"),
-                "ts": ev.get("timestamp"),
-            }
-            prev_window = app_entry.get("last_window") or {}
-            if prev_window.get("hwnd") != cur_window["hwnd"] or prev_window.get("title") != cur_window["title"]:
-                app_entry.setdefault("windows_seen", []).append(cur_window)
-                if len(app_entry["windows_seen"]) > 10:
-                    app_entry["windows_seen"] = app_entry["windows_seen"][-10:]
-            app_entry["last_window"] = cur_window
-
-            ev_type = ev.get("event", "unknown")
             app_entry["events"] = int(app_entry.get("events", 0)) + 1
-            by_type = app_entry.setdefault("by_type", {
-                "mouse_click": 0, "mouse_up": 0, "mouse_move": 0, "drag_drop": 0,
-                "key_press": 0, "hotkey": 0, "scroll": 0
-            })
-            by_type[ev_type] = int(by_type.get(ev_type, 0)) + 1
-
-            m.setdefault("summary", {"apps": 0, "events": 0, "by_type": {}, "by_app": {}})
-            m["summary"]["events"] = int(m["summary"].get("events", 0)) + 1
-            m["summary"]["by_app"][bucket_key] = int(m["summary"]["by_app"].get(bucket_key, 0)) + 1
-            m["summary"]["by_type"][ev_type] = int(m["summary"]["by_type"].get(ev_type, 0)) + 1
-            m["session"]["last_event_at"] = ev.get("timestamp", now_ts)
             _save_meta(m)
 
             # --- APPEND TO PER-APP FILE (sanitize bucket_key for filenames) ---
@@ -1507,7 +1512,7 @@ class TaskGUI:
                     except Exception:
                         pass
                     logs = []
-                logs.append(ev)
+                logs.append(_format_event_for_log(ev))
                 with open(path, "w", encoding="utf-8") as f:
                     json.dump(logs, f, indent=2)
 
@@ -1532,6 +1537,7 @@ class TaskGUI:
         MOD_ORDER = {"Ctrl": 1, "Alt": 2, "Win": 3, "Shift": 4, "Insert": 5, "CapsLock": 6}
 
         def _normalize_key_obj(k):
+            """Convert a pynput Key/KeyCode to a consistent human-readable string (e.g. 'Ctrl', 'F5', 'a')."""
             # chars
             try:
                 ch = getattr(k, "char", None)
@@ -1570,9 +1576,11 @@ class TaskGUI:
             return name.title()
 
         def _is_modifier(norm):
+            """Return True if the normalised key name is a modifier key (Ctrl, Alt, Shift, etc.)."""
             return norm in MOD_SET
 
         def _build_combo(mods, main_key):
+            """Format a hotkey combo string in canonical modifier order, e.g. 'Ctrl+Shift+S'."""
             ordered_mods = sorted(mods, key=lambda m: MOD_ORDER.get(m, 99))
             tail = main_key.upper() if len(main_key) == 1 else main_key
             return "+".join(ordered_mods + [tail])
@@ -1598,6 +1606,7 @@ class TaskGUI:
         }
 
         def _classify_hotkey(mods, main_key):
+            """Return hints about a hotkey: whether it looks like a screen-reader combo and its common intent."""
             mods_set = set(mods)
             reader = None
             if "Insert" in mods_set:
@@ -1666,6 +1675,7 @@ class TaskGUI:
                 return None
 
         def _slider_identity(slider_el):
+            """Return a small dict identifying a slider element (name, type, automationId)."""
             try:
                 return {
                     "name": slider_el.Name,
@@ -1677,6 +1687,7 @@ class TaskGUI:
 
 
         def on_click(x, y, button, pressed):
+            """pynput mouse button callback: logs mouse_click on press and drag_drop/mouse_up on release."""
             nonlocal drag_start, dragging
             btn_str = str(button)
 
@@ -1808,6 +1819,7 @@ class TaskGUI:
 
 
         def on_move(x, y):
+            """pynput move callback: throttled to MOVE_THROTTLE_SEC; detects drag start and logs mouse_move."""
             nonlocal last_move_ts, last_move_pos, dragging
             now = time.time()
             if now - last_move_ts < MOVE_THROTTLE_SEC:
@@ -1839,6 +1851,7 @@ class TaskGUI:
 
 
         def on_scroll(x, y, dx, dy):
+            """pynput scroll callback: logs a scroll event with the wheel delta."""
             ev = get_current_info()
             if not ev:
                 return
@@ -1848,6 +1861,7 @@ class TaskGUI:
 
 
         def on_press(key):
+            """pynput key-press callback: logs key_press and, when modifiers are held, a hotkey event."""
             name = _normalize_key_obj(key)
             pressed_keys.add(name)
             if _is_modifier(name):
@@ -1880,6 +1894,7 @@ class TaskGUI:
                     log_event(hk)
 
         def on_release(key):
+            """pynput key-release callback: removes the key from pressed_keys/pressed_mods tracking sets."""
             name = _normalize_key_obj(key)
             pressed_keys.discard(name)
             pressed_mods.discard(name)
@@ -1899,6 +1914,8 @@ class TaskGUI:
 
     def _show_task_brief_dialog(self):
         """Modal pop-up showing the selected task's context and instruction."""
+        if self.auto:
+            return
         top = tk.Toplevel(self.root)
         top.title("Task Brief")
         top.transient(self.root)
@@ -1924,7 +1941,7 @@ class TaskGUI:
 
         tk.Label(top, text="Task Instruction", font=self.bold_font).pack(anchor="w", padx=padx, pady=(12, 4))
         tk.Message(top,
-                text=self.task_metadata.get("task", "no task"),
+                text=self.task_metadata.get("instruction", "no instruction"),
                 width=W - (padx * 2),
                 font=self.base_font,
                 justify="left").pack(anchor="w", padx=padx)
@@ -2067,13 +2084,89 @@ class TaskGUI:
         return result
 
 
-    def stop_task(self):
+    def _watch_for_stop_signal(self, folder_path: str):
+        """Background thread: watches for stop.signal; schedules a clean stop on the UI thread."""
+        flag = os.path.join(folder_path, "stop.signal")
+        try:
+            while True:
+                if os.path.exists(flag):
+                    try:
+                        os.remove(flag)
+                    except Exception:
+                        pass
+                    self.root.after(0, self._stop_task_no_dialog if self.auto else self.stop_task)
+                    break
+                time.sleep(0.25)
+        except Exception as e:
+            print(f"[watcher] stop.signal watcher error: {e}")
+
+    def _stop_task_no_dialog(self):
+        """Stop logging immediately without any GUI prompts (used in auto mode)."""
         for l in self.interaction_loggers:
             try: l.stop()
             except Exception: pass
         self.interaction_loggers = []
 
-        # NEW combined dialog
+        try:
+            with open(self.metadata_path, "r", encoding="utf-8") as f:
+                m = json.load(f)
+        except Exception:
+            m = {}
+
+        m.setdefault("task", {})
+        if "difficulty_before" not in m["task"]:
+            prev = self.task_metadata.get("difficulty_before") or self.task_metadata.get("difficulty")
+            if prev is not None:
+                m["task"]["difficulty_before"] = prev
+            m["task"].pop("difficulty", None)
+
+        m["task"]["difficulty_after"] = m["task"].get("difficulty_after") or "Medium"
+        m["task"]["success"] = True
+        m["task"].pop("failure_reason", None)
+        m["task"].pop("failure_notes", None)
+
+        m.setdefault("session", {})
+        m["session"]["ended_at"] = time.time()
+
+        _BROWSER_APPS = {"chrome.exe", "msedge.exe", "firefox.exe", "brave.exe", "opera.exe", "vivaldi.exe"}
+        pending_tabs = m.pop("_pending_web_tabs", [])
+        if pending_tabs:
+            apps_list = m["session"].get("applications", [])
+            browser_app = next(
+                (a for a in apps_list if (a.get("app") or "").lower() in _BROWSER_APPS), None
+            )
+            if browser_app is not None:
+                tabs_list = browser_app.setdefault("tabs", [])
+                for tab_record in pending_tabs:
+                    existing = next(
+                        (t for t in tabs_list
+                         if t.get("order") == tab_record.get("order")
+                         and t.get("first_ts") == tab_record.get("first_ts")),
+                        None
+                    )
+                    if existing is None:
+                        tabs_list.append(tab_record)
+                    else:
+                        existing.update(tab_record)
+
+        try:
+            with open(self.metadata_path, "w", encoding="utf-8") as f:
+                json.dump(m, f, indent=2)
+        except Exception as e:
+            print(f"[meta] write failed in _stop_task_no_dialog: {e}")
+
+        rec_src = self._stop_obs()
+        final_path = self._bring_obs_file(rec_src)
+        self._split_mkv(final_path)
+        self.root.quit()
+
+    def stop_task(self):
+        """Stop all listeners, collect post-task outcome via dialog, finalize metadata, split OBS recording."""
+        for l in self.interaction_loggers:
+            try: l.stop()
+            except Exception: pass
+        self.interaction_loggers = []
+
         outcome = self._ask_post_task_outcome_dialog()
         difficulty_after = outcome["difficulty_after"]
         success = outcome["success"]
@@ -2110,6 +2203,29 @@ class TaskGUI:
         m.setdefault("session", {})
         m["session"]["ended_at"] = time.time()
 
+        # Merge any web tabs staged before the browser app was registered
+        _BROWSER_APPS = {"chrome.exe", "msedge.exe", "firefox.exe", "brave.exe", "opera.exe", "vivaldi.exe"}
+        pending_tabs = m.pop("_pending_web_tabs", [])
+        if pending_tabs:
+            apps_list = m["session"].get("applications", [])
+            browser_app = next(
+                (a for a in apps_list if (a.get("app") or "").lower() in _BROWSER_APPS),
+                None
+            )
+            if browser_app is not None:
+                tabs_list = browser_app.setdefault("tabs", [])
+                for tab_record in pending_tabs:
+                    existing = next(
+                        (t for t in tabs_list
+                         if t.get("order") == tab_record.get("order")
+                         and t.get("first_ts") == tab_record.get("first_ts")),
+                        None
+                    )
+                    if existing is None:
+                        tabs_list.append(tab_record)
+                    else:
+                        existing.update(tab_record)
+
         try:
             with open(self.metadata_path, "w", encoding="utf-8") as f:
                 json.dump(m, f, indent=2)
@@ -2123,11 +2239,13 @@ class TaskGUI:
 
 
     def run(self):
+        """Enter the Tkinter event loop (blocks until the window is closed or quit() is called)."""
         self.root.mainloop()
 import argparse
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--user_id", type=int, default = 0)
+    parser.add_argument("--user_id", type=int, default=None)
+    parser.add_argument("--auto", action="store_true", help="Headless mode for orchestrator")
     args = parser.parse_args()
-    app = TaskGUI(args.user_id)
+    app = TaskGUI(args.user_id, auto=args.auto)
     app.run()

@@ -26,7 +26,6 @@ console.log("[cu] Content script injected on", location.href);
 } catch (e) {}
 
   // ---- config / state ----
-  const LOG_URL = "http://localhost:8765/log_web"; // unchanged
   let accessibilityTreeSent = false;
   let lastURL = location.href;
   let lastScrollPayload = null;
@@ -152,17 +151,8 @@ function sendToLogger(interaction, forceDom = false) {
       accessibilityTreeSent = true;
     }
     try {
-      fetch(LOG_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-        signal: (() => {
-          const ctl = new AbortController();
-          setTimeout(() => ctl.abort(), 800);
-          return ctl.signal;
-        })()
-      }).catch(() => {/* swallow errors to avoid console spam */});
-    } catch {/* swallow */}
+      chrome.runtime.sendMessage({ type: "log_web", data });
+    } catch {/* swallow — extension context unavailable */}
   }
 
   let pageEventSent = false;

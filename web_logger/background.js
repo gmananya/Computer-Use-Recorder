@@ -33,3 +33,17 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     inject(tabId);
   }
 });
+
+// Proxy fetch to localhost on behalf of content scripts.
+// Background service workers use the extension origin (chrome-extension://...)
+// and are exempt from Chrome's Private Network Access restrictions.
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type !== "log_web") return false;
+  fetch("http://localhost:8765/log_web", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(message.data)
+  }).then(() => sendResponse({ ok: true }))
+    .catch(() => sendResponse({ ok: false }));
+  return true; // keep channel open for async response
+});

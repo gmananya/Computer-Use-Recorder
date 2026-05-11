@@ -36,6 +36,8 @@ import accessibility_settings as a11y
 
 
 TASKS_PATH = "tasks-list.json"
+OBS_PORT = 4444
+OBS_PASSWORD = ""
 
 
 
@@ -128,7 +130,7 @@ def _sanitize_filename(s):
 class ObsController:
     """Thin wrapper around the OBS WebSocket v5 API for starting and stopping recordings."""
 
-    def __init__(self, host="127.0.0.1", port=4455, password="OqOC5wKTGnahpL8L"):
+    def __init__(self, host="127.0.0.1", port=OBS_PORT, password=OBS_PASSWORD):
         """Store connection parameters; actual connection is deferred to start()."""
         self.host, self.port, self.password = host, port, password
         self.req = None
@@ -394,7 +396,8 @@ class TaskGUI:
         already_done = self._existing_task_ids_for_user()
         self.current_tasks = [
             t for t in sorted(self.tasks, key=lambda t: self._task_id_from_row(t) or 0)
-            if self._task_id_from_row(t) not in already_done
+            if self._task_id_from_row(t) is not None
+            and self._task_id_from_row(t) not in already_done
         ]
 
         display = [
@@ -433,8 +436,6 @@ class TaskGUI:
             self.form_frame, textvariable=self.user_id_var, width=49, font=self.base_font
         )
         self.user_id_entry.grid(row=0, column=1, padx=5, pady=5)
-        self.user_id_entry.bind("<Return>",    self._refresh_task_list)
-        self.user_id_entry.bind("<FocusOut>",  self._refresh_task_list)
 
         tk.Label(self.form_frame, text="Task:", font=self.base_font)\
             .grid(row=1, column=0, sticky="e", padx=5, pady=5)
@@ -443,6 +444,12 @@ class TaskGUI:
         )
         self.task_number_dropdown.configure(font=self.base_font)
         self.task_number_dropdown.grid(row=1, column=1, padx=5, pady=5)
+
+        # Attach trace and Return binding AFTER dropdown exists (both reference it)
+        # Trace fires on every keystroke so the list is populated before the user clicks
+        self.user_id_var.trace_add("write", lambda *_: self._refresh_task_list())
+        # Return moves focus straight to the task dropdown
+        self.user_id_entry.bind("<Return>", lambda e: self.task_number_dropdown.focus_set())
 
         self.continue_button = tk.Button(
             self.form_frame, text="Next", command=self._task_details,
@@ -724,7 +731,7 @@ class TaskGUI:
     def _start_obs(self, out_dir):
         """Create an ObsController, connect, and start recording into out_dir."""
         try:
-            self._obs = ObsController(host="localhost", port=4455, password="OqOC5wKTGnahpL8L")
+            self._obs = ObsController(host="localhost", port=OBS_PORT, password=OBS_PASSWORD)
             self._obs.start(out_dir)
             print(f"OBS: recording to {os.path.abspath(out_dir)}")
         except Exception as e:

@@ -113,11 +113,13 @@ class WebLogHandler(BaseHTTPRequestHandler):
     """HTTP request handler that accepts POST /log_web payloads from the Chrome extension."""
 
     def _set_headers(self, code=200):
-        """Send HTTP status code and CORS headers."""
+        """Send HTTP status code and CORS headers including Private Network Access for Chrome 94+."""
         self.send_response(code)
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        # Required for Chrome 94+: allows fetch() from HTTPS pages to this localhost server
+        self.send_header("Access-Control-Allow-Private-Network", "true")
         self.end_headers()
 
     def do_OPTIONS(self):

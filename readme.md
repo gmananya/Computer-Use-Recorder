@@ -75,17 +75,3 @@ task_logs/
         web_tab<n>_<ts>_a11y_tree.json   # browser accessibility tree
 ```
 
----
-
-## Key Files
-
-| File | Purpose |
-|------|---------|
-| `main.py` | Main GUI application — task selection, input recording, OBS control |
-| `main_auto.py` | Thin shim that calls `main.py` with `--auto` |
-| `web_logger_server.py` | Local HTTP server receiving Chrome extension events |
-| `accessibility_settings.py` | Reads NVDA/JAWS and Windows accessibility settings; provides diff utility |
-| `tasks-list.json` | Task definitions (Task ID, instruction, context, group) |
-| `web_logger/` | Chrome extension source (Manifest V3) |
-
-

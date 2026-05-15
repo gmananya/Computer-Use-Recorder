@@ -1,5 +1,11 @@
 # Computer Use Recorder
 
+[![Paper](https://img.shields.io/badge/Paper-arXiv-B31B1B?style=flat-square&logo=arxiv&logoColor=fff)](https://arxiv.org/abs/2602.09310)
+[![A11y-CUA Dataset](https://img.shields.io/badge/A11y--CUA_Dataset-HuggingFace-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/datasets/berkeley-hci/A11y-CUA)
+[![Reduced Dataset](https://img.shields.io/badge/Reduced_Dataset-HuggingFace-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/datasets/berkeley-hci/Reduced-A11y-CUA)
+[![Project Page](https://img.shields.io/badge/Project_Page-blue?style=flat-square&logo=googlechrome&logoColor=fff)](https://ananyagm.com/a11y-cua/a11y-cua.html)
+[![Data Explorer](https://img.shields.io/badge/Data_Explorer-blue?style=flat-square&logo=googlechrome&logoColor=fff)](https://ananyagm.com/a11y-cua/dataset-explorer.html)
+
 A desktop recorder for collecting interaction trace data of users doing computer tasks. For every task session, it captures every keyboard and mouse event along with action context, browser interactions (via a Chrome extension), screen video, audio, and a snapshot of the participant's accessibility settings. The tool is designed for assistive-technology research: it works with screen readers (NVDA, JAWS) and records the full Windows UI Automation accessibility tree for every application the user uses.
 
 ---
